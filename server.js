@@ -3,25 +3,28 @@ const path=require('path');
 const userRoute=require('./routes/userRoute');
 const adminRoute=require('./routes/adminRoute');
 const port=process.env.PORT || 3000;
+const session=require('express-session');
+const nocache=require('nocache');
+const crypto = require('crypto');
 
 const app=express();
 
-//for mongodb atlas
-// const mongoose=require('mongoose');
-// const uri = 'mongodb+srv://devikarajesh:O169hz7q1cj2Df9r@Organic.mongodb.net/<databasename>?retryWrites=true&w=majority';
-// mongoose.connect(uri, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   });
-//   const db = mongoose.connection;
-//   db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-// db.once('open', () => {
-//   console.log('Connected to MongoDB Atlas');
-// });
+const mongoose=require('mongoose');
+mongoose.connect('mongodb://127.0.0.1/OrganicBeauty');
 
+//configure express session
+const secretKey = crypto.randomBytes(32).toString('hex');
+app.use(express.urlencoded({ extended: true }));
+app.use(
+session({
+  secret: secretKey,
+  resave: false,
+  saveUninitialized: true,
+}));
 
 //static
 app.use(express.static(path.join(__dirname, "public")));
+app.use(nocache());
 
 //routes
 app.use('/',userRoute);

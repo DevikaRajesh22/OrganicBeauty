@@ -19,7 +19,7 @@
     <!-- endinject -->
     <link rel="shortcut icon" href="../../admin/images/favicon.png" />
   </head>
-  <body style="background-image: url('../../admin/images/background.png');">
+  <body style="background-image: url('admin/images/background.png');">
     <div class="container-scroller">
       <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
@@ -28,9 +28,9 @@
               <div class="auto-form-wrapper">
                 <form action="/login" method="post">
                   <div class="form-group">
-                    <label class="label">Username</label>
+                    <label class="label">Email</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" placeholder="Username">
+                      <input type="text" class="form-control" placeholder="Username" name="email">
                       <div class="input-group-append">
                         <span class="input-group-text">
                         </span>
@@ -40,13 +40,16 @@
                   <div class="form-group">
                     <label class="label">Password</label>
                     <div class="input-group">
-                      <input type="password" class="form-control" placeholder="*********">
+                      <input type="password" class="form-control" placeholder="*********" name="password">
                       <div class="input-group-append">
                         <span class="input-group-text">
                         </span>
                       </div>
                     </div>
                   </div>
+                  <p class="text-center" style="color: red;">
+                    <%=locals.emailError? emailError : " "   %>
+                   </p> 
                   <div class="form-group">
                     <button class="btn submit-btn btn-block" style="background-color:#8BB471; border: 1px solid #8BB471; color:white">Login</button>
                   </div>

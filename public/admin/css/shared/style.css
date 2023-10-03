@@ -9720,7 +9720,7 @@ ul {
       margin-right: 0;
       margin-left: 1rem; }
 
-.item-purchase-banner {
+/* .item-purchase-banner {
   position: fixed;
   top: 0px;
   width: 100%;
@@ -9744,7 +9744,7 @@ ul {
     color: #ffffff; }
   .item-purchase-banner .toggler-close {
     margin-left: auto;
-    color: #ffffff; }
+    color: #ffffff; } */
 
 /*-------------------------------------------------------------------*/
 /* === Landing screens === */
@@ -9757,10 +9757,10 @@ ul {
 .auth {
   min-height: 100vh; }
   .auth.auth-bg-1 {
-    background: url("../../images/auth/login_1.jpg");
+    background: url("../../images/background.png");
     background-size: cover; }
   .auth.register-bg-1 {
-    background: url("../../images/auth/register.jpg") center center no-repeat;
+    background: url("../../images/background.png") center center no-repeat;
     background-size: cover; }
   .auth.theme-one .auto-form-wrapper {
     background: #fff;

@@ -1,0 +1,78 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #747070;
+
+}
+
+.card {
+    border-radius: 10px;
+    padding: 35px 26px;
+    width: 400px
+}
+
+.abt {
+    font-size: 14px
+}
+
+.inputbox {
+    margin-top: 12px;
+    position: relative
+}
+
+.inputbox input {
+    border: 2px solid #eee;
+    padding: 0 10px
+}
+
+.inputbox input:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: none;
+    outline: 0;
+    box-shadow: none;
+    border: 2px solid #0d6efd
+}
+
+.inputbox span{
+
+    font-size: 12px;
+}
+
+
+.inputbox a{
+
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.input-tag {
+    position: absolute;
+    top: 27px;
+    left: 7px;
+    width: 32px
+}
+
+.proceed button {
+ 
+    font-size: 15px
+}
+
+.form-check-label {
+    font-size: 12px
+}
+
+.btn-primary:focus {
+    color: #fff;
+    background-color: #025ce2;
+    border-color: #0257d5;
+    box-shadow: none
+}
+
+.form-check-input {
+    width: 16px;
+    height: 16px;
+    margin-top: 6px
+}
