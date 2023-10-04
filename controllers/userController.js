@@ -1,6 +1,7 @@
 const User = require('../models/user/userCollection');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
+const Product=require('../models/admin/productCollection');
 
 //for otp using nodemailer
 let randomNumber;
@@ -51,6 +52,8 @@ exports.userLoginPost = async (req, res,next) => {
                 req.session.email = user.email;
                 req.session.phone = user.number;
                 return res.redirect('/landingPage'); //if password match then store user session and redirect to landingPage
+            }else{
+                res.redirect('/');
             }
         }
     } catch (error) {
@@ -75,6 +78,7 @@ exports.registerPost = async (req, res) => {
         const transporter = nodemailer.createTransport(smtpConfig);
         emailOne = req.body.email;
         randomNumber = Math.floor(Math.random() * 9000) + 1000;
+
         console.log('registerPost'+randomNumber);
         const spassword = await securePassword(req.body.spassword);
         const newUser = new User({
@@ -103,9 +107,19 @@ exports.registerPost = async (req, res) => {
 //landingPage for GET request
 exports.landingPage = async (req, res) => {
     try {
-        const pageTitle = 'Home';
-        res.render('user/landingPage', { pageTitle });
+        const products=await Product.find();
+        res.render('user/landingPage',{products});
     } catch (error) {
+        console.log(error.message);
+        res.render('user/error');
+    }
+};
+
+//productsGet GET request
+exports.productsGet=async(req,res)=>{
+    try{
+        res.render('user/product');
+    }catch(error){
         console.log(error.message);
         res.render('user/error');
     }
@@ -124,28 +138,24 @@ exports.otp = async (req, res) => {
 //otp POST request
 exports.otpPost = async (req, res) => {
     try {
-        const { otp } = req.body;
-        console.log(otp);
-            console.log(randomNumber);
-        if (randomNumber == otp) {
-            console.log(otp);
-            console.log(randomNumber);
-            console.log(emailOne);
-            const verified = await User.updateOne({ email: emailOne }, { $set: { isVerified: true } });
-            console.log(verified);
-            if (verified.nModified===1) {
-                res.redirect('/');
-            } else {
-                res.redirect('/otp');
-                console.log('A');
-            }
-        } else {
-            res.redirect('/otp');
-            console.log('B');
-        }
+   const {otp} = req.body;
+   console.log('otp: '+otp);
+   console.log('randomNumber: '+randomNumber);
+   console.log('emailOne: '+emailOne);
+   if(otp === randomNumber){
+    console.log('a');
+    const verified = await User.findOneAndUpdate({email : emailOne},{$set :{isVerified : true}})
+    if(verified){
+            res.redirect('/')
+    }else{
+        res.redirect('/otp')
+    }
+   }else{
+    res.redirect('/otp')
+   }
     }catch(error){
         console.log(error.message);
-        res.render('user/error');
+        // res.render('user/error');
     }   
 };
 
