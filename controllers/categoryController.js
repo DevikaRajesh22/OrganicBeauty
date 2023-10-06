@@ -1,10 +1,11 @@
-const Category=require('../models/admin/categoryCollection');
-const User=require('../models/user/userCollection');
-const Product=require('../models/admin/productCollection');
+const Category = require('../models/admin/categoryCollection');
+const User = require('../models/user/userCollection');
+const Product = require('../models/admin/productCollection');
 
 //category GET request
 let categoryData;
 exports.category = async (req, res) => {
+    const pageName = 'Category Management';
     const category = await Category.find()
         .populate({
             path: 'category',
@@ -12,18 +13,21 @@ exports.category = async (req, res) => {
         });
     console.log(category);
     try {
-        res.render('admin/category', { category, categoryData });
+        res.render('admin/category', { category, categoryData, pageName });
     } catch (error) {
         console.log(error.message);
+        res.redirect('/admin/errors');
     }
 };
 
 //addCategory GET request
 exports.addCategory = async (req, res) => {
     try {
-        res.render('admin/addCategory');
+        const pageName = 'Category Management';
+        res.render('admin/addCategory', { pageName });
     } catch (error) {
         console.log(error.message);
+        res.redirect('/admin/errors');
     }
 };
 
@@ -40,6 +44,7 @@ exports.addCategoryPost = async (req, res) => {
         res.redirect('/admin/category');
     } catch (error) {
         console.log(error.message);
+        res.redirect('/admin/errors');
     }
 };
 
@@ -58,6 +63,7 @@ exports.blockCategory = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.redirect('/admin/errors');
     }
 };
 
@@ -76,33 +82,37 @@ exports.unblockCategory = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.redirect('/admin/errors');
     }
 };
 
 //editCategory GET request
 exports.editCategory = async (req, res) => {
     try {
-        const cid=req.query.id;
+        const pageName = 'Category Management';
+        const cid = req.query.id;
         console.log(cid);
-        const cinfo=await Category.findById({_id:cid});
-        res.render('admin/editCategory', { cinfo});
+        const cinfo = await Category.findById({ _id: cid });
+        res.render('admin/editCategory', { cinfo, pageName });
     } catch (error) {
         console.log(error.message);
+        res.redirect('/admin/errors');
     }
 };
 
 //editCategory POST request
-exports.editCategoryPost=async(req,res)=>{
+exports.editCategoryPost = async (req, res) => {
     console.log('editCategoryPost');
-    const categoryId=req.body.id;
-    const updatedCategoryData={
+    const categoryId = req.body.id;
+    const updatedCategoryData = {
         categoryName: req.body.cname,
-        categoryDescription:req.body.cdesc
+        categoryDescription: req.body.cdesc
     };
-    try{
-        await Category.findByIdAndUpdate(categoryId,updatedCategoryData);
+    try {
+        await Category.findByIdAndUpdate(categoryId, updatedCategoryData);
         res.redirect('/admin/category');
-    }catch(error){
+    } catch (error) {
         console.log(error.message);
+        res.redirect('/admin/errors');
     }
 };

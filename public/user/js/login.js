@@ -1,79 +1,59 @@
-const registerForm=document.getElementById('registerForm');
-const nameInput=document.getElementById('nameInput');
-const emailInput=document.getElementById('emailInput');
-const numberInput=document.getElementById('numberInput');
-const spasswordInput=document.getElementById('spasswodInput');
-const cpasswordInput=document.getElementById('cpasswordInput');
-const registerButton=document.getElementById('registerButton');
-const nameError=document.getElementById('nameError');
-const emailError=document.getElementById('emailError');
-const numberError=document.getElementById('numberError');
-const passwordError=document.getElementById('passwordError');
-const validationMessage=document.getElementById('validationMessage');
+// Get the registration form elements
+const registerForm = document.getElementById('registerForm');
+const emailInput = document.getElementById('emailInput');
+const passwordInput = document.getElementById('passwordInput');
+const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+const phoneNumberInput = document.getElementById('phoneNumberInput');
+const emailError = document.getElementById('emailError');
+const passwordError = document.getElementById('passwordError');
+const confirmPasswordError = document.getElementById('confirmPasswordError');
+const phoneNumberError = document.getElementById('phoneNumberError');
+const validationMessage = document.getElementById('validationMessage');
 
-registerForm.addEventListener('submit',function(event){
-    validationMessage.textContext='';
+// Add a submit event listener to the registration form
+registerForm.addEventListener('submit', function (event) {
+    validationMessage.textContent = '';
+    let hasError = false;
 
-     // Validate name (min length, max length, special characters)
-     if (!validateName(nameInput.value)) {
-        nameError.textContent = 'Name is invalid';
-        event.preventDefault();
-    } else {
-        nameError.textContent = '';
-    }
-
-     // Validate email (pattern)
-     if (!validateEmail(emailInput.value)) {
+    // Validate email
+    if (!validateEmail(emailInput.value)) {
         emailError.textContent = 'Please enter a valid email';
-        event.preventDefault();
+        hasError = true;
     } else {
         emailError.textContent = '';
     }
 
-     // Validate number (datatype, 10 digits)
-     if (!validateNumber(numberInput.value)) {
-        numberError.textContent = 'Please enter a valid number with 10 digits';
-        event.preventDefault();
-    } else {
-        numberError.textContent = '';
-    }
-
-     // Validate password and confirm password (mismatch, min length, max length)
-     if (!validatePassword(spasswordInput.value, cpasswordInput.value)) {
-        passwordError.textContent = 'Passwords do not match or are invalid';
-        event.preventDefault();
+    // Validate password
+    const password = passwordInput.value;
+    if (!validatePassword(password)) {
+        passwordError.textContent = 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit';
+        hasError = true;
     } else {
         passwordError.textContent = '';
+    }
+
+    // Validate confirm password
+    const confirmPassword = confirmPasswordInput.value;
+    if (password !== confirmPassword) {
+        confirmPasswordError.textContent = 'Passwords do not match';
+        hasError = true;
+    } else {
+        confirmPasswordError.textContent = '';
+    }
+
+    // Validate phone number
+    const phoneNumber = phoneNumberInput.value;
+    if (!validatePhoneNumber(phoneNumber)) {
+        phoneNumberError.textContent = 'Please enter a valid 10-digit phone number';
+        hasError = true;
+    } else {
+        phoneNumberError.textContent = '';
+    }
+
+    if (hasError) {
+        event.preventDefault();
     }
 });
-
-// Add event listener to password and confirm password input fields
-spasswordInput.addEventListener('input', validatePasswordFields);
-cpasswordInput.addEventListener('input', validatePasswordFields);
-
-// Password and confirm password validation function
-function validatePasswordFields() {
-    const spassword = spasswordInput.value;
-    const cpassword = cpasswordInput.value;
-
-    if (spassword !== cpassword) {
-        passwordError.textContent = 'Passwords do not match';
-        submitButton.disabled = true;
-    } else if (!validatePassword(spassword, cpassword)) {
-        passwordError.textContent = 'Password is invalid';
-        submitButton.disabled = true;
-    } else {
-        passwordError.textContent = '';
-        submitButton.disabled = false;
-    }
-};
-
-// Name validation function
-function validateName(name) {
-    // Implement your name validation logic here
-    // Example: Check for minimum and maximum length, special characters, etc.
-    return name.length >= 3 && name.length <= 50 && /^[A-Za-z\s]+$/.test(name);
-}
 
 // Email validation function
 function validateEmail(email) {
@@ -81,19 +61,20 @@ function validateEmail(email) {
     return emailRegex.test(email);
 }
 
-// Number validation function
-function validateNumber(number) {
-    // Implement your number validation logic here
-    // Example: Check for 10 digits
-    return /^\d{10}$/.test(number);
+// Password validation function
+function validatePassword(password) {
+    // Implement your password validation logic here
+    // Example: Require at least one uppercase letter, one lowercase letter, one digit, and be at least 8 characters long
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasDigit = /\d/.test(password);
+
+    return hasUpperCase && hasLowerCase && hasDigit && password.length >= 8;
 }
 
-// Password validation function
-function validatePassword(password,confirmPassword) {
-    if(password===confirmPassword){
-        return password.length >= 6 && password.length <= 20;
-    }else{
-        return false; 
-    }
-    
+// Phone number validation function
+function validatePhoneNumber(phoneNumber) {
+    // Implement your phone number validation logic here
+    // Example: Check for 10 digits
+    return /^\d{10}$/.test(phoneNumber);
 }

@@ -8,9 +8,11 @@ const Sharp = require('sharp');
 //loginGet for GET request
 exports.loginGet = async (req, res) => {
     try {
-        res.render('admin/adminLogin');
+        req.app.locals.err = "";
+       const err =  req.app.locals.err;
+        res.render('admin/adminLogin',{err});
     } catch (error) {
-        res.render('admin/error');
+        res.redirect('/admin/errors');
         console.log(error.message);
     }
 };
@@ -18,24 +20,51 @@ exports.loginGet = async (req, res) => {
 //loginPost for POST request
 exports.loginPost = async (req, res) => {
     try {
+        const pageName='User Management';
         const admin = await Admin.findOne({ email: req.body.email });
         if (admin.email == req.body.email && admin.password == req.body.password) {
             req.session.admin = admin.email;
-            res.render('admin/landingPage');
+            res.render('admin/landingPage',{pageName,admin:req.session.admin});
+        }else if(admin.email !== req.body.email || admin.password !== req.body.password){
+            req.app.locals.err = 'Invalid credentials';
+            res.redirect('/admin/adminLogin');
         }
     } catch (error) {
-        res.render('admin/error');
+        res.redirect('/admin/errors');
         console.log(error.message);
     }
 };
 
+//error GET request
+exports.errors = async (req, res) => {
+    const pageName = 'Error';
+    res.render('admin/errors', { pageName });
+};
+
+//signout GET request
+exports.signout=async(req,res)=>{
+    try{
+        req.session.destroy(err=>{
+            if(err){
+                console.error('Error destroying session:',err);
+            }
+            res.redirect('/admin/');
+        });
+    }catch(error){
+        res.redirect('/admin/errors');
+        console.log(error.message);
+    }
+}
+
 //users GET request
 exports.users = async (req, res) => {
     try {
+        const pageName = 'User management';
         const users = await User.find();
-        res.render('admin/users', { users });
+        res.render('admin/users', { users, pageName });
     } catch (error) {
         console.log(error.message);
+        res.redirect('/admin/errors');
     }
 };
 
@@ -55,7 +84,8 @@ exports.blockUser = async (req, res) => {
 
     } catch (error) {
         // return res.status(500).json({ error: 'Internal Server Error' });
-        console.log('blockuser: internal server error')
+        console.log('blockuser: internal server error');
+        res.redirect('/admin/errors');
     }
 };
 
@@ -75,5 +105,6 @@ exports.unblockUser = async (req, res) => {
     } catch (error) {
         // return res.status(500).json({ error: 'Internal Server Error' });
         console.log('unblockUser: internal server error');
+        res.redirect('/admin/errors');
     }
 };

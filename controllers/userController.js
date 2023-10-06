@@ -1,7 +1,7 @@
 const User = require('../models/user/userCollection');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-const Product=require('../models/admin/productCollection');
+const Product = require('../models/admin/productCollection');
 
 //for otp using nodemailer
 let randomNumber;
@@ -28,6 +28,7 @@ const securePassword = async (password) => {
 
 //loginGet for GET request
 exports.loginGet = async (req, res) => {
+
     try {
         res.render('user/userLogin');
     } catch (error) {
@@ -37,11 +38,12 @@ exports.loginGet = async (req, res) => {
 };
 
 //userLoginPost for POST request
-exports.userLoginPost = async (req, res,next) => {
+exports.userLoginPost = async (req, res, next) => {
     try {
+
         const email = req.body.email;
         const password = req.body.password;
-        const user = await User.findOne({ email:email });
+        const user = await User.findOne({ email: email });
         console.log(user);
         if (user) {
             const passwordMatch = await bcrypt.compare(password, user.spassword);
@@ -51,8 +53,8 @@ exports.userLoginPost = async (req, res,next) => {
                 req.session.name = user.name;
                 req.session.email = user.email;
                 req.session.phone = user.number;
-                return res.redirect('/landingPage'); //if password match then store user session and redirect to landingPage
-            }else{
+                return res.redirect("/landingPage"); //if password match then store user session and redirect to landingPage
+            } else {
                 res.redirect('/');
             }
         }
@@ -79,7 +81,7 @@ exports.registerPost = async (req, res) => {
         emailOne = req.body.email;
         randomNumber = Math.floor(Math.random() * 9000) + 1000;
 
-        console.log('registerPost'+randomNumber);
+        console.log('registerPost' + randomNumber);
         const spassword = await securePassword(req.body.spassword);
         const newUser = new User({
             name: req.body.name,
@@ -100,15 +102,17 @@ exports.registerPost = async (req, res) => {
         res.redirect('/otp');
     } catch (error) {
         console.log(error.message);
-        res.render('user/error');
+       
     }
 };
 
 //landingPage for GET request
 exports.landingPage = async (req, res) => {
     try {
-        const products=await Product.find();
-        res.render('user/landingPage',{products});
+        const pageTitle = 'Home';
+        const products = await Product.find();
+        console.log(products);
+        res.render('user/landingPage', { products, pageTitle });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -116,10 +120,12 @@ exports.landingPage = async (req, res) => {
 };
 
 //productsGet GET request
-exports.productsGet=async(req,res)=>{
-    try{
-        res.render('user/product');
-    }catch(error){
+exports.productsGet = async (req, res) => {
+    try {
+        const pageTitle = 'Products';
+        const products = await Product.find();
+        res.render('user/products', { pageTitle, products });
+    } catch (error) {
         console.log(error.message);
         res.render('user/error');
     }
@@ -136,45 +142,108 @@ exports.otp = async (req, res) => {
 };
 
 //otp POST request
+// exports.otpPost = async (req, res) => {
+//     try {
+//         const { otp } = req.body;
+//         console.log('otp: ' + otp);
+//         console.log('randomNumber: ' + randomNumber);
+//         console.log('emailOne: ' + emailOne);
+//         if (otp === randomNumber) {
+//             console.log('a');
+//             const verified = await User.findOneAndUpdate({ email: emailOne }, { $set: { isVerified: true } });
+//             if (verified) {
+//                 res.redirect('/');
+//             } else {
+//                 res.redirect('/otp')
+//             }
+//         } else {
+//             console.log('b');
+//             res.redirect('/otp')
+//         }
+//     } catch (error) {
+//         console.log(error.message);
+//         res.render('user/error');
+//     }
+// };
+
 exports.otpPost = async (req, res) => {
     try {
-   const {otp} = req.body;
-   console.log('otp: '+otp);
-   console.log('randomNumber: '+randomNumber);
-   console.log('emailOne: '+emailOne);
-   if(otp === randomNumber){
-    console.log('a');
-    const verified = await User.findOneAndUpdate({email : emailOne},{$set :{isVerified : true}})
-    if(verified){
-            res.redirect('/')
-    }else{
-        res.redirect('/otp')
-    }
-   }else{
-    res.redirect('/otp')
-   }
-    }catch(error){
+                                                                
+        const { otp } = req.body;
+        const user = await User.findOne({ email: emailOne });
+        if (randomNumber == otp) {
+            const verified = await User.updateOne(
+                { email: emailOne },
+                { $set: { isVerified: true } }
+            );
+            if (verified) {
+                req.session.otp = otp;
+                req.session.user = user.name;
+                res.redirect('/landingPage');
+            } else {
+                res.redirect('/otp');
+            }
+        } else {
+            res.redirect('/otp');
+        }
+
+    } catch (error) {
         console.log(error.message);
-        // res.render('user/error');
-    }   
+    }
 };
 
 //logout GET request
-exports.logout=async(req,res)=>{
-    try{
-        req.session.destroy(err=>{
-            if(err){
-                console.error('Error destroying session:',err);
+exports.logout = async (req, res) => {
+    try {
+        req.session.destroy(err => {
+            if (err) {
+                console.error('Error destroying session:', err);
             }
             res.redirect('/');
         });
-    }catch(error){
+    } catch (error) {
         res.render('user/error');
-        console.log(error.message)
-;    }
+        console.log(error.message);
+    }
+};
+
+//productDetails GET request
+exports.productDetails = async (req, res) => {
+    try {
+        const productId = req.query.id;
+        console.log(productId);
+        const pageTitle = 'Product';
+        const products = await Product.findOne({ _id: productId });
+        res.render('user/productDetails', { products, pageTitle });
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+//about GET request
+exports.about = async (req, res) => {
+    try {
+        const pageTitle = 'About';
+        res.render('user/about', { pageTitle });
+    } catch (error) {
+        console.log(error.message);
+        res.render('user/error');
+    }
+};
+
+//contact GET request
+exports.contact = async (req, res) => {
+    try {
+        const pageTitle = 'contact';
+        res.render('user/contact', { pageTitle });
+    } catch (error) {
+        console.log(error.message);
+        res.render('user/error');
+    }
 };
 
 //error GET request
-exports.error = async (req, res) => {
-    res.render('user/error');
-};
+// exports.error = async (req, res) => {
+//     const pageTitle='Error';
+//     res.render('user/error',{pageTitle});
+// };
