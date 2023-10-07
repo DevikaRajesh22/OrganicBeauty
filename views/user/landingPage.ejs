@@ -23,7 +23,7 @@
                             that
                             leave you glowing. Join us on a journey to a healthier, more beautiful you.</p>
                         <a href="/products" class="btn btn-dark py-2 px-4 me-3 animated slideInRight">Shop Now</a>
-                        <a href="" class="btn btn-outline-dark py-2 px-4 animated slideInRight">Contact Us</a>
+                        <a href="/contact" class="btn btn-outline-dark py-2 px-4 animated slideInRight">Contact Us</a>
                     </div>
                     <div class="col-lg-6">
                         <img class="img-fluid animated pulse infinite" src="../../user/img/organic1.png" alt="">
@@ -280,7 +280,7 @@
                             <div class="product-item text-center border h-100 p-4">
                                 <img class="img-fluid mb-4" src="/product/img/<%=product.productImage[0]%>
                                 " alt="">
-                                <a href="/productDetails" class="h6 d-inline-block mb-2">
+                                <a href="/productDetails?id=<%=product._id%>" class="h6 d-inline-block mb-2">
                                     <%= product.productName %>
                                 </a>
                                 <h5 class="text-primary mb-3">$<%= product.price%>

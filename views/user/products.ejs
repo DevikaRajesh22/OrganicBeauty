@@ -40,13 +40,16 @@
                 </div>
            
                     <div class="row g-4">
-                             <% products.forEach(function(product){ %>
+                             <% products.forEach(function(product,index){ %>
                         <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.1s">
                             <div class="product-item text-center border h-100 p-4">
                                 <img class="img-fluid mb-4" src="/product/img/<%=product.productImage[0]%>" alt="">
-                                <a href="" class="h6 d-inline-block mb-2"><%=product.productName%></a>
-                                <h5 class="text-primary mb-3"><%=product.price%></h5>
-                                <a href="" class="btn btn-outline-primary px-3">Add To Cart</a>
+                                <a href="/productDetails?id=<%=product._id%>" class="h6 d-inline-block mb-2"><%=product.productName%></a>
+                                <h5 class="text-primary mb-3">$ <%=product.price%></h5>
+                                <!-- <a href="" class="btn btn-outline-primary px-3">Add To Cart</a> -->
+                                <form action="/addToCart?id=<%= product._id %>" method="POST">
+                                    <button class="btn btn-outline-success" type="submit">Add to cart</button>
+                                </form>
                             </div>
                        
                         </div>

@@ -2,6 +2,7 @@ const User = require('../models/user/userCollection');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const Product = require('../models/admin/productCollection');
+const { log } = require('console');
 
 //for otp using nodemailer
 let randomNumber;
@@ -102,7 +103,7 @@ exports.registerPost = async (req, res) => {
         res.redirect('/otp');
     } catch (error) {
         console.log(error.message);
-       
+        // res.render('user/error');
     }
 };
 
@@ -210,11 +211,12 @@ exports.logout = async (req, res) => {
 //productDetails GET request
 exports.productDetails = async (req, res) => {
     try {
-        const productId = req.query.id;
-        console.log(productId);
+        const productId = req.query.id
+       console.log(productId);
+       const products = await Product.findOne({_id : productId})
         const pageTitle = 'Product';
-        const products = await Product.findOne({ _id: productId });
-        res.render('user/productDetails', { products, pageTitle });
+        // const products = await Product.findById({ _id : productId });
+        res.render('user/productDetails', { pageTitle,products });
     } catch (error) {
         console.log(error.message);
     }

@@ -16,25 +16,25 @@
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
                             <img class="product__details__pic__item--large"
-                                src="/product/img/<%=products.productImage[0]%>" alt="">
+                                src="product/img/<%=products.productImage[0]%>" alt="">
                         </div>
                         <div class="product__details__pic__slider owl-carousel">
                          
-                            <img data-imgbigurl="/product/img/<%=products.productImage[0]%>"
-                                src="/product/img/<%=products.productImage[0]%>" alt="">
-                            <img data-imgbigurl="/product/img/<%=products.productImage[1]%>"
-                                src="/product/img/<%=products.productImage[1]%>" alt="">
-                            <img data-imgbigurl="/product/img/<%=products.productImage[2]%>"
-                                src="/product/img/<%=products.productImage[2]%>" alt="">
-                            <img data-imgbigurl="/product/img/<%=products.productImage[3]%>"
-                                src="/product/img/<%=products.productImage[3]%>" alt="">
+                            <img data-imgbigurl="product/img/<%=products.productImage[0]%>"
+                                src="product/img/<%=products.productImage[0]%>" alt="">
+                            <img data-imgbigurl="product/img/<%=products.productImage[1]%>"
+                                src="product/img/<%=products.productImage[1]%>" alt="">
+                            <img data-imgbigurl="product/img/<%=products.productImage[2]%>"
+                                src="product/img/<%=products.productImage[2]%>" alt="">
+                            <img data-imgbigurl="product/img/<%=products.productImage[3]%>"
+                                src="product/img/<%=products.productImage[3]%>" alt="">
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6">
                     <div class="product__details__text">
-                        <h3><%= products.productName %></h3>
-                        <div class="product__details__price">$ <%= products.price %></div>
+                        <h3><%=products.productName%></h3>
+                        <div class="product__details__price">$<%=products.price%></div>
                         <div class="product__details__quantity">
                             <div class="quantity">
                                 <div class="pro-qty">
@@ -63,7 +63,7 @@
                             <div class="tab-pane active" id="tabs-1" role="tabpanel">
                                 <div class="product__details__tab__desc">
                                     <h6>Products Infomation</h6>
-                                    <p><%= products.productDetails %></p>
+                                    <p><%=products.productDetails%></p>
                                 </div>
                             </div>
                         </div>
