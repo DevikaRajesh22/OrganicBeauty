@@ -47,7 +47,7 @@
                                 <a href="/productDetails?id=<%=product._id%>" class="h6 d-inline-block mb-2"><%=product.productName%></a>
                                 <h5 class="text-primary mb-3">$ <%=product.price%></h5>
                                 <!-- <a href="" class="btn btn-outline-primary px-3">Add To Cart</a> -->
-                                <form action="/addToCart?id=<%= product._id %>" method="POST">
+                                <form action="/add?id=<%= product._id %>" method="POST">
                                     <button class="btn btn-outline-success" type="submit">Add to cart</button>
                                 </form>
                             </div>

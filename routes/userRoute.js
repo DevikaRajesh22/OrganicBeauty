@@ -25,7 +25,7 @@ userRoute.get('/contact',userController.contact);
 
 //routes for cart and checkouts
 userRoute.get('/cart',cartController.cartGet);
-userRoute.post('/addToCart',cartController.addToCartPost);
+userRoute.post('/add',cartController.addToCartPost);
 
 
 module.exports = userRoute;
