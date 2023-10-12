@@ -51,6 +51,7 @@ exports.userLoginPost = async (req, res, next) => {
             if (passwordMatch && !user.isBlocked && user.isVerified) {
                 //setting up user session
                 req.session.userId = user._id;
+                console.log(req.session.userId);
                 req.session.name = user.name;
                 req.session.email = user.email;
                 req.session.phone = user.number;
@@ -112,7 +113,7 @@ exports.landingPage = async (req, res) => {
     try {
         const pageTitle = 'Home';
         const products = await Product.find();
-        console.log(products);
+      
         res.render('user/landingPage', { products, pageTitle });
     } catch (error) {
         console.log(error.message);
@@ -212,10 +213,11 @@ exports.logout = async (req, res) => {
 exports.productDetails = async (req, res) => {
     try {
         const productId = req.query.id
-       console.log(productId);
+       console.log(productId,"this is the orei");
        const products = await Product.findOne({_id : productId})
         const pageTitle = 'Product';
         // const products = await Product.findById({ _id : productId });
+        console.log('render hi',products);
         res.render('user/productDetails', { pageTitle,products });
     } catch (error) {
         console.log(error.message);

@@ -285,7 +285,9 @@
                                 </a>
                                 <h5 class="text-primary mb-3">$<%= product.price%>
                                 </h5>
-                                <a href="" class="btn btn-outline-primary px-3">Add To Cart</a>
+                                <form action="/add?id=<%= product._id %>" method="POST">
+                                    <button href="/addToCart?id=<%=products._id%>" class="btn btn-outline-success" type="submit">Add to cart</button>
+                                </form>
                             </div>
                         </div>
                         <% }); %>

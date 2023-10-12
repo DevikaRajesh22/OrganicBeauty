@@ -4,6 +4,7 @@
  <!-- Navbar End -->
 
     <!-- Cart Start -->
+    <div id="re-load">
     <div class="container-fluid pt-5">
         <div class="row px-xl-5">
             <div class="col-lg-8 table-responsive mb-5">
@@ -19,28 +20,33 @@
                     </thead>
                     <tbody class="align-middle">
                         
+                     
+                            <%carts?.products?.forEach(function(product,index){ %>
+                                <tr>
+                                    <td class="d-flex px-2 mx-2 align-middle"><img class="px-2" src="/product/img/<%= product.productId.productImage[0] %>" alt="" style="width: 50px;"><%= product.productId.productName %></td>
+                                    <td class="align-middle">$ <%= product.productPrice%></td>
+                                    <td class="align-middle">
+                                        <div class="input-group quantity mx-auto" style="width: 100px;">
+                                            <div class="input-group-btn">
+                                                <button class="btn btn-sm btn-primary btn-minus" onclick="changeQuantity('<%= product.productId._id%>',-1)" >
+                                                <i class="fa fa-minus"></i>
+                                                </button>
+                                            </div>
+                                            <input type="text" class="form-control form-control-sm bg-secondary text-center" value="<%=product.count%>" >
+                                            <div class="input-group-btn">
+                                                <button class="btn btn-sm btn-primary btn-plus" onclick="changeQuantity('<%= product.productId._id%>',1)">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle">$ <%= product.totalPrice %></td>
+                                    <td class="align-middle"><button class="btn btn-sm btn-primary" onclick="removeProduct('<%= product.productId._id %>')"><i class="fa fa-trash"></i></button></td>
+                                </tr>
+                           
+                       <% })%>
                         
-                        <tr>
-                            <td class="align-middle"><img src="img/product-3.jpg" alt="" style="width: 50px;"> Colorful Stylish Shirt</td>
-                            <td class="align-middle">$150</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle">$150</td>
-                            <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-trash"></i></button></td>
-                        </tr>
+                        
                     </tbody>
                 </table>
             </div>
@@ -82,7 +88,54 @@
             </div>
         </div>
     </div>
+</div>
     <!-- Cart End -->
-    <hr style="border: 0px solid #787878; margin: 100px 0;">
 
+    <!-- ajax for quantity updation -->
+    <script>
+        //for changing quantity
+        function changeQuantity(productId, count) {
+            console.log(productId,count)
+    $.ajax({
+        type: 'post',
+        url: '/cartModify',
+        data: {
+            productId: productId,
+            count: count
+        },
+        success: function (response) {
+            if (response.success) {
+                $("#re-load").load("/cart #re-load");
+            } else {
+                swal.fire({
+                    position: "center",
+                    icon: "warning",
+                    text: response.message,
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+            }
+        }
+    });
+}
+
+function removeProduct(productId){
+            $.ajax({
+                url : '/removeProduct',
+                method : 'post',
+                data : {
+                    productId : productId
+                },
+                success : function(response){
+                    if(response.success){
+                        $("#re-load").load("/cart #re-load");
+                    }
+                }
+                
+            })
+         }
+
+    </script>
+    
+    <hr style="border: 0px solid #787878; margin: 100px 0;">
     <%- include('../user/userFooter.ejs') %>

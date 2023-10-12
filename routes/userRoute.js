@@ -1,6 +1,7 @@
 const userController = require('../controllers/userController');
 const productController = require('../controllers/productController');
 const cartController=require('../controllers/cartController');
+const profileController=require('../controllers/profileController');
 const userAuth = require('../middleware/userAuth');
 const express = require('express');
 const userRoute = express();
@@ -23,9 +24,17 @@ userRoute.get('/productDetails',userController.productDetails);
 userRoute.get('/about',userController.about);
 userRoute.get('/contact',userController.contact);
 
-//routes for cart and checkouts
+//routes for cart management
 userRoute.get('/cart',cartController.cartGet);
 userRoute.post('/add',cartController.addToCartPost);
+userRoute.post('/cartModify',cartController.updateCartQuantity);
+userRoute.post('/removeProduct',cartController.removeProduct);
+
+//routes for profile
+userRoute.get('/profile',profileController.profile);
+
+
+
 
 
 module.exports = userRoute;

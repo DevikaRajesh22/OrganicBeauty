@@ -43,10 +43,8 @@
                             </div>
                         </div>
                         <a href="#" class="heart-icon"><i class="far fa-heart"></i></a>
-                        <!-- <a href="#" class="primary-btn">ADD TO CART</a> -->
-                        <form action="/add" method="post">
-                            <input type="hidden" name="id" value="<%= products._id %>">
-                            <button type="submit" class="btn primary-btn btn-outline-success mx-1 ">Add to cart</button>
+                        <form action="/add?id=<%= products._id %>" method="POST">
+                            <button href="/addToCart?id=<%=products._id%>" class="btn btn-outline-success" type="submit">Add to cart</button>
                         </form>
                        
                         <ul>
