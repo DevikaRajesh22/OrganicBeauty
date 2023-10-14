@@ -7,36 +7,52 @@ const { log } = require('util');
 //cartGet() GET request
 exports.cartGet = async (req, res) => {
     try {
-        const pageTitle = 'Cart';
         const userId=req.session.userId;
+        const user= await User.findOne({_id:userId});
+        const pageTitle = 'Cart';
+        console.log(userId);
         const carts = await Cart.findOne({ userId: userId })
-
             .populate({
                 path: 'products.productId',
                 model: 'Product',
                 select: 'productId productName productImage'
             });
-
-            if(carts){
-                const products=carts.products.length;
-                if(products.length>0){
-                    const total=await Cart.aggregate([
-                        { $match : {userId: userId}},
-                        { $unwind : "$products"},
-                        {
-                            $group : {
-                                _id: null,
-                                total:{
-                                    $sum:{
-                                        $multiply:["$products.productPrice","$products.count"],
+            console.log(carts);
+            if (carts) {
+                const products = carts.products.length;
+                console.log(products);
+            
+                if (products > 0) { // Check if there are products in the cart
+                    try {
+                        const total = await Cart.aggregate([
+                            { $match: { userId: userId } },
+                            { $unwind: "$products" },
+                            {
+                                $group: {
+                                    _id: null,
+                                    total: {
+                                        $sum: {
+                                            $multiply: ["$products.productPrice", "$products.count"],
+                                        },
                                     },
                                 },
                             },
-                        },
-                    ]);
-                    res.render('user/cart', { pageTitle, carts,product: products,total:total[0].total});
+                        ]);
+                        console.log(total);
+            
+                        if (total.length > 0) {
+                            res.render('user/cart', { pageTitle, carts, product: products, total: total[0].total, user});
+                        } else {
+                            // Handle the case where total is empty or undefined
+                            res.render('user/cart', { pageTitle, carts, product: products, total: 0 });
+                        }
+                    } catch (err) {
+                        console.error('Error in aggregation:', err);
+                        // Handle the error, send an error response or redirect as needed
+                    }
                 }
             }
+            
 
         
     } catch (error) {
@@ -101,8 +117,8 @@ exports.addToCartPost = async (req, res) => {
 exports.updateCartQuantity = async (req, res) => {
     try {
         console.log('req received');
-
-        const userId = req.session.userId;
+        const userId=req.session.userId;
+        const user= await User.findOne({_id:userId});
         const productId = req.body.productId;
         let count = req.body.count;
         count = parseInt(count);

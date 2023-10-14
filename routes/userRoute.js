@@ -1,7 +1,6 @@
 const userController = require('../controllers/userController');
 const productController = require('../controllers/productController');
 const cartController=require('../controllers/cartController');
-const profileController=require('../controllers/profileController');
 const userAuth = require('../middleware/userAuth');
 const express = require('express');
 const userRoute = express();
@@ -31,7 +30,9 @@ userRoute.post('/cartModify',cartController.updateCartQuantity);
 userRoute.post('/removeProduct',cartController.removeProduct);
 
 //routes for profile
-userRoute.get('/profile',profileController.profile);
+userRoute.get('/orders',userController.orders);
+userRoute.get('/account',userController.account);
+userRoute.get('/address',userController.address);
 
 
 

@@ -15,11 +15,22 @@
                     <a href="/about" class="nav-item nav-link">About</a>
                     <a href="/products" class="nav-item nav-link">Products</a>
                     <a href="/contact" class="nav-item nav-link">Contact</a>
-                    <a href="/logout" class="btn btn-dark py-2 my-0 px-4 d-none d-lg-inline-block mx-2" style="height: fit-content; color: white; background-color: #8BB471;">Logout</a>
                     <div class="mx-lg-3 d-flex justify-content-end align-content-end">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent;">
+                                <i class="fas fa-user fa-lg mx-2" aria-hidden="true" style="color: black;"></i><%=user?user:'user' %>
+                            </button>
+                            <ul class="dropdown-menu">
+                              <li><a href="/orders" class="nav-item" style="text-decoration: none;">My Orders</a></li>
+                              <li><a href="/address" class="nav-item" style="text-decoration: none;">Address Book</a></li>
+                              <li><a href="/account" class="nav-item" style="text-decoration: none;">My Account</a></li>
+                              <li><a href="/logout" class="nav-item" style="text-decoration: none;">Logout</a></li>
+                            </ul>
+                          </div>
                         <i class="fas fa-heart fa-lg mx-2" aria-hidden="true" style="color: black;"><a href="#"></a></i>
                         <a href="/cart"><i class="fas fa-shopping-cart fa-lg mx-2" aria-hidden="true" style="color: black;"></i></a>              
-                        <a href="/profile"><i class="fas fa-user fa-lg mx-2" aria-hidden="true" style="color: black;"></i></a>
+                        <!-- <a href="/profile"></a> -->
+                        
                     </div>
                 </div>
 
