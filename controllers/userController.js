@@ -1,4 +1,5 @@
 const User = require('../models/user/userCollection');
+const Address=require('../models/user/addressCollection');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const Product = require('../models/admin/productCollection');
@@ -244,22 +245,86 @@ exports.orders=async(req,res)=>{
 //account() GET request
 exports.account=async(req,res)=>{
     try{
+        console.log('account get request');
+        const userId=req.session.userId;
+        console.log(userId);
+        if(userId===undefined){
+            return res.redirect('/');
+        }
+        const users=await User.findOne({_id:userId});
+        console.log(users);
         const pageTitle='Account';
-        res.render('user/account',{pageTitle,user:req.session.name});
+        res.render('user/account',{pageTitle,user:req.session.name,users});
     }catch(error){
         console.log(error.message);
     }
 };
 
-//address() GET request
-exports.address=async(req,res)=>{
+//accountPost() POST request
+exports.accountPost=async(req,res)=>{
     try{
-        const pageTitle='Address';
-        res.render('user/address',{pageTitle,user:req.session.name});
+        console.log('account post request');
+        const profileId=req.session.userId;
+        console.log(profileId);
+        const updatedProfileData={
+            name: req.body.name,
+            email:req.body.email,
+            number:req.body.number,
+            spassword:req.body.spassword
+         };
+         console.log(updatedProfileData);
+         await User.findByIdAndUpdate(profileId,updatedProfileData);
+         console.log('updated');
+         res.redirect('/account');
     }catch(error){
         console.log(error.message);
     }
 }
+
+//address() GET request
+exports.address=async(req,res)=>{
+    try{
+        const addresses=await Address.find();
+        const pageTitle='Address';
+        res.render('user/address',{pageTitle,user:req.session.name,addresses});
+    }catch(error){
+        console.log(error.message);
+    }
+};
+
+//addAddress() GET request
+exports.addAddress=async(req,res)=>{
+    try{
+        console.log('req received at addAddress get')
+        const pageTitle='Address';
+        res.render('user/addAddress',{pageTitle,user:req.session.name});
+    }catch(error){
+        console.log(error.message);
+    }
+};
+
+//addAddressPost() POST request
+exports.addAddressPost=async(req,res)=>{
+    try{
+        console.log('post req received at addAddressPost');
+       const newAddress=new Address({
+        country:req.body.country,
+        state: req.body.state,
+        apartment: req.body.apartment,
+        city: req.body.city,
+        street: req.body.street,
+        zipcode: req.body.zipcode,
+        type: req.body.type
+       });
+       console.log(req.body);
+       const addressData=await newAddress.save();
+       res.redirect('/address');
+    }catch(error){
+        console.log(error.message);
+    }
+};
+
+
 
 
 

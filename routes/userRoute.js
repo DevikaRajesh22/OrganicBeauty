@@ -33,6 +33,8 @@ userRoute.post('/removeProduct',cartController.removeProduct);
 userRoute.get('/orders',userController.orders);
 userRoute.get('/account',userController.account);
 userRoute.get('/address',userController.address);
+userRoute.get('/addAddress',userController.addAddress);
+userRoute.post('/addAddress',userController.addAddressPost);
 
 
 

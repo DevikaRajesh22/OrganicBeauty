@@ -24,13 +24,23 @@ exports.loginPost = async (req, res) => {
         const admin = await Admin.findOne({ email: req.body.email });
         if (admin.email == req.body.email && admin.password == req.body.password) {
             req.session.admin = admin.email;
-            res.render('admin/landingPage',{pageName,admin:req.session.admin});
+            res.render('admin/landing',{pageName,admin:req.session.admin});
         }else if(admin.email !== req.body.email || admin.password !== req.body.password){
             req.app.locals.err = 'Invalid credentials';
-            res.redirect('/admin/adminLogin');
+            res.redirect('/');
         }
     } catch (error) {
         res.redirect('/admin/errors');
+        console.log(error.message);
+    }
+};
+
+//landing GET request
+exports.landing=async(req,res)=>{
+    const pageName='Home';
+    try{
+        res.render('admin/landing',{pageName});
+    }catch(error){
         console.log(error.message);
     }
 };

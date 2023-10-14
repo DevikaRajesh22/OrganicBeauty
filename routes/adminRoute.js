@@ -1,6 +1,7 @@
 const adminController = require('../controllers/adminController');
 const productController = require('../controllers/productController');
 const categoryController = require('../controllers/categoryController');
+const orderController=require('../controllers/orderController');
 const express = require('express');
 const adminRoute = express();
 const multer = require('../middleware/multer');
@@ -12,6 +13,7 @@ adminRoute.set('view engine', 'ejs');
 //admin routes
 adminRoute.get('/', adminController.loginGet);
 adminRoute.post('/login', adminController.loginPost);
+adminRoute.get('/landing',adminController.landing);
 adminRoute.get('/errors', adminController.errors);
 adminRoute.get('/signout',adminController.signout);
 
@@ -36,5 +38,8 @@ adminRoute.get('/cblock', categoryController.blockCategory);
 adminRoute.get('/cunblock', categoryController.unblockCategory);
 adminRoute.get('/cedit', categoryController.editCategory);
 adminRoute.post('/cedit', categoryController.editCategoryPost);
+
+//order management
+adminRoute.get('/orders',orderController.orders);
 
 module.exports = adminRoute;

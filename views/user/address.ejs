@@ -31,9 +31,27 @@
         <!-- Hero End -->
 
 
-        <!-- Product Start -->
-        
-        <!-- Product End -->
+        <!-- address Start -->
+        <div class="col-lg-9 my-lg-0 my-1">
+            <% addresses.forEach(function(address){ %>
+              <div class="card w-75 my-3">
+                <div class="card-body text-center">
+                  <h6 class="card-title my-3">
+                    <%= address.type %>
+                  </h6>
+                  <p class="card-text my-3">
+                  <h5>Name</h5>
+                  <%= address.country %>,<%= address.state %>, <%= address.apartment %><br>
+                        <%= address.city %>, <%= address.street %>, <%= address.zipcode %><br>
+                              <h5>contact numbers</h5>
+                              </p>
+                              <a href="/adelete/<%= address._id %>" class="btn btn-danger my-3">Delete</a>
+                </div>
+              </div>
+              <% }); %>
+                <a href="/addAddress" class="btn" style="background-color: #8BB471; color: white; width: 100px;">Add New</a>
+          </div>
+        <!-- address End -->
 
 
         <!-- Newsletter Start -->
