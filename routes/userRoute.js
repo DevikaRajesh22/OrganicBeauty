@@ -32,12 +32,11 @@ userRoute.post('/removeProduct',cartController.removeProduct);
 //routes for profile
 userRoute.get('/orders',userController.orders);
 userRoute.get('/account',userController.account);
+userRoute.post('/accountPost',userController.accountPost);
+userRoute.get('/changePassword',userController.changePassword);
 userRoute.get('/address',userController.address);
 userRoute.get('/addAddress',userController.addAddress);
 userRoute.post('/addAddress',userController.addAddressPost);
-
-
-
-
+userRoute.get('/adelete/:id',userController.deleteAddress);
 
 module.exports = userRoute;

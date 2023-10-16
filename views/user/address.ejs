@@ -36,14 +36,14 @@
             <% addresses.forEach(function(address){ %>
               <div class="card w-75 my-3">
                 <div class="card-body text-center">
-                  <h6 class="card-title my-3">
+                  <h5 class="card-title my-3">
                     <%= address.type %>
-                  </h6>
+                  </h5>
                   <p class="card-text my-3">
-                  <h5>Name</h5>
+                  <h6><%=user?user:'user' %></h6>
                   <%= address.country %>,<%= address.state %>, <%= address.apartment %><br>
                         <%= address.city %>, <%= address.street %>, <%= address.zipcode %><br>
-                              <h5>contact numbers</h5>
+                              <h6>Contact: <%=number?number:'Number' %></h6>
                               </p>
                               <a href="/adelete/<%= address._id %>" class="btn btn-danger my-3">Delete</a>
                 </div>

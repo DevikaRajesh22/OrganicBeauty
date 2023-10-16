@@ -1,6 +1,7 @@
 const User = require('../models/user/userCollection');
-const Address=require('../models/user/addressCollection');
+const Address = require('../models/user/addressCollection');
 const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const nodemailer = require('nodemailer');
 const Product = require('../models/admin/productCollection');
 const { log } = require('console');
@@ -52,7 +53,6 @@ exports.userLoginPost = async (req, res, next) => {
             if (passwordMatch && !user.isBlocked && user.isVerified) {
                 //setting up user session
                 req.session.userId = user._id;
-                console.log(req.session.userId);
                 req.session.name = user.name;
                 req.session.email = user.email;
                 req.session.phone = user.number;
@@ -101,7 +101,7 @@ exports.registerPost = async (req, res) => {
             text: `Your OTP is ${randomNumber}`,
         };
         transporter.sendMail(mailOptions);
-        res.redirect('/otp');
+        res.render('user/otp');
     } catch (error) {
         console.log(error.message);
         // res.render('user/error');
@@ -111,12 +111,12 @@ exports.registerPost = async (req, res) => {
 //landingPage for GET request
 exports.landingPage = async (req, res) => {
     try {
-        const userId=req.session.userId;
-        const user= await User.findOne({_id:userId});
+        const userId = req.session.userId;
+        const user = await User.findOne({ _id: userId });
         const pageTitle = 'Home';
         const products = await Product.find();
-      
-        res.render('user/landingPage', { products, pageTitle,user : req.session.name });
+
+        res.render('user/landingPage', { products, pageTitle, user: req.session.name });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -126,11 +126,11 @@ exports.landingPage = async (req, res) => {
 //productsGet GET request
 exports.productsGet = async (req, res) => {
     try {
-        const userId=req.session.userId;
+        const userId = req.session.userId;
         // const user= await User.findOne({_id:userId});
         const pageTitle = 'Products';
         const products = await Product.find();
-        res.render('user/products', { pageTitle, products,user : req.session.user });
+        res.render('user/products', { pageTitle, products, user: req.session.user });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -150,7 +150,7 @@ exports.otp = async (req, res) => {
 //otp POST request
 exports.otpPost = async (req, res) => {
     try {
-                                                                
+
         const { otp } = req.body;
         const user = await User.findOne({ email: emailOne });
         if (randomNumber == otp) {
@@ -192,15 +192,15 @@ exports.logout = async (req, res) => {
 //productDetails GET request
 exports.productDetails = async (req, res) => {
     try {
-        const userId=req.session.userId;
-        const user= await User.findOne({_id:userId});
+        const userId = req.session.userId;
+        const user = await User.findOne({ _id: userId });
         const productId = req.query.id
-       console.log(productId,"this is the orei");
-       const products = await Product.findOne({_id : productId})
+        console.log(productId, "this is the orei");
+        const products = await Product.findOne({ _id: productId })
         const pageTitle = 'Product';
         // const products = await Product.findById({ _id : productId });
-        console.log('render hi',products);
-        res.render('user/productDetails', { pageTitle,products ,user});
+        console.log('render hi', products);
+        res.render('user/productDetails', { pageTitle, products, user });
     } catch (error) {
         console.log(error.message);
     }
@@ -209,10 +209,10 @@ exports.productDetails = async (req, res) => {
 //about GET request
 exports.about = async (req, res) => {
     try {
-        const userId=req.session.userId;
-        const user= await User.findOne({_id:userId});
+        const userId = req.session.userId;
+        const user = await User.findOne({ _id: userId });
         const pageTitle = 'About';
-        res.render('user/about', { pageTitle,user });
+        res.render('user/about', { pageTitle, user });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -222,10 +222,8 @@ exports.about = async (req, res) => {
 //contact GET request
 exports.contact = async (req, res) => {
     try {
-        const userId=req.session.userId;
-        const user= await User.findOne({_id:userId});
         const pageTitle = 'contact';
-        res.render('user/contact', { pageTitle,user });
+        res.render('user/contact', { pageTitle, user: req.session.name });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -233,96 +231,120 @@ exports.contact = async (req, res) => {
 };
 
 //orders() GET request
-exports.orders=async(req,res)=>{
-    try{
-        const pageTitle='Orders';
-        res.render('user/orders',{user:req.session.name,pageTitle});
-    }catch(error){
+exports.orders = async (req, res) => {
+    try {
+        const pageTitle = 'Orders';
+        res.render('user/orders', { user: req.session.name, pageTitle });
+    } catch (error) {
         console.log(error.message);
     }
 };
 
 //account() GET request
-exports.account=async(req,res)=>{
-    try{
+exports.account = async (req, res) => {
+    try {
+        const pageTitle = 'Account';
         console.log('account get request');
-        const userId=req.session.userId;
+        const userId = req.session.userId;
         console.log(userId);
-        if(userId===undefined){
+        if (userId === undefined) {
             return res.redirect('/');
         }
-        const users=await User.findOne({_id:userId});
+        const users = await User.findOne({ _id: userId });
         console.log(users);
-        const pageTitle='Account';
-        res.render('user/account',{pageTitle,user:req.session.name,users});
-    }catch(error){
+        res.render('user/account', { pageTitle, user: req.session.name, users, pageTitle });
+    } catch (error) {
         console.log(error.message);
     }
 };
 
 //accountPost() POST request
-exports.accountPost=async(req,res)=>{
-    try{
-        console.log('account post request');
-        const profileId=req.session.userId;
-        console.log(profileId);
-        const updatedProfileData={
-            name: req.body.name,
-            email:req.body.email,
-            number:req.body.number,
-            spassword:req.body.spassword
-         };
-         console.log(updatedProfileData);
-         await User.findByIdAndUpdate(profileId,updatedProfileData);
-         console.log('updated');
-         res.redirect('/account');
-    }catch(error){
+exports.accountPost = async (req, res) => {
+    try {
+      
+        const pass = req.body.currentpassword;
+        const newPass = req.body.newpassword
+        const userId = req.session.userId;
+        const user = await User.findOne({ _id: userId });
+        const hashPass = user.spassword;
+        
+        const same = await bcrypt.compare(pass, hashPass);
+        const updatedPassword  = await bcrypt.hash(newPass,10);
+     if(same){
+        const updateResult = await User.updateOne({ _id: userId }, { $set: { spassword: updatedPassword } });
+     }else{
+        console.log("password doesnt match");
+     }
+       
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+//changePassword() GET request
+exports.changePassword = async (req, res) => {
+    try {
+        console.log('change password get')
+        const pageTitle = 'Account';
+        res.render('user/changePassword', { pageTitle, user: req.session.name });
+    } catch (error) {
         console.log(error.message);
     }
 }
 
 //address() GET request
-exports.address=async(req,res)=>{
-    try{
-        const addresses=await Address.find();
-        const pageTitle='Address';
-        res.render('user/address',{pageTitle,user:req.session.name,addresses});
-    }catch(error){
+exports.address = async (req, res) => {
+    try {
+        const addresses = await Address.find();
+        const pageTitle = 'Address';
+        res.render('user/address', { pageTitle, user: req.session.name, addresses,number:req.session.phone });
+    } catch (error) {
         console.log(error.message);
     }
 };
 
 //addAddress() GET request
-exports.addAddress=async(req,res)=>{
-    try{
+exports.addAddress = async (req, res) => {
+    try {
         console.log('req received at addAddress get')
-        const pageTitle='Address';
-        res.render('user/addAddress',{pageTitle,user:req.session.name});
-    }catch(error){
+        const pageTitle = 'Address';
+        res.render('user/addAddress', { pageTitle, user: req.session.name });
+    } catch (error) {
         console.log(error.message);
     }
 };
 
 //addAddressPost() POST request
-exports.addAddressPost=async(req,res)=>{
-    try{
+exports.addAddressPost = async (req, res) => {
+    try {
         console.log('post req received at addAddressPost');
-       const newAddress=new Address({
-        country:req.body.country,
-        state: req.body.state,
-        apartment: req.body.apartment,
-        city: req.body.city,
-        street: req.body.street,
-        zipcode: req.body.zipcode,
-        type: req.body.type
-       });
-       console.log(req.body);
-       const addressData=await newAddress.save();
-       res.redirect('/address');
-    }catch(error){
+        const newAddress = new Address({
+            country: req.body.country,
+            state: req.body.state,
+            apartment: req.body.apartment,
+            city: req.body.city,
+            street: req.body.street,
+            zipcode: req.body.zipcode,
+            type: req.body.type
+        });
+        console.log(req.body);
+        const addressData = await newAddress.save();
+        res.redirect('/address');
+    } catch (error) {
         console.log(error.message);
     }
 };
+
+//deleteAddress() GET request
+exports.deleteAddress=async(req,res)=>{
+    try{
+        const addressId=req.params.id;
+        await Address.deleteOne({_id:addressId});
+        res.redirect('/address');
+    }catch(error){
+        console.log(error.message);
+    }
+}
 
 
 

@@ -8,19 +8,19 @@ const { log } = require('util');
 exports.cartGet = async (req, res) => {
     try {
         const userId=req.session.userId;
-        const user= await User.findOne({_id:userId});
+        const users= await User.findOne({_id:userId});
+        const user = req.session.name
         const pageTitle = 'Cart';
-        console.log(userId);
-        const carts = await Cart.findOne({ userId: userId })
+        const carts = await Cart.findOne({ userId:userId})
             .populate({
                 path: 'products.productId',
                 model: 'Product',
                 select: 'productId productName productImage'
             });
-            console.log(carts);
+       
             if (carts) {
                 const products = carts.products.length;
-                console.log(products);
+              
             
                 if (products > 0) { // Check if there are products in the cart
                     try {
@@ -38,13 +38,13 @@ exports.cartGet = async (req, res) => {
                                 },
                             },
                         ]);
-                        console.log(total);
+                    
             
                         if (total.length > 0) {
-                            res.render('user/cart', { pageTitle, carts, product: products, total: total[0].total, user});
+                            res.render('user/cart', { pageTitle, carts, product: products, total: total[0].total,user:req.session.name});
                         } else {
                             // Handle the case where total is empty or undefined
-                            res.render('user/cart', { pageTitle, carts, product: products, total: 0 });
+                            res.render('user/cart', { pageTitle, carts, product: products, total: 0,user});
                         }
                     } catch (err) {
                         console.error('Error in aggregation:', err);
@@ -117,15 +117,17 @@ exports.addToCartPost = async (req, res) => {
 exports.updateCartQuantity = async (req, res) => {
     try {
         console.log('req received');
-        const userId=req.session.userId;
+        const userId = req.session.userId;
+        console.log(userId);
         const user= await User.findOne({_id:userId});
         const productId = req.body.productId;
         let count = req.body.count;
         count = parseInt(count);
 
         const cartData = await Cart.findOne({ userId: userId });
+      
         const productData = await Product.findOne({ _id: productId });
-        console.log(cartData);
+        // console.log(cartData);
 
 
         if (!cartData || !productData) {
@@ -135,9 +137,9 @@ exports.updateCartQuantity = async (req, res) => {
 
         const productQuantity = productData.stock;
         const existingProductIndex = cartData.products.findIndex(
-            (product) => product.productId === productId
+            (product) => product.productId.toString() === productId.toString()
         );
-        console.log('exiatingProdooo', existingProductIndex);
+      
 
         if (existingProductIndex === -1) {
             res.json({ success: false, message: "Product not found in the cart." });
@@ -146,8 +148,27 @@ exports.updateCartQuantity = async (req, res) => {
 
         const existingProduct = cartData.products[existingProductIndex];
         const updatedQuantity = existingProduct.count + count;
-        console.log('existingProduct', existingProduct);
-        console.log('uodatedQuantity', updatedQuantity);
+
+        // console.log('existingProduct', existingProduct);
+         
+    if (updatedQuantity < 0 || updatedQuantity > productQuantity) {
+        res.json({ success: false, message: "Invalid quantity." });
+        return;
+      }
+      if (updatedQuantity <= 0 || updatedQuantity > productQuantity) {
+        return;
+      }
+      // Update the product count and total price in the cart
+      cartData.products[existingProductIndex].count = updatedQuantity;
+      console.log(cartData.products[existingProductIndex].count);
+  
+      // Calculate the updated total price for the product
+      const productPrice = productData.price;
+      const productTotal = productPrice * updatedQuantity;
+      cartData.products[existingProductIndex].totalPrice = productTotal;
+  
+      // Save the updated cart
+      await cartData.save();
 
 
         res.status(200).json({ success: true, message: 'Cart item updated successfully' });
