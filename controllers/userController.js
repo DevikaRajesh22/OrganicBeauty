@@ -67,16 +67,66 @@ exports.userLoginPost = async (req, res, next) => {
     }
 };
 
-//forgotPassword() get request
+//forgotPassword() GET request
 exports.forgotPassword=async(req,res)=>{
     try{
-        res.render('user/forgotPassword');
+        const pageTitle='Password';
+        res.render('user/forgotPassword',{pageTitle});
     }catch(error){
         console.log(error.message);
     }
 };
 
 
+var emailId;
+
+//forgotPasswordPost() POST request
+exports.forgotPasswordPost=async(req,res)=>{
+    try{
+        // console.log('forgot password post request');
+         emailId=req.body.email;
+        // console.log(emailId);
+        const user=await User.findOne({email:emailId});
+        // console.log(user);
+        if(user){
+           res.redirect('/forgotPasswordChange'); 
+        }else{
+            res.redirect('/forgotPassword');
+        }
+    }catch(error){
+        console.log(error.message);
+    }
+};
+
+//forgotPasswordChange() GET request
+exports.forgotPasswordChange=async(req,res)=>{
+    try{
+        res.render('user/forgotPasswordChange');
+    }catch(error){
+        console.log(error.message);
+    }
+};
+
+//forgotPasswordChangePost() POST request
+exports.forgotPasswordChangePost=async(req,res)=>{
+    try{
+        const curPassword=req.body.currentpassword;
+        const newPassword=req.body.newpassword;
+        const user=await User.findOne({email:emailId});
+        const hashPass=user.spassword;
+        const same=await bcrypt.compare(curPassword,hashPass);
+        const updatedPassword=await bcrypt.hash(newPassword,10);
+        if(same){
+            const updateResult=await User.updateOne({email:emailId},{$set:{spassword:updatedPassword}});
+        }else{
+            console.log('password doesnt match');
+            return res.redirect('/forgotChangePassword');
+        }
+        res.redirect('/login');
+    }catch(error){
+        console.log(error.message);
+    }
+};
 
 //registerGet for GET request
 exports.registerGet = async (req, res) => {
