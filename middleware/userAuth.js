@@ -3,7 +3,7 @@ exports.isLoggedIn = async(req,res,next) => {
       if (req.session.userId) {
           next();
       }else{
-          res.redirect('/')
+          res.redirect('/login')
       }
   } catch (error) {
       console.log(error.message);
@@ -13,7 +13,7 @@ exports.isLoggedIn = async(req,res,next) => {
 exports.isLoggedOut = async(req, res, next) =>{
   try {
       if (req.session.userId) {
-          res.redirect('/landingPage');
+          res.redirect('/');
       } else {
           next();
       }

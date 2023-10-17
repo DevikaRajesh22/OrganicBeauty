@@ -56,9 +56,9 @@ exports.userLoginPost = async (req, res, next) => {
                 req.session.name = user.name;
                 req.session.email = user.email;
                 req.session.phone = user.number;
-                return res.redirect("/landingPage"); //if password match then store user session and redirect to landingPage
+                return res.redirect("/"); //if password match then store user session and redirect to landingPage
             } else {
-                res.redirect('/');
+                res.redirect('/login');
             }
         }
     } catch (error) {
@@ -66,6 +66,17 @@ exports.userLoginPost = async (req, res, next) => {
         res.render('user/error');
     }
 };
+
+//forgotPassword() get request
+exports.forgotPassword=async(req,res)=>{
+    try{
+        res.render('user/forgotPassword');
+    }catch(error){
+        console.log(error.message);
+    }
+};
+
+
 
 //registerGet for GET request
 exports.registerGet = async (req, res) => {
@@ -126,11 +137,11 @@ exports.landingPage = async (req, res) => {
 //productsGet GET request
 exports.productsGet = async (req, res) => {
     try {
-        const userId = req.session.userId;
-        // const user= await User.findOne({_id:userId});
+        console.log('productsGet request')
         const pageTitle = 'Products';
         const products = await Product.find();
-        res.render('user/products', { pageTitle, products, user: req.session.user });
+        console.log(req.session.name);
+        res.render('user/products', { pageTitle, products, user: req.session.name });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -161,7 +172,7 @@ exports.otpPost = async (req, res) => {
             if (verified) {
                 req.session.otp = otp;
                 req.session.user = user.name;
-                res.redirect('/landingPage');
+                res.redirect('/');
             } else {
                 res.redirect('/otp');
             }
@@ -181,7 +192,7 @@ exports.logout = async (req, res) => {
             if (err) {
                 console.error('Error destroying session:', err);
             }
-            res.redirect('/');
+            res.redirect('/login');
         });
     } catch (error) {
         res.render('user/error');
@@ -192,15 +203,10 @@ exports.logout = async (req, res) => {
 //productDetails GET request
 exports.productDetails = async (req, res) => {
     try {
-        const userId = req.session.userId;
-        const user = await User.findOne({ _id: userId });
         const productId = req.query.id
-        console.log(productId, "this is the orei");
         const products = await Product.findOne({ _id: productId })
         const pageTitle = 'Product';
-        // const products = await Product.findById({ _id : productId });
-        console.log('render hi', products);
-        res.render('user/productDetails', { pageTitle, products, user });
+        res.render('user/productDetails', { pageTitle, products, user: req.session.name });
     } catch (error) {
         console.log(error.message);
     }
@@ -230,16 +236,6 @@ exports.contact = async (req, res) => {
     }
 };
 
-//orders() GET request
-exports.orders = async (req, res) => {
-    try {
-        const pageTitle = 'Orders';
-        res.render('user/orders', { user: req.session.name, pageTitle });
-    } catch (error) {
-        console.log(error.message);
-    }
-};
-
 //account() GET request
 exports.account = async (req, res) => {
     try {
@@ -248,9 +244,12 @@ exports.account = async (req, res) => {
         const userId = req.session.userId;
         console.log(userId);
         if (userId === undefined) {
-            return res.redirect('/');
+            return res.redirect('/login');
         }
         const users = await User.findOne({ _id: userId });
+        if(!users){
+            res.redirect('/login');
+        }
         console.log(users);
         res.render('user/account', { pageTitle, user: req.session.name, users, pageTitle });
     } catch (error) {
@@ -261,21 +260,21 @@ exports.account = async (req, res) => {
 //accountPost() POST request
 exports.accountPost = async (req, res) => {
     try {
-      
+
         const pass = req.body.currentpassword;
         const newPass = req.body.newpassword
         const userId = req.session.userId;
         const user = await User.findOne({ _id: userId });
         const hashPass = user.spassword;
-        
+
         const same = await bcrypt.compare(pass, hashPass);
-        const updatedPassword  = await bcrypt.hash(newPass,10);
-     if(same){
-        const updateResult = await User.updateOne({ _id: userId }, { $set: { spassword: updatedPassword } });
-     }else{
-        console.log("password doesnt match");
-     }
-       
+        const updatedPassword = await bcrypt.hash(newPass, 10);
+        if (same) {
+            const updateResult = await User.updateOne({ _id: userId }, { $set: { spassword: updatedPassword } });
+        } else {
+            console.log("password doesnt match");
+        }
+
     } catch (error) {
         console.log(error.message);
     }
@@ -295,9 +294,13 @@ exports.changePassword = async (req, res) => {
 //address() GET request
 exports.address = async (req, res) => {
     try {
-        const addresses = await Address.find();
+        const userId=req.session.userId;
+        if(userId===undefined){
+            res.redirect('/login');
+        }
+        const addresses = await Address.findOne({user:userId});
         const pageTitle = 'Address';
-        res.render('user/address', { pageTitle, user: req.session.name, addresses,number:req.session.phone });
+        res.render('user/address', { pageTitle, user: req.session.name, addresses, number: req.session.phone });
     } catch (error) {
         console.log(error.message);
     }
@@ -318,17 +321,38 @@ exports.addAddress = async (req, res) => {
 exports.addAddressPost = async (req, res) => {
     try {
         console.log('post req received at addAddressPost');
-        const newAddress = new Address({
-            country: req.body.country,
-            state: req.body.state,
-            apartment: req.body.apartment,
-            city: req.body.city,
-            street: req.body.street,
-            zipcode: req.body.zipcode,
-            type: req.body.type
-        });
+        const userId = req.session.userId;
+        const address = await Address.findOne({ user: userId });
+        if (!address) {
+            const newAddress = new Address({
+                user: userId,
+                address: {
+                    country: req.body.country,
+                    state: req.body.state,
+                    apartment: req.body.apartment,
+                    city: req.body.city,
+                    street: req.body.street,
+                    zipcode: req.body.zipcode,
+                    type: req.body.type,
+                },
+            });
+            const addressData = await newAddress.save();
+        } else {
+            await Address.updateOne({ user: userId }, {
+                $push: {
+                    address:{
+                        country: req.body.country,
+                        state: req.body.state,
+                        apartment: req.body.apartment,
+                        city: req.body.city,
+                        street: req.body.street,
+                        zipcode: req.body.zipcode,
+                        type: req.body.type,
+                    }
+                }
+            })
+        }
         console.log(req.body);
-        const addressData = await newAddress.save();
         res.redirect('/address');
     } catch (error) {
         console.log(error.message);
@@ -336,12 +360,12 @@ exports.addAddressPost = async (req, res) => {
 };
 
 //deleteAddress() GET request
-exports.deleteAddress=async(req,res)=>{
-    try{
-        const addressId=req.params.id;
-        await Address.deleteOne({_id:addressId});
+exports.deleteAddress = async (req, res) => {
+    try {
+        const addressId = req.params.id;
+        await Address.deleteOne({ _id: addressId });
         res.redirect('/address');
-    }catch(error){
+    } catch (error) {
         console.log(error.message);
     }
 }

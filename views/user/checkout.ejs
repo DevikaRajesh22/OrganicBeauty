@@ -1,0 +1,99 @@
+<%- include('../user/userHeader.ejs') %>
+    <!-- Navbar Start -->
+    <%- include('../user/userNavbar.ejs') %>
+        <!-- Navbar End -->
+        <!-- Checkout Start -->
+        <div class="container-fluid pt-5">
+            <div class="row px-xl-5">
+                <div class="col-lg-8">
+                    <div class="mb-4">
+                        <h4 class="font-weight-semi-bold mb-4">Billing Address</h4>
+                        <div class="row">
+                            <div class="col-lg-9 mx-3 my-3 px-3">
+                                <% addresses?.address?.forEach(function(add){ %>
+                                    <div class="col-lg-9 mx-3 my-3">
+                                        <div class="card card-dashboard">
+                                            <div class="card-body">
+                                                <input type="radio" name="selectedAddress" value="<%= add._id %> "
+                                                    <%=(add._id===addresses.address[0]._id) ? 'checked' : '' %>>
+                                                <p>
+                                                <h3>
+                                                    <%= user?user:'User'%>
+                                                </h3><br>
+                                                <h6>
+                                                    <%=add.type%>
+                                                </h6><br>
+                                                <%=add.country%><br>
+                                                    <%= add.state %>, <%= add.city %><br>
+                                                            <%=add.apartment%>, <%=add.street%>, <%=add.zipcode%><br>
+                                                                        <a href="/editAddress?id=<%=add._id%>">Edit
+                                                                            Address <i class="fas fa-edit"></i></a>
+                                                                        </p>
+
+                                            </div><!-- End .card-body -->
+
+                                        </div><!-- End .card-dashboard -->
+                                    </div><!-- End .col-lg-6 -->
+                                    <% }); %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card border-secondary mb-5">
+                        <div class="card-header bg-secondary border-0">
+                            <h4 class="font-weight-semi-bold m-0">Order Total</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="font-weight-medium">Subtotal</h6>
+                                <h6 class="font-weight-medium">$ <%= carts?.subTotal%>
+                                </h6>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <h6 class="font-weight-medium">Shipping</h6>
+                                <h6 class="font-weight-medium">$ <%= carts?.shipping %>
+                                </h6>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <h6 class="font-weight-medium">Discount</h6>
+                                <h6 class="font-weight-medium">$ 0</h6>
+                            </div>
+                        </div>
+                        <div class="card-footer border-secondary bg-transparent">
+                            <div class="d-flex justify-content-between mt-2">
+                                <h5 class="font-weight-bold">Total</h5>
+                                <h5 class="font-weight-bold">$ <%= carts?.finalPrice %>
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card border-secondary mb-5">
+                        <div class="card-header bg-secondary border-0">
+                            <h4 class="font-weight-semi-bold m-0">Payment</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" name="payment" id="paypal" checked>
+                                    <label class="custom-control-label" for="paypal">Cash on delivery</label>
+                                </div>
+                            </div>
+                            <div class="">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" name="payment" id="banktransfer">
+                                    <label class="custom-control-label" for="banktransfer">Pay on delivery</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-secondary bg-transparent">
+                            <a href="/success" class="text-decoration-none"><button
+                                    class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Place
+                                    Order</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Checkout End -->
+        <%- include('../user/userFooter.ejs') %>
