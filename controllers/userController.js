@@ -120,7 +120,7 @@ exports.forgotPasswordChangePost=async(req,res)=>{
             const updateResult=await User.updateOne({email:emailId},{$set:{spassword:updatedPassword}});
         }else{
             console.log('password doesnt match');
-            return res.redirect('/forgotChangePassword');
+            return res.redirect('/forgotPasswordChange');
         }
         res.redirect('/login');
     }catch(error){
@@ -222,7 +222,7 @@ exports.otpPost = async (req, res) => {
             if (verified) {
                 req.session.otp = otp;
                 req.session.user = user.name;
-                res.redirect('/');
+                res.redirect('/login');
             } else {
                 res.redirect('/otp');
             }
@@ -412,13 +412,26 @@ exports.addAddressPost = async (req, res) => {
 //deleteAddress() GET request
 exports.deleteAddress = async (req, res) => {
     try {
+        console.log('deleteAddress get request')
         const addressId = req.params.id;
-        await Address.deleteOne({ _id: addressId });
+        console.log(addressId);
+        const userId=req.session.userId;
+        const delAdd=await Address.updateOne(
+            {user:userId},
+            {
+                $pull:{
+                    address:{
+                        _id:addressId
+                    }
+                }
+            }
+        );
+        console.log(delAdd)
         res.redirect('/address');
     } catch (error) {
         console.log(error.message);
     }
-}
+};
 
 
 

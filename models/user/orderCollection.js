@@ -7,7 +7,7 @@ const orderSchema = new mongoose.Schema({
   },
   user: {
     type: mongoose.Types.ObjectId,
-    ref : 'User'
+    ref: 'User'
 
   },
   uniqueId: {
@@ -41,7 +41,7 @@ const orderSchema = new mongoose.Schema({
       },
       status: {
         type: String,
-        default: "placed",
+        default: "Placed",
       },
     },
   ],
@@ -61,6 +61,6 @@ const orderSchema = new mongoose.Schema({
   orderId: {
     type: String,
   }
-},{strictPopulate : false});
+}, { strictPopulate: false });
 
-module.exports = mongoose.model("order", orderSchema);
+module.exports = mongoose.model("Order", orderSchema);

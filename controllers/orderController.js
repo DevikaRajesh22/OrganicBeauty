@@ -24,7 +24,6 @@ exports.placeOrder=async(req,res)=>{
     try{
         console.log('place order post request');
         
-
     }catch(error){
         console.log(error.message);
     }

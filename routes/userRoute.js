@@ -42,7 +42,6 @@ userRoute.get('/success',cartController.success);
 userRoute.get('/orders',orderController.orders);
 userRoute.post('/placeOrder',orderController.placeOrder);
 
-
 //routes for profile management
 userRoute.get('/account',userController.account);
 userRoute.post('/accountPost',userController.accountPost);

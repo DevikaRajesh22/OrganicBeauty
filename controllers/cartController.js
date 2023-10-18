@@ -77,18 +77,21 @@ exports.cartGet = async (req, res) => {
 
 exports.addToCartPost = async (req, res) => {
     try {
-        const user = req.session.userId; //to find user
+        const user = req.session.userId; // Find the user
         if (!user) {
             return res.redirect('/login');
         }
-        const productId = req.query.id; //get the id by the query in a tag
-        const product = await Product.findById(productId); //finding the product by the product
-        let cartFound = await Cart.findOne({ userId: user }); //to check if there is a cart for the user
+        const productId = req.query.id; // Get the ID from the query parameter
+        const product = await Product.findById(productId); // Find the product by its ID
+        let cartFound = await Cart.findOne({ userId: user }); // Check if there is a cart for the user
+        let userFound = await User.findOne({ _id: user });
+
         if (!cartFound) {
-            //create a new cart
+            // Create a new cart
             const newCart = new Cart({
                 userId: user,
                 finalPrice: product.price + 10,
+                subTotal: product.price,
                 products: [{
                     productId: productId,
                     count: 1,
@@ -99,11 +102,11 @@ exports.addToCartPost = async (req, res) => {
             await newCart.save();
         } else {
             // Check if the product is already in the cart
-            const existingProductIndex = userFound.products.findIndex(p => p.productId.toString() === productId);
+            const existingProductIndex = cartFound.products.findIndex(p => p.productId.toString() === productId);
 
             if (existingProductIndex === -1) {
                 // If the product is not in the cart, add it as a new product
-                userFound.products.push({
+                cartFound.products.push({
                     productId: product._id,
                     count: 1,
                     productPrice: product.price,
@@ -111,11 +114,11 @@ exports.addToCartPost = async (req, res) => {
                 });
             } else {
                 // If the product is already in the cart, increase the count and adjust the price
-                userFound.products[existingProductIndex].count += 1;
-                userFound.products[existingProductIndex].totalPrice = userFound.products[existingProductIndex].count * product.price;
+                cartFound.products[existingProductIndex].count += 1;
+                cartFound.products[existingProductIndex].totalPrice = cartFound.products[existingProductIndex].count * product.price;
             }
 
-            await userFound.save();
+            await cartFound.save();
         }
 
         res.redirect('/products');
