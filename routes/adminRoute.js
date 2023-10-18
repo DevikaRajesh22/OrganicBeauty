@@ -1,7 +1,7 @@
 const adminController = require('../controllers/adminController');
 const productController = require('../controllers/productController');
 const categoryController = require('../controllers/categoryController');
-const orderController=require('../controllers/orderController');
+const adminOrderController=require('../controllers/adminOrderController');
 const express = require('express');
 const adminRoute = express();
 const multer = require('../middleware/multer');
@@ -40,6 +40,6 @@ adminRoute.get('/cedit', categoryController.editCategory);
 adminRoute.post('/cedit', categoryController.editCategoryPost);
 
 //order management
-adminRoute.get('/orders',orderController.orders);
+adminRoute.get('/orders',adminOrderController.orderGet);
 
 module.exports = adminRoute;

@@ -5,6 +5,7 @@ const saltRounds = 10;
 const nodemailer = require('nodemailer');
 const Product = require('../models/admin/productCollection');
 const { log } = require('console');
+require('dotenv').config();
 
 //for otp using nodemailer
 let randomNumber;
@@ -13,8 +14,8 @@ const smtpConfig = {
     service: "Gmail",
     auth: {
 
-        user: "devikaraj699@gmail.com",
-        pass: "vtey pzad jmzy ofoj",
+        user: process.env.EMAIL,
+        pass: process.env.PASS
 
     }
 }

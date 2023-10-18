@@ -8,10 +8,6 @@ const orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Types.ObjectId,
     ref: 'User'
-
-  },
-  uniqueId: {
-    type: Number,
   },
   userName: {
     type: String,
@@ -51,9 +47,6 @@ const orderSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-  },
-  status: {
-    type: String,
   },
   paymentMethod: {
     type: String,
