@@ -38,13 +38,10 @@ exports.placeOrder = async (req, res) => {
         const totalAmount = cartData.finalPrice;
         const date = new Date();
 
-        const selAdd=req.body.selectedAddress.trim();
-        console.log(selAdd);
-        const ObjectId = mongoose.Types.ObjectId; 
+        const selAdd = req.body.selectedAddress.trim();
+        const ObjectId = mongoose.Types.ObjectId;
         const selAddObjectId = new ObjectId(selAdd);
-        const address = await Address.findOne({user : userId},{'address': { $elemMatch: { '_id': selAdd } }});
-        console.log(address);
-
+        const address = await Address.findOne({ user: userId }, { 'address': { $elemMatch: { '_id': selAdd } } });
 
         const deliveryDate = new Date(date);
         deliveryDate.setDate(date.getDate() + 10);
@@ -68,7 +65,34 @@ exports.placeOrder = async (req, res) => {
             paymentMethod: paymentMethod,
             orderId: orderId,
         });
-        await newOrder.save();
+        const orderDetails = await newOrder.save();
+
+        //to remove products from cart when order is placed
+        if(orderDetails){
+            const removeProducts=await Cart.findOneAndUpdate({userId:userId},
+               {$pull:{
+                products:{}
+               }})
+        }
+
+        //to reduce stock when order is placed
+        const stockReduce = cartData.products;
+        console.log('stockreduce'+stockReduce);
+        for(let i=0;i<stockReduce.length;i++){
+            const productId = stockReduce[i].productId;
+            const updatedProduct = await Product.findByIdAndUpdate(
+                productId, 
+                {
+                    $inc: { stock: -stockReduce[i].count } 
+                },
+                { new: true }
+            );
+            console.log(updatedProduct);
+        }
+
+
+
+
         res.redirect('/success');
     } catch (error) {
         console.log(error.message);
@@ -76,18 +100,40 @@ exports.placeOrder = async (req, res) => {
 };
 
 //userDet() GET request
-exports.orderDet=async(req,res)=>{
-    try{
-        const pageTitle='Orders';
-        const orderId=req.query.orderId;
+exports.orderDet = async (req, res) => {
+    try {
+        const pageTitle = 'Orders';
+        const orderId = req.query.orderId;
         const orders = await Order.findOne({ _id: orderId }).populate(
             "products.productId"
         );
-        const userId=orders.user;
-        const cart=await Cart.findOne({userId:userId});
-        const subTotal=cart.subTotal;
-        res.render('user/orderDet',{user:req.session.name,pageTitle,orders,subTotal});
-    }catch(error){
+        const userId = orders.user;
+        const cart = await Cart.findOne({ userId: userId });
+        const subTotal = cart.subTotal;
+        res.render('user/orderDet', { user: req.session.name, pageTitle, orders, subTotal });
+    } catch (error) {
         console.log(error.message);
     }
 };
+
+//cancelOrder() GET request
+exports.cancelOrder = async (req, res) => {
+    try {
+        const orderId = req.query.orderId;
+        const deletedOrder = await Order.deleteOne({ _id: orderId });
+        res.redirect('/orders');
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+//returnOrder() GET request
+exports.returnOrder = async (req, res) => {
+    try {
+        console.log('return order get request received');
+        const orderId = req.query.orderId;
+        console.log(orderId);
+    } catch (error) {
+        console.log(error.message);
+    }
+}

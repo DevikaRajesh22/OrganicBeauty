@@ -63,13 +63,12 @@ exports.cartGet = async (req, res) => {
                     console.error('Error in aggregation:', err);
                     // Handle the error, send an error response or redirect as needed
                 }
+            } else {
+                res.render('user/cart', { pageTitle, carts,product:undefined, user: req.session.name });
             }
         } else {
             res.render('user/cart', { pageTitle, carts: undefined, total: 0, user: req.session.name })
         }
-
-
-
     } catch (error) {
         console.log(error);
     }
@@ -232,8 +231,8 @@ exports.checkout = async (req, res) => {
                 select: 'productId productName productImage'
             });
         const addresses = await Address.findOne({ user: userId });
-        const address=addresses.address;
-        res.render('user/checkout', { pageTitle, user: req.session.name, carts, addresses,address });
+        const address = addresses.address;
+        res.render('user/checkout', { pageTitle, user: req.session.name, carts, addresses, address });
     } catch (error) {
         console.log(error.message);
     }
@@ -262,20 +261,20 @@ exports.editAddressPost = async (req, res) => {
         // console.log('editAddressPost');
         const userId = req.session.userId;
         // console.log(userId);
-        const addressId=req.body.id;
+        const addressId = req.body.id;
         // console.log(addressId);
-        const {country,state,apartment,city,street,zipcode,type}=req.body;
-        const updatedAddress=await Address.updateOne(
-            {user:userId,'address._id':addressId},
+        const { country, state, apartment, city, street, zipcode, type } = req.body;
+        const updatedAddress = await Address.updateOne(
+            { user: userId, 'address._id': addressId },
             {
-                $set:{
-                    "address.$.country":country,
-                    "address.$.state":state,
-                    "address.$.apartment":apartment,
-                    "address.$.city":city,
-                    "address.$.street":street,
-                    "address.$.zipcode":zipcode,
-                    "address.$.type":type,
+                $set: {
+                    "address.$.country": country,
+                    "address.$.state": state,
+                    "address.$.apartment": apartment,
+                    "address.$.city": city,
+                    "address.$.street": street,
+                    "address.$.zipcode": zipcode,
+                    "address.$.type": type,
 
                 },
             },

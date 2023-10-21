@@ -1,156 +1,241 @@
 <%- include('../user/userHeader.ejs') %>
-    <!-- Navbar Start -->
-    <%- include('../user/userNavbar.ejs') %>
-        <!-- Navbar End -->
+<!-- Navbar Start -->
+<%- include('../user/userNavbar.ejs') %>
+<!-- Navbar End -->
 
-        <!-- Cart Start -->
-        <div id="re-load">
-            <div class="container-fluid pt-5">
-                <div class="row px-xl-5">
-                    <div class="col-lg-8 table-responsive mb-5">
-                        <table class="table table-bordered text-center mb-0">
-                            <thead class="bg-secondary text-dark">
-                                <tr>
-                                    <th>Products</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                    <th>Remove</th>
-                                </tr>
-                            </thead>
-                            <tbody class="align-middle">
+<!-- Cart Start -->
+<% if (product===undefined) { %>
+<style>
+  .mt-100 {
+    margin-top: 100px;
+  }
 
+  .card {
+    margin-bottom: 30px;
+    border: 0;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    border-radius: 8px;
+    -webkit-box-shadow: 1px 5px 24px 0 rgba(68, 102, 242, 0.05);
+    box-shadow: 1px 5px 24px 0 rgba(68, 102, 242, 0.05);
+  }
 
-                                <%carts?.products?.forEach(function(product,index){ %>
-                                    <tr>
-                                        <td class="d-flex px-2 mx-2 align-middle"><img class="px-2"
-                                                src="/product/img/<%= product.productId.productImage[0] %>" alt=""
-                                                style="width: 50px;">
-                                            <%= product.productId.productName %>
-                                        </td>
-                                        <td class="align-middle">$ <%= product.productPrice%>
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="input-group quantity mx-auto" style="width: 100px;">
-                                                <div class="input-group-btn">
-                                                    <button class="btn btn-sm btn-primary btn-minus"
-                                                        onclick="changeQuantity('<%= product.productId._id%>',-1)">
-                                                        <i class="fa fa-minus"></i>
-                                                    </button>
-                                                </div>
-                                                <input type="text"
-                                                    class="form-control form-control-sm bg-secondary text-center"
-                                                    value="<%=product.count%>">
-                                                <div class="input-group-btn">
-                                                    <button class="btn btn-sm btn-primary btn-plus"
-                                                        onclick="changeQuantity('<%= product.productId._id%>',1)">
-                                                        <i class="fa fa-plus"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">$ <%= product.totalPrice %>
-                                        </td>
-                                        <td class="align-middle"><button class="btn btn-sm btn-primary"
-                                                onclick="removeProduct('<%= product.productId._id %>',-1)"><i
-                                                    class="fa fa-trash"></i></button></td>
-                                    </tr>
+  .card .card-header {
+    background-color: #fff;
+    border-bottom: none;
+    padding: 24px;
+    border-bottom: 1px solid #f6f7fb;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
 
-                                    <% })%>
+  .card-header:first-child {
+    border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+  }
 
+  .card .card-body {
+    padding: 30px;
+    background-color: transparent;
+  }
 
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-lg-4">
-                        <form class="mb-5" action="">
-                            <div class="input-group">
-                                <input type="text" class="form-control p-4" placeholder="Coupon Code">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary">Apply Coupon</button>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="card border-secondary mb-5">
-                            <div class="card-header bg-secondary border-0">
-                                <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between mb-3 pt-1">
-                                    <h6 class="font-weight-medium">Subtotal</h6>
-                                    <h6 class="font-weight-medium">$ <%= carts?.subTotal %></h6>
-                                </div>
-                                <div class="d-flex justify-content-between mb-3 pt-1">
-                                    <h6 class="font-weight-medium">Shipping</h6>
-                                    <h6 class="font-weight-medium">$ <%= carts?.shipping %></h6>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="font-weight-medium">Discount</h6>
-                                    <h6 class="font-weight-medium">$ 0</h6>
-                                </div>
-                            </div>
-                            <div class="card-footer border-secondary bg-transparent">
-                                <div class="d-flex justify-content-between mt-2">
-                                    <h5 class="font-weight-bold">Total</h5>
-                                    <h5 class="font-weight-bold">$ <%= carts?.finalPrice %></h5>
-                                </div>
-                                <a href="/checkout" class="text-decoration-none"><button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  .btn-primary,
+  .btn-primary.disabled,
+  .btn-primary:disabled {
+    background-color: #4466f2 !important;
+    border-color: #4466f2 !important;
+  }
+</style>
+<div class="container-fluid mt-100">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
         </div>
-        <!-- Cart End -->
+        <div class="card-body cart">
+          <div class="col-sm-12 empty-cart-cls text-center">
+            <img
+              src="https://i.imgur.com/dCdflKN.png"
+              width="130"
+              height="130"
+              class="img-fluid mb-4 mr-3"
+            />
+            <h3><strong>Your Cart is Empty</strong></h3>
+            <h4>Add something to make me happy :)</h4>
+            <a
+              href="/products"
+              class="btn btn-primary cart-btn-transform m-3"
+              data-abc="true"
+              >continue shopping</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% }else{ %>
+<div id="re-load">
+  <div class="container-fluid pt-5">
+    <div class="row px-xl-5">
+      <div class="col-lg-8 table-responsive mb-5">
+        <table class="table table-bordered text-center mb-0">
+          <thead class="bg-secondary text-dark">
+            <tr>
+              <th>Products</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Total</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody class="align-middle">
+            <%carts?.products?.forEach(function(product,index){ %>
+            <tr>
+              <td class="d-flex px-2 mx-2 align-middle">
+                <img
+                  class="px-2"
+                  src="/product/img/<%= product.productId.productImage[0] %>"
+                  alt=""
+                  style="width: 50px"
+                />
+                <%= product.productId.productName %>
+              </td>
+              <td class="align-middle">$ <%= product.productPrice%></td>
+              <td class="align-middle">
+                <div class="input-group quantity mx-auto" style="width: 100px">
+                  <div class="input-group-btn">
+                    <button
+                      class="btn btn-sm btn-primary btn-minus"
+                      onclick="changeQuantity('<%= product.productId._id%>',-1)"
+                    >
+                      <i class="fa fa-minus"></i>
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm bg-secondary text-center"
+                    value="<%=product.count%>"
+                  />
+                  <div class="input-group-btn">
+                    <button
+                      class="btn btn-sm btn-primary btn-plus"
+                      onclick="changeQuantity('<%= product.productId._id%>',1)"
+                    >
+                      <i class="fa fa-plus"></i>
+                    </button>
+                  </div>
+                </div>
+              </td>
+              <td class="align-middle">$ <%= product.totalPrice %></td>
+              <td class="align-middle">
+                <button
+                  class="btn btn-sm btn-primary"
+                  onclick="removeProduct('<%= product.productId._id %>',-1)"
+                >
+                  <i class="fa fa-trash"></i>
+                </button>
+              </td>
+            </tr>
 
-        <!-- ajax for quantity updation -->
-        <script>
-            //for changing quantity
-            function changeQuantity(productId, count) {
-                console.log(productId, count)
-                $.ajax({
-                    type: 'post',
-                    url: '/cartModify',
-                    data: {
-                        productId: productId,
-                        count: count
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            $("#re-load").load("/cart #re-load");
-                         
-                        } else {
-                          
-                            Swal.fire({
-                                position: "center",
-                                icon: "warning",
-                                text: response.message,
-                                timer: 1500,
-                                showConfirmButton: false,
-                            });
-                        }
-                    }
-                });
+            <% })%>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-lg-4">
+        <form class="mb-5" action="">
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control p-4"
+              placeholder="Coupon Code"
+            />
+            <div class="input-group-append">
+              <button class="btn btn-primary">Apply Coupon</button>
+            </div>
+          </div>
+        </form>
+        <div class="card border-secondary mb-5">
+          <div class="card-header bg-secondary border-0">
+            <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between mb-3 pt-1">
+              <h6 class="font-weight-medium">Subtotal</h6>
+              <h6 class="font-weight-medium">$ <%= carts?.subTotal %></h6>
+            </div>
+            <div class="d-flex justify-content-between mb-3 pt-1">
+              <h6 class="font-weight-medium">Shipping</h6>
+              <h6 class="font-weight-medium">$ <%= carts?.shipping %></h6>
+            </div>
+            <div class="d-flex justify-content-between">
+              <h6 class="font-weight-medium">Discount</h6>
+              <h6 class="font-weight-medium">$ 0</h6>
+            </div>
+          </div>
+          <div class="card-footer border-secondary bg-transparent">
+            <div class="d-flex justify-content-between mt-2">
+              <h5 class="font-weight-bold">Total</h5>
+              <h5 class="font-weight-bold">$ <%= carts?.finalPrice %></h5>
+            </div>
+            <a href="/checkout" class="text-decoration-none"
+              ><button class="btn btn-block btn-primary my-3 py-3">
+                Proceed To Checkout
+              </button></a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>
 
-            }
+<!-- Cart End -->
 
-            function removeProduct(productId) {
-                $.ajax({
-                    url: '/removeProduct',
-                    method: 'post',
-                    data: {
-                        productId: productId
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            $("#re-load").load("/cart #re-load");
-                        }
-                    }
+<!-- ajax for quantity updation -->
+<script>
+  //for changing quantity
+  function changeQuantity(productId, count) {
+    console.log(productId, count);
+    $.ajax({
+      type: "post",
+      url: "/cartModify",
+      data: {
+        productId: productId,
+        count: count,
+      },
+      success: function (response) {
+        if (response.success) {
+          $("#re-load").load("/cart #re-load");
+        } else {
+          Swal.fire({
+            position: "center",
+            icon: "warning",
+            text: response.message,
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        }
+      },
+    });
+  }
 
-                })
-            }
+  function removeProduct(productId) {
+    $.ajax({
+      url: "/removeProduct",
+      method: "post",
+      data: {
+        productId: productId,
+      },
+      success: function (response) {
+        if (response.success) {
+          $("#re-load").load("/cart #re-load");
+        }
+      },
+    });
+  }
+</script>
 
-        </script>
-
-        <hr style="border: 0px solid #787878; margin: 100px 0;">
-        <%- include('../user/userFooter.ejs') %>
+<hr style="border: 0px solid #787878; margin: 100px 0" />
+<%- include('../user/userFooter.ejs') %>
