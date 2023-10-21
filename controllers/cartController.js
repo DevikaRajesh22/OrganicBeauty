@@ -232,7 +232,8 @@ exports.checkout = async (req, res) => {
                 select: 'productId productName productImage'
             });
         const addresses = await Address.findOne({ user: userId });
-        res.render('user/checkout', { pageTitle, user: req.session.name, carts, addresses });
+        const address=addresses.address;
+        res.render('user/checkout', { pageTitle, user: req.session.name, carts, addresses,address });
     } catch (error) {
         console.log(error.message);
     }

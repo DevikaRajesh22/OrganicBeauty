@@ -31,9 +31,45 @@
         <!-- Hero End -->
 
 
-        <!-- Product Start -->
-        
-        <!-- Product End -->
+        <!-- Orders Start -->
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Sno</th>
+                <th scope="col">Order date</th>
+                <th scope="col">Delivery date</th>
+                <th scope="col">Payment</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Status</th>
+                <th scope="col">Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% orders.forEach(function(order,index){ %>
+              <tr>
+                <th scope="row"><%= index+1 %></th>
+                <td>
+                  <%= new Date(order.date).toLocaleString('en-US', { year:
+                  'numeric' , month: '2-digit' , day: '2-digit' }) %>
+                </td>
+                <td>
+                    <%= new Date(order.deliveryDate).toLocaleString('en-US', { year:
+                    'numeric' , month: '2-digit' , day: '2-digit' }) %>
+                  </td>
+                  <td><%= order.paymentMethod %></td>
+                  <td><%= order.totalAmount %></td>
+                  <td><%= order.status%></td>
+                <td>
+                  <a href="/orderDet?orderId=<%= order._id %>"
+                    ><button type="button" class="btn btn-success">
+                      Order details
+                    </button></a>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <!-- Orders End -->
 
 
         <!-- Newsletter Start -->

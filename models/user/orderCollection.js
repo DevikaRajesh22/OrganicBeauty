@@ -32,15 +32,15 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
-      deliveryDate: {
-        type: Date,
-      },
-      status: {
-        type: String,
-        default: "Placed",
-      },
     },
   ],
+  status: {
+    type: String,
+    default: "Placed",
+  },
+  deliveryDate: {
+    type: Date,
+  },
   totalAmount: {
     type: Number,
     required: true,

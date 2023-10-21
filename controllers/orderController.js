@@ -1,6 +1,10 @@
 const User = require('../models/user/userCollection');
 const Order = require('../models/user/orderCollection');
 const Cart = require('../models/user/cartCollection');
+const Product = require('../models/admin/productCollection');
+const Address = require('../models/user/addressCollection');
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 //orders() GET request
 exports.orders = async (req, res) => {
@@ -16,7 +20,8 @@ exports.orders = async (req, res) => {
         if (!users) {
             return res.redirect('/login');
         }
-        res.render('user/orders', { user: req.session.name, pageTitle });
+        const orders = await Order.find();
+        res.render('user/orders', { user: req.session.name, pageTitle, orders });
     } catch (error) {
         console.log(error.message);
     }
@@ -25,53 +30,25 @@ exports.orders = async (req, res) => {
 //placeOrder() POST request
 exports.placeOrder = async (req, res) => {
     try {
-        console.log('place order post request');
-
         const userId = req.session.userId;
-        console.log('userId' + userId);
-
-        //user
         const user = await User.findOne({ _id: userId });
-        console.log('user' + user);
-
-        //userName
         const userName = req.session.name;
-        console.log('userName' + userName);
-
         const cartData = await Cart.findOne({ userId: userId });
-        console.log('cartData' + cartData);
-
         const products = cartData.products;
-        console.log('products' + products);
-
         const totalAmount = cartData.finalPrice;
-        console.log('totalAmount' + totalAmount);
-
-        //date
         const date = new Date();
-        console.log('date' + date);
 
-        //deliveryDate
+        const selAdd=req.body.selectedAddress.trim();
+        console.log(selAdd);
+        const ObjectId = mongoose.Types.ObjectId; 
+        const selAddObjectId = new ObjectId(selAdd);
+        const address = await Address.findOne({user : userId},{'address': { $elemMatch: { '_id': selAdd } }});
+        console.log(address);
+
+
         const deliveryDate = new Date(date);
         deliveryDate.setDate(date.getDate() + 10);
-        const options = {
-            weekday: 'short', // E.g., "Wed"
-            month: 'short',   // E.g., "Oct"
-            day: 'numeric',   // E.g., "18"
-            year: 'numeric',  // E.g., "2023"
-            hour: '2-digit',  // E.g., "10"
-            minute: '2-digit', // E.g., "37"
-            second: '2-digit', // E.g., "55"
-            timeZoneName: 'long', // E.g., "India Standard Time"
-            timeZone: 'UTC'  // Use 'UTC' to ensure consistent formatting
-        };
-        const formattedDeliveryDate = deliveryDate.toLocaleString('en-US', options);
-        console.log('Formatted delivery date: ' + formattedDeliveryDate);
-
-        //paymentMethod
         const paymentMethod = req.body.payment;
-        console.log(paymentMethod);
-
         //orderId
         function generateOrderId() {
             const prefix = "ORD";
@@ -80,28 +57,37 @@ exports.placeOrder = async (req, res) => {
             return uniqueId;
         }
         const orderId = generateOrderId();
-        console.log(orderId);
-
         const newOrder = new Order({
-            deliveryDetails,
+            deliveryDetails: address,
             user: userId,
             userName: userName,
-            products: [{
-                productId: products.id,
-                count: products.count,
-                productPrice:products.productPrice,
-                deliveryDate:formattedDeliveryDate,
-            }
-            ],
-            totalAmount:totalAmount,
-            date:date,
-            paymentMethod:paymentMethod,
-            orderId:orderId,
+            products: products,
+            deliveryDate: deliveryDate,
+            totalAmount: totalAmount,
+            date: date,
+            paymentMethod: paymentMethod,
+            orderId: orderId,
         });
-        console.log(newOrder);
-
+        await newOrder.save();
         res.redirect('/success');
     } catch (error) {
         console.log(error.message);
     }
-};3
+};
+
+//userDet() GET request
+exports.orderDet=async(req,res)=>{
+    try{
+        const pageTitle='Orders';
+        const orderId=req.query.orderId;
+        const orders = await Order.findOne({ _id: orderId }).populate(
+            "products.productId"
+        );
+        const userId=orders.user;
+        const cart=await Cart.findOne({userId:userId});
+        const subTotal=cart.subTotal;
+        res.render('user/orderDet',{user:req.session.name,pageTitle,orders,subTotal});
+    }catch(error){
+        console.log(error.message);
+    }
+};

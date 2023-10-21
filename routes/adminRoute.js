@@ -40,6 +40,8 @@ adminRoute.get('/cedit', categoryController.editCategory);
 adminRoute.post('/cedit', categoryController.editCategoryPost);
 
 //order management
-adminRoute.get('/orders',adminOrderController.orderGet);
+adminRoute.get('/ordersAdmin',adminOrderController.orderGet);
+adminRoute.post('/updateStatus',adminOrderController.updateStatus);
+adminRoute.get('/orderDetails',adminOrderController.orderDetails);
 
 module.exports = adminRoute;

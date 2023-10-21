@@ -1,0 +1,176 @@
+<%- include('../user/userHeader.ejs') %>
+    <!-- Spinner Start -->
+    <div id="spinner"
+        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
+
+    <!-- Navbar Start -->
+    <%- include('../user/userNavbar.ejs') %>
+        <!-- Navbar End -->
+
+        <!-- Order details Start -->
+        <style>
+            .card {
+              box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
+            }
+  
+            .card {
+              position: relative;
+              display: flex;
+              flex-direction: column;
+              min-width: 0;
+              word-wrap: break-word;
+              background-color: #fff;
+              background-clip: border-box;
+              border: 0 solid rgba(0, 0, 0, 0.125);
+              border-radius: 1rem;
+            }
+  
+            .text-reset {
+              --bs-text-opacity: 1;
+              color: inherit !important;
+            }
+  
+            a {
+              color: #5465ff;
+              text-decoration: none;
+            }
+          </style>
+          <div class="container-fluid">
+            <div class="container">
+              <!-- Title -->
+              <div class="d-flex justify-content-between align-items-center py-3">
+                <h2 class="h5 mb-0">
+                  <a href="#" class="text-muted"></a><b>#<%= orders.orderId %></b>
+                </h2>
+              </div>
+  
+              <!-- Main content -->
+              <div class="row">
+                <div class="col-lg-8">
+                  <!-- Details -->
+                  <div class="card mb-4">
+                    <div class="card-body">
+                      <div class="mb-3 d-flex justify-content-between">
+                        <div>
+                          <span class="me-3"
+                            ><b>Customer: </b>
+                            <%= orders.userName %>
+                          </span>
+                          <span class="badge rounded-pill bg-info">
+                            <%= orders.status %>
+                          </span>
+                        </div>
+                      </div>
+                      <table class="table">
+                        <tbody>
+                          <% orders.products.forEach(function(order){ %>
+                          <tr>
+                            <td>
+                              <div class="d-flex mb-2">
+                                <div class="flex-shrink-0">
+                                  <img
+                                    src="/product/img/<%= order.productId.productImage[0] %>"
+                                    alt=""
+                                    style="border-radius: 0%; margin-right: 10px; height: 50px; width: 50px;"
+                                    class="img-fluid"
+                                  />
+                                </div>
+                                <div class="flex-lg-grow-1 ms-3">
+                                  <h6 class="small mb-0">
+                                    <a href="#" class="text-reset">
+                                      <b><%= order.productId.productName %></b>
+                                    </a>
+                                  </h6>
+                                  <span class="small"
+                                    >Product Price: <%= order.productPrice %>
+                                  </span>
+                                </div>
+                              </div>
+                            </td>
+                            <td><%= order.count %></td>
+                            <td class="text-end">$ <%= order.totalPrice %></td>
+                          </tr>
+                          <% }) %>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <td colspan="2">Subtotal</td>
+                            <td class="text-end">$ <%= subTotal %></td>
+                          </tr>
+                          <tr>
+                            <td colspan="2">Shipping</td>
+                            <td class="text-end">$ 10</td>
+                          </tr>
+                          <tr>
+                            <td colspan="2">Discount (Code: NEWYEAR)</td>
+                            <td class="text-danger text-end">$ 0</td>
+                          </tr>
+                          <tr class="fw-bold">
+                            <td colspan="2"><b>TOTAL</b></td>
+                            <td class="text-end">$ <%= orders.totalAmount %></td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                  <!-- Payment -->
+                  <div class="card mb-4">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <h3 class="h6"><b>Payment Method</b></h3>
+                          <p><%= orders.paymentMethod %></p>
+                        </div>
+                        <div class="col-lg-6">
+                          <% orders.deliveryDetails.address.forEach(function(add){
+                          %>
+                          <h3 class="h6"><b>Billing address</b></h3>
+                          <address>
+                            <%= orders.userName %><br />
+                            <%= add.country %>, <%= add.state %><br />
+                            <%= add.city %>, <%= add.street %><br />
+                            <%= add.apartment %>, <%= add.zipcode %><br />
+                          </address>
+                          <% }) %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <!-- Order details End -->
+
+
+        <!-- Newsletter Start -->
+        <div class="container-fluid newsletter bg-primary py-5 my-5">
+            <div class="container py-5">
+                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px;">
+                    <h1 class="text-white mb-3"><span class="fw-light text-dark">Let's Subscribe</span> The Newsletter
+                    </h1>
+                    <p class="text-white mb-4">Subscribe now to get 15% discount on any of our products</p>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-7 wow fadeIn" data-wow-delay="0.5s">
+                        <div class="position-relative w-100 mt-3 mb-2">
+                            <input class="form-control w-100 py-4 ps-4 pe-5" type="text" placeholder="Enter Your Email"
+                                style="height: 48px;">
+                            <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2"><i
+                                    class="fa fa-paper-plane text-white fs-4"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Newsletter End -->
+
+
+        <!-- Footer Start -->
+        <%- include('../user/userFooter.ejs') %>
