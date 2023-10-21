@@ -69,11 +69,11 @@ exports.userLoginPost = async (req, res, next) => {
 };
 
 //forgotPassword() GET request
-exports.forgotPassword=async(req,res)=>{
-    try{
-        const pageTitle='Password';
-        res.render('user/forgotPassword',{pageTitle});
-    }catch(error){
+exports.forgotPassword = async (req, res) => {
+    try {
+        const pageTitle = 'Password';
+        res.render('user/forgotPassword', { pageTitle });
+    } catch (error) {
         console.log(error.message);
     }
 };
@@ -82,49 +82,49 @@ exports.forgotPassword=async(req,res)=>{
 var emailId;
 
 //forgotPasswordPost() POST request
-exports.forgotPasswordPost=async(req,res)=>{
-    try{
+exports.forgotPasswordPost = async (req, res) => {
+    try {
         // console.log('forgot password post request');
-         emailId=req.body.email;
+        emailId = req.body.email;
         // console.log(emailId);
-        const user=await User.findOne({email:emailId});
+        const user = await User.findOne({ email: emailId });
         // console.log(user);
-        if(user){
-           res.redirect('/forgotPasswordChange'); 
-        }else{
+        if (user) {
+            res.redirect('/forgotPasswordChange');
+        } else {
             res.redirect('/forgotPassword');
         }
-    }catch(error){
+    } catch (error) {
         console.log(error.message);
     }
 };
 
 //forgotPasswordChange() GET request
-exports.forgotPasswordChange=async(req,res)=>{
-    try{
+exports.forgotPasswordChange = async (req, res) => {
+    try {
         res.render('user/forgotPasswordChange');
-    }catch(error){
+    } catch (error) {
         console.log(error.message);
     }
 };
 
 //forgotPasswordChangePost() POST request
-exports.forgotPasswordChangePost=async(req,res)=>{
-    try{
-        const curPassword=req.body.currentpassword;
-        const newPassword=req.body.newpassword;
-        const user=await User.findOne({email:emailId});
-        const hashPass=user.spassword;
-        const same=await bcrypt.compare(curPassword,hashPass);
-        const updatedPassword=await bcrypt.hash(newPassword,10);
-        if(same){
-            const updateResult=await User.updateOne({email:emailId},{$set:{spassword:updatedPassword}});
-        }else{
+exports.forgotPasswordChangePost = async (req, res) => {
+    try {
+        const curPassword = req.body.currentpassword;
+        const newPassword = req.body.newpassword;
+        const user = await User.findOne({ email: emailId });
+        const hashPass = user.spassword;
+        const same = await bcrypt.compare(curPassword, hashPass);
+        const updatedPassword = await bcrypt.hash(newPassword, 10);
+        if (same) {
+            const updateResult = await User.updateOne({ email: emailId }, { $set: { spassword: updatedPassword } });
+        } else {
             console.log('password doesnt match');
             return res.redirect('/forgotPasswordChange');
         }
         res.redirect('/login');
-    }catch(error){
+    } catch (error) {
         console.log(error.message);
     }
 };
@@ -298,7 +298,7 @@ exports.account = async (req, res) => {
             return res.redirect('/login');
         }
         const users = await User.findOne({ _id: userId });
-        if(!users){
+        if (!users) {
             res.redirect('/login');
         }
         console.log(users);
@@ -311,21 +311,19 @@ exports.account = async (req, res) => {
 //accountPost() POST request
 exports.accountPost = async (req, res) => {
     try {
-
         const pass = req.body.currentpassword;
-        const newPass = req.body.newpassword
+        const newPass = req.body.newpassword;
         const userId = req.session.userId;
         const user = await User.findOne({ _id: userId });
         const hashPass = user.spassword;
-
         const same = await bcrypt.compare(pass, hashPass);
         const updatedPassword = await bcrypt.hash(newPass, 10);
         if (same) {
             const updateResult = await User.updateOne({ _id: userId }, { $set: { spassword: updatedPassword } });
+            res.redirect('/account');
         } else {
             console.log("password doesnt match");
         }
-
     } catch (error) {
         console.log(error.message);
     }
@@ -345,13 +343,18 @@ exports.changePassword = async (req, res) => {
 //address() GET request
 exports.address = async (req, res) => {
     try {
-        const userId=req.session.userId;
-        if(userId===undefined){
+        const pageTitle = 'Address';
+        const userId = req.session.userId;
+        if (userId === undefined) {
             res.redirect('/login');
         }
-        const addresses = await Address.findOne({user:userId});
-        const pageTitle = 'Address';
-        res.render('user/address', { pageTitle, user: req.session.name, addresses, number: req.session.phone });
+        const addresses = await Address.findOne({ user: userId });
+
+        if(addresses!=null){
+            res.render('user/address', { pageTitle, user: req.session.name, addresses:addresses, number: req.session.phone });
+        }else{
+            res.render('user/address', { pageTitle, user: req.session.name, addresses:undefined, number: req.session.phone });
+        }
     } catch (error) {
         console.log(error.message);
     }
@@ -391,7 +394,7 @@ exports.addAddressPost = async (req, res) => {
         } else {
             await Address.updateOne({ user: userId }, {
                 $push: {
-                    address:{
+                    address: {
                         country: req.body.country,
                         state: req.body.state,
                         apartment: req.body.apartment,
@@ -416,13 +419,13 @@ exports.deleteAddress = async (req, res) => {
         console.log('deleteAddress get request')
         const addressId = req.params.id;
         console.log(addressId);
-        const userId=req.session.userId;
-        const delAdd=await Address.updateOne(
-            {user:userId},
+        const userId = req.session.userId;
+        const delAdd = await Address.updateOne(
+            { user: userId },
             {
-                $pull:{
-                    address:{
-                        _id:addressId
+                $pull: {
+                    address: {
+                        _id: addressId
                     }
                 }
             }

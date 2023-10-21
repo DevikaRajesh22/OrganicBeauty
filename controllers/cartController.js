@@ -64,10 +64,10 @@ exports.cartGet = async (req, res) => {
                     // Handle the error, send an error response or redirect as needed
                 }
             } else {
-                res.render('user/cart', { pageTitle, carts,product:undefined, user: req.session.name });
+                res.render('user/cart', { pageTitle, carts, product: undefined, user: req.session.name });
             }
         } else {
-            res.render('user/cart', { pageTitle, carts: undefined, total: 0, user: req.session.name })
+            res.render('user/cart', { pageTitle, carts: undefined,product:undefined, total: 0, user: req.session.name })
         }
     } catch (error) {
         console.log(error);

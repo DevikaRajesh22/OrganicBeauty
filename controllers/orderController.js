@@ -20,8 +20,10 @@ exports.orders = async (req, res) => {
         if (!users) {
             return res.redirect('/login');
         }
-        const orders = await Order.find();
-        res.render('user/orders', { user: req.session.name, pageTitle, orders });
+        const orders = await Order.find({ user: userId });
+        const products = orders.products;
+        console.log('products' + products);
+        res.render('user/orders', { user: req.session.name, pageTitle, orders, products: products })
     } catch (error) {
         console.log(error.message);
     }
@@ -68,22 +70,24 @@ exports.placeOrder = async (req, res) => {
         const orderDetails = await newOrder.save();
 
         //to remove products from cart when order is placed
-        if(orderDetails){
-            const removeProducts=await Cart.findOneAndUpdate({userId:userId},
-               {$pull:{
-                products:{}
-               }})
+        if (orderDetails) {
+            const removeProducts = await Cart.findOneAndUpdate({ userId: userId },
+                {
+                    $pull: {
+                        products: {}
+                    }
+                })
         }
 
         //to reduce stock when order is placed
         const stockReduce = cartData.products;
-        console.log('stockreduce'+stockReduce);
-        for(let i=0;i<stockReduce.length;i++){
+        console.log('stockreduce' + stockReduce);
+        for (let i = 0; i < stockReduce.length; i++) {
             const productId = stockReduce[i].productId;
             const updatedProduct = await Product.findByIdAndUpdate(
-                productId, 
+                productId,
                 {
-                    $inc: { stock: -stockReduce[i].count } 
+                    $inc: { stock: -stockReduce[i].count }
                 },
                 { new: true }
             );

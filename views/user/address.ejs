@@ -15,42 +15,109 @@
 
 
         <!-- Hero Start -->
-        <div class="container-fluid bg-primary hero-header mb-5">
-            <div class="container text-center">
-                <h1 class="display-4 text-white mb-3 animated slideInDown">Address Book</h1>
-                <p>View and manage addresses</p>
-                <!-- <nav aria-label="breadcrumb">
-                <ol class="breadcrumb justify-content-center mb-0 animated slideInDown">
-                    <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
-                    <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
-                    <li class="breadcrumb-item text-white active" aria-current="page">Products</li>
-                </ol>
-            </nav> -->
-            </div>
-        </div>
-        <!-- Hero End -->
-
-
-        <!-- address Start -->
-        <div class="col-lg-9 my-lg-0 my-1">
-            <% addresses?.address?.forEach(function(address){ %>
-              <div class="card w-75 my-3">
-                <div class="card-body text-center">
-                  <h5 class="card-title my-3">
-                    <%= address.type %>
-                  </h5>
-                  <p class="card-text my-3">
-                  <h6><%=user?user:'user' %></h6>
-                  <%= address.country %>,<%= address.state %>, <%= address.apartment %><br>
-                        <%= address.city %>, <%= address.street %>, <%= address.zipcode %><br>
-                              <h6>Contact: <%=number?number:'Number' %></h6>
-                              </p>
-                              <a href="/adelete/<%= address._id %>" class="btn btn-danger my-3">Delete</a>
+            <div class="container-fluid bg-primary hero-header mb-5">
+                <div class="container text-center">
+                    <h1 class="display-4 text-white mb-3 animated slideInDown">Address Book</h1>
+                    <p>View and manage addresses</p>
+                    <!-- <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center mb-0 animated slideInDown">
+                        <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Products</li>
+                    </ol>
+                </nav> -->
                 </div>
+            </div>
+            <!-- Hero End -->
+    
+    
+            <!-- address Start -->
+            <% if(addresses===undefined){ %>
+                <style>
+                    .mt-100 {
+                      margin-top: 100px;
+                    }
+                  
+                    .card {
+                      margin-bottom: 30px;
+                      border: 0;
+                      -webkit-transition: all 0.3s ease;
+                      transition: all 0.3s ease;
+                      letter-spacing: 0.5px;
+                      border-radius: 8px;
+                      -webkit-box-shadow: 1px 5px 24px 0 rgba(68, 102, 242, 0.05);
+                      box-shadow: 1px 5px 24px 0 rgba(68, 102, 242, 0.05);
+                    }
+                  
+                    .card .card-header {
+                      background-color: #fff;
+                      border-bottom: none;
+                      padding: 24px;
+                      border-bottom: 1px solid #f6f7fb;
+                      border-top-left-radius: 8px;
+                      border-top-right-radius: 8px;
+                    }
+                  
+                    .card-header:first-child {
+                      border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+                    }
+                  
+                    .card .card-body {
+                      padding: 30px;
+                      background-color: transparent;
+                    }
+                  
+                    .btn-primary,
+                    .btn-primary.disabled,
+                    .btn-primary:disabled {
+                      background-color: #4466f2 !important;
+                      border-color: #4466f2 !important;
+                    }
+                  </style>
+                  <div class="container-fluid mt-100">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="card">
+                          <div class="card-header">
+                          </div>
+                          <div class="card-body cart">
+                            <div class="col-sm-12 empty-cart-cls text-center">
+                              <img
+                                src="https://i.imgur.com/dCdflKN.png"
+                                width="130"
+                                height="130"
+                                class="img-fluid mb-4 mr-3"
+                              />
+                              <h3><strong>You have not yet added any addresses</strong></h3>
+                              <h4>Please add some addresses :)</h4>
+                              <a href="/addAddress" class="btn" style="background-color: #8BB471; color: white; width: 150px;">Add New</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            <% }else{ %>
+            <div class="col-lg-9 my-lg-0 my-1">
+                <% addresses?.address?.forEach(function(address){ %>
+                  <div class="card w-75 my-3">
+                    <div class="card-body text-center">
+                      <h5 class="card-title my-3">
+                        <%= address.type %>
+                      </h5>
+                      <p class="card-text my-3">
+                      <h6><%=user?user:'user' %></h6>
+                      <%= address.country %>,<%= address.state %>, <%= address.apartment %><br>
+                            <%= address.city %>, <%= address.street %>, <%= address.zipcode %><br>
+                                  <h6>Contact: <%=number?number:'Number' %></h6>
+                                  </p>
+                                  <a href="/adelete/<%= address._id %>" class="btn btn-danger my-3">Delete</a>
+                    </div>
+                  </div>
+                  <% }); %>
+                    <a href="/addAddress" class="btn" style="background-color: #8BB471; color: white; width: 100px;">Add New</a>
               </div>
-              <% }); %>
-                <a href="/addAddress" class="btn" style="background-color: #8BB471; color: white; width: 100px;">Add New</a>
-          </div>
+        <% } %>
         <!-- address End -->
 
 
