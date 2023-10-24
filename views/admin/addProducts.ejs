@@ -243,14 +243,14 @@
                           <div class="form-group">
                             <label for="category">Select category:</label>
                             <select id="category" name="category">
-                              <% categories.forEach(function(category) { %>
+                              <% categories.filter(category => !category.isBlocked).forEach(function(category) { %>
                                 <option value="<%= category._id %>">
                                   <%= category.categoryName %>
                                 </option>
-                                <% }); %>
+                              <% }); %>
                             </select>
                             <br>
-                          </div>
+                          </div>                          
                           <div class="form-group">
                             <label for="name">Stock:</label>
                             <input type="text" class="form-control" id="category" name="stock" required>
