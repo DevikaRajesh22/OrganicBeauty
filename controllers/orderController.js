@@ -11,9 +11,7 @@ exports.orders = async (req, res) => {
     try {
         const pageTitle = 'Orders';
         const userId = req.session.userId;
-        console.log(userId);
         const users = await User.findOne({ _id: userId });
-        console.log(users);
         if (userId === undefined) {
             return res.redirect('/login');
         }
@@ -22,8 +20,14 @@ exports.orders = async (req, res) => {
         }
         const orders = await Order.find({ user: userId });
         const products = orders.products;
-        console.log('products' + products);
-        res.render('user/orders', { user: req.session.name, pageTitle, orders, products: products })
+        const carts=await Cart?.findOne({userId:userId});
+        let count=0;
+        if(carts?.products?.length>0){
+            count=count+carts.products.length;
+        }else{
+            count=0;
+        }
+        res.render('user/orders', { user: req.session.name, pageTitle, orders, products: products ,count})
     } catch (error) {
         console.log(error.message);
     }
@@ -39,12 +43,10 @@ exports.placeOrder = async (req, res) => {
         const products = cartData.products;
         const totalAmount = cartData.finalPrice;
         const date = new Date();
-
         const selAdd = req.body.selectedAddress.trim();
         const ObjectId = mongoose.Types.ObjectId;
         const selAddObjectId = new ObjectId(selAdd);
         const address = await Address.findOne({ user: userId }, { 'address': { $elemMatch: { '_id': selAdd } } });
-
         const deliveryDate = new Date(date);
         deliveryDate.setDate(date.getDate() + 10);
         const paymentMethod = req.body.payment;
@@ -81,7 +83,6 @@ exports.placeOrder = async (req, res) => {
 
         //to reduce stock when order is placed
         const stockReduce = cartData.products;
-        console.log('stockreduce' + stockReduce);
         for (let i = 0; i < stockReduce.length; i++) {
             const productId = stockReduce[i].productId;
             const updatedProduct = await Product.findByIdAndUpdate(
@@ -91,12 +92,7 @@ exports.placeOrder = async (req, res) => {
                 },
                 { new: true }
             );
-            console.log(updatedProduct);
         }
-
-
-
-
         res.redirect('/success');
     } catch (error) {
         console.log(error.message);
@@ -114,7 +110,13 @@ exports.orderDet = async (req, res) => {
         const userId = orders.user;
         const cart = await Cart.findOne({ userId: userId });
         const subTotal = cart.subTotal;
-        res.render('user/orderDet', { user: req.session.name, pageTitle, orders, subTotal });
+        let count=0;
+        if(cart?.products?.length>0){
+            count=count+cart.products.length;
+        }else{
+            count=0;
+        }
+        res.render('user/orderDet', { user: req.session.name, pageTitle, orders, subTotal,count });
     } catch (error) {
         console.log(error.message);
     }

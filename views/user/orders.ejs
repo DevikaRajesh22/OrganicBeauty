@@ -49,7 +49,10 @@
     </tr>
   </thead>
   <tbody>
-    <% orders.forEach(function(order,index){ %>
+    <% 
+    // Sort the orders by date in descending order (most recent first)
+    orders.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+    orders.forEach(function(order,index){ %>
     <tr>
       <th scope="row"><%= index+1 %></th>
       <td>

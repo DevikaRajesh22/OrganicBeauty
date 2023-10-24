@@ -29,7 +29,11 @@
             </tr>
           </thead>
           <tbody>
-            <% orders.forEach(function(order){ %>
+            <%
+            orders.sort(function(a, b) {
+              return new Date(b.date) - new Date(a.date);
+            });
+            orders.forEach(function(order){ %>
             <tr>
               <th scope="row"><%= order.orderId %></th>
               <td><%= order.userName %></td>
@@ -41,7 +45,7 @@
                 <% if(order.status==="Placed"){ %>
                 <button
                   class="btn btn-success"
-                  onclick="updateStatus('<%=order._id %>')"
+                  onclick="return updateStatus('<%=order._id %>')"
                   type="button"
                 >
                   <%= order.status %>
@@ -49,7 +53,7 @@
                 <% }else if(order.status==="Shipped"){ %>
                 <button
                   class="btn btn-success"
-                  onclick="updateStatus('<%=order._id %>')"
+                  onclick="return updateStatus('<%=order._id %>')"
                   type="button"
                 >
                   <%= order.status %>
@@ -57,7 +61,7 @@
                 <% }else if(order.status==="Out for delivery"){ %>
                 <button
                   class="btn btn-success"
-                  onclick="updateStatus('<%=order._id %>')"
+                  onclick="return updateStatus('<%=order._id %>')"
                   type="button"
                 >
                   <%= order.status %>
@@ -93,19 +97,33 @@
   <!-- container-scroller -->
   <script>
     function updateStatus(orderId) {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You want to change the status?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes",
+    cancelButtonText: "No",
+  }).then((result) => {
+    if (result.isConfirmed) {
       $.ajax({
         type: "post",
         url: "/admin/updateStatus",
         data: {
           orderId: orderId,
         },
-        success : function(response){
-            if(response.success){
-                location.reload()
-            }
-        }
+        success: function (response) {
+          if (response.success) {
+            location.reload();
+          }
+        },
       });
     }
+  });
+}
+
   </script>
   <!-- footer -->
   <%- include('../admin/adminFooter.ejs') %>

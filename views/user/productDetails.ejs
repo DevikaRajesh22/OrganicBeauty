@@ -35,13 +35,13 @@
                             <h3>
                                 <%=products.productName%>
                             </h3>
-                            <div class="product__details__price">$<%=products.price%>
+                            <div class="product__details__price">₹<%=products.price%>
                             </div>
                             <div style="display: inline;">
                                 <a href="#" class="heart-icon"><i class="far fa-heart"></i></a>
                                 <form action="/add?id=<%= products._id %>" method="POST">
                                     <button href="/addToCart?id=<%=products._id%>" class="btn btn-outline-success"
-                                        type="submit">Add to cart</button>
+                                        type="submit" onclick="addToCart()">Add to cart</button>
                                 </form>
                             </div>
                             <ul>
@@ -74,4 +74,16 @@
             </div>
         </section>
         <!-- Product Details Section End -->
+
+        <!-- sweetalert script -->
+        <script>
+            function addToCart() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'The product has been added to your cart.',
+                });
+            }
+        </script>
+
         <%- include('../user/userFooter.ejs') %>

@@ -45,10 +45,10 @@
                             <div class="product-item text-center border h-100 p-4">
                                 <img class="img-fluid mb-4" src="/product/img/<%=product.productImage[0]%>" alt="">
                                 <a href="/productDetails?id=<%=product._id%>" class="h6 d-inline-block mb-2"><%=product.productName%></a>
-                                <h5 class="text-primary mb-3">$ <%=product.price%></h5>
+                                <h5 class="text-primary mb-3">₹ <%=product.price%></h5>
                                 <!-- <a href="" class="btn btn-outline-primary px-3">Add To Cart</a> -->
                                 <form action="/add?id=<%= product._id %>" method="POST">
-                                    <button href="/addToCart?id=<%=products._id%>" class="btn btn-outline-success" type="submit">Add to cart</button>
+                                    <button href="/addToCart?id=<%=products._id%>" class="btn btn-outline-success" type="submit" onclick="addToCart()">Add to cart</button>
                                 </form>
                             </div>
                        
@@ -86,6 +86,16 @@
         </div>
         <!-- Newsletter End -->
 
+        <!-- sweetalert script -->
+        <script>
+            function addToCart() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'The product has been added to your cart.',
+                });
+            }
+        </script>
 
         <!-- Footer Start -->
         <%- include('../user/userFooter.ejs') %>

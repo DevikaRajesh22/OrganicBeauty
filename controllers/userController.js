@@ -1,5 +1,6 @@
 const User = require('../models/user/userCollection');
 const Address = require('../models/user/addressCollection');
+const Cart=require('../models/user/cartCollection');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const nodemailer = require('nodemailer');
@@ -175,10 +176,17 @@ exports.landingPage = async (req, res) => {
     try {
         const userId = req.session.userId;
         const user = await User.findOne({ _id: userId });
+        const carts=await Cart?.findOne({userId:userId});
         const pageTitle = 'Home';
+        let count=0;
         const products = await Product.find();
+        if(carts){
+            count=count+carts.products.length;
+        }else{
+            count=0;
+        }
 
-        res.render('user/landingPage', { products, pageTitle, user: req.session.name });
+        res.render('user/landingPage', { products, pageTitle, count,user: req.session.name });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -188,11 +196,19 @@ exports.landingPage = async (req, res) => {
 //productsGet GET request
 exports.productsGet = async (req, res) => {
     try {
-        console.log('productsGet request')
+        console.log('productsGet request');
+        const userId=req.session.userId;
+        const carts=await Cart?.findOne({userId:userId});
+        let count=0;
+        if(carts?.products?.length>0){
+            count=count+carts.products.length;
+        }else{
+            count=0;
+        }
         const pageTitle = 'Products';
         const products = await Product.find();
         console.log(req.session.name);
-        res.render('user/products', { pageTitle, products, user: req.session.name });
+        res.render('user/products', { pageTitle, products,count, user: req.session.name });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -254,10 +270,18 @@ exports.logout = async (req, res) => {
 //productDetails GET request
 exports.productDetails = async (req, res) => {
     try {
-        const productId = req.query.id
+        const productId = req.query.id;
+        const userId=req.session.userId;
+        const carts=await Cart?.findOne({userId:userId});
+        let count=0;
+        if(carts?.products?.length>0){
+            count=count+carts.products.length;
+        }else{
+            count=0;
+        }
         const products = await Product.findOne({ _id: productId })
         const pageTitle = 'Product';
-        res.render('user/productDetails', { pageTitle, products, user: req.session.name });
+        res.render('user/productDetails', { pageTitle, products,count, user: req.session.name });
     } catch (error) {
         console.log(error.message);
     }
@@ -268,8 +292,15 @@ exports.about = async (req, res) => {
     try {
         const userId = req.session.userId;
         const user = await User.findOne({ _id: userId });
+        const carts=await Cart?.findOne({userId:userId});
+        let count=0;
+        if(carts?.products?.length>0){
+            count=count+carts.products.length;
+        }else{
+            count=0;
+        }
         const pageTitle = 'About';
-        res.render('user/about', { pageTitle, user });
+        res.render('user/about', { pageTitle, user:req.session.name,count });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -280,7 +311,15 @@ exports.about = async (req, res) => {
 exports.contact = async (req, res) => {
     try {
         const pageTitle = 'contact';
-        res.render('user/contact', { pageTitle, user: req.session.name });
+        const userId=req.session.userId;
+        const carts=await Cart.findOne({userId:userId});
+        let count=0;
+        if(carts?.products?.length>0){
+            count=count+carts.products.length;
+        }else{
+            count=0;
+        }
+        res.render('user/contact', { pageTitle, user: req.session.name, count});
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -293,7 +332,13 @@ exports.account = async (req, res) => {
         const pageTitle = 'Account';
         console.log('account get request');
         const userId = req.session.userId;
-        console.log(userId);
+        const carts=await Cart?.findOne({userId:userId});
+        let count=0;
+        if(carts?.products?.length>0){
+            count=count+carts.products.length;
+        }else{
+            count=0;
+        }
         if (userId === undefined) {
             return res.redirect('/login');
         }
@@ -302,7 +347,7 @@ exports.account = async (req, res) => {
             res.redirect('/login');
         }
         console.log(users);
-        res.render('user/account', { pageTitle, user: req.session.name, users, pageTitle });
+        res.render('user/account', { pageTitle, user: req.session.name, users, pageTitle,count });
     } catch (error) {
         console.log(error.message);
     }
@@ -313,16 +358,23 @@ exports.accountPost = async (req, res) => {
     try {
         const pass = req.body.currentpassword;
         const newPass = req.body.newpassword;
+        const conPass = req.body.confirmpassword;
         const userId = req.session.userId;
         const user = await User.findOne({ _id: userId });
         const hashPass = user.spassword;
-        const same = await bcrypt.compare(pass, hashPass);
-        const updatedPassword = await bcrypt.hash(newPass, 10);
-        if (same) {
-            const updateResult = await User.updateOne({ _id: userId }, { $set: { spassword: updatedPassword } });
-            res.redirect('/account');
+        if (newPass === conPass) {
+            console.log('newpass and conpass match');
+            const same = await bcrypt.compare(pass, hashPass);
+            const updatedPassword = await bcrypt.hash(newPass, 10);
+            if (same) {
+                const updateResult = await User.updateOne({ _id: userId }, { $set: { spassword: updatedPassword } });
+                res.redirect('/account');
+            } else {
+                console.log("password doesnt match");
+            }
         } else {
-            console.log("password doesnt match");
+            console.log('newpass and conpass doesnt match');
+            res.redirect('/changePassword');
         }
     } catch (error) {
         console.log(error.message);
@@ -332,9 +384,17 @@ exports.accountPost = async (req, res) => {
 //changePassword() GET request
 exports.changePassword = async (req, res) => {
     try {
-        console.log('change password get')
+        console.log('change password get');
+        const userId=req.session.userId;
+        const carts=await Cart?.findOne({userId:userId});
+        let count=0;
+        if(carts?.products?.length>0){
+            count=count+carts.products.length;
+        }else{
+            count=0;
+        }
         const pageTitle = 'Account';
-        res.render('user/changePassword', { pageTitle, user: req.session.name });
+        res.render('user/changePassword', { pageTitle, user: req.session.name,count});
     } catch (error) {
         console.log(error.message);
     }
@@ -349,11 +409,17 @@ exports.address = async (req, res) => {
             res.redirect('/login');
         }
         const addresses = await Address.findOne({ user: userId });
-
-        if(addresses!=null){
-            res.render('user/address', { pageTitle, user: req.session.name, addresses:addresses, number: req.session.phone });
+        const carts=await Cart?.findOne({userId:userId});
+        let count=0;
+        if(carts?.products?.length>0){
+            count=count+carts.products.length;
         }else{
-            res.render('user/address', { pageTitle, user: req.session.name, addresses:undefined, number: req.session.phone });
+            count=0;
+        }
+        if (addresses != null) {
+            res.render('user/address', { pageTitle, user: req.session.name, addresses: addresses, number: req.session.phone,count });
+        } else {
+            res.render('user/address', { pageTitle, user: req.session.name, addresses: undefined, number: req.session.phone,count });
         }
     } catch (error) {
         console.log(error.message);
@@ -365,7 +431,15 @@ exports.addAddress = async (req, res) => {
     try {
         console.log('req received at addAddress get')
         const pageTitle = 'Address';
-        res.render('user/addAddress', { pageTitle, user: req.session.name });
+        const userId=req.session.userId;
+        const carts=await Cart?.findOne({userId:userId});
+        let count=0;
+        if(carts?.products?.length>0){
+            count=count+carts.products.length;
+        }else{
+            count=0;
+        }
+        res.render('user/addAddress', { pageTitle, user: req.session.name, count});
     } catch (error) {
         console.log(error.message);
     }
@@ -436,8 +510,3 @@ exports.deleteAddress = async (req, res) => {
         console.log(error.message);
     }
 };
-
-
-
-
-

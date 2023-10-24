@@ -111,7 +111,7 @@
                             <div class="border p-4">
                                 <p class="mb-2">Natural & Organic Shampoo</p>
                                 <h2 class="fw-bold text-uppercase mb-4">Deals of the Day</h2>
-                                <h1 class="display-4 text-primary mb-4">$99.99</h1>
+                                <h1 class="display-4 text-primary mb-4">₹99.99</h1>
                                 <h5>Fresh Organic Shampoo</h5>
                                 <p class="mb-4">Our organic fresh hair shampoo is a revitalizing blend of all-natural
                                     ingredients that gently cleanse and nourish your hair. Experience the invigorating
@@ -283,10 +283,11 @@
                                 <a href="/productDetails?id=<%=product._id%>" class="h6 d-inline-block mb-2">
                                     <%= product.productName %>
                                 </a>
-                                <h5 class="text-primary mb-3">$<%= product.price%>
+                                <h5 class="text-primary mb-3">₹ <%= product.price%>
                                 </h5>
                                 <form action="/add?id=<%= product._id %>" method="POST">
-                                    <button href="/addToCart?id=<%=product._id%>" class="btn btn-outline-success" type="submit">Add to cart</button>
+                                    <button href="/addToCart?id=<%=product._id%>" class="btn btn-outline-success"
+                                        type="submit" onclick="addToCart()">Add to cart</button>
                                 </form>
                             </div>
                         </div>
@@ -317,6 +318,18 @@
             </div>
         </div>
         <!-- Newsletter End -->
+
+        <script>
+            function addToCart() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'The product has been added to your cart.',
+                    showConfirmButton:false,
+                    timer:1500,
+                });
+            }
+        </script>
 
         <!-- Footer Partials -->
         <%- include('../user/userFooter.ejs') %>

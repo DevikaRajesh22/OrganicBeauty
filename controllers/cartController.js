@@ -21,6 +21,12 @@ exports.cartGet = async (req, res) => {
                 model: 'Product',
                 select: 'productId productName productImage'
             });
+        let count = 0;
+        if (carts?.products?.length > 0) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
+        }
 
         if (carts) {
             const products = carts.products.length;
@@ -54,20 +60,20 @@ exports.cartGet = async (req, res) => {
                     const updatedResult = await Cart.findOne({ userId: userId });
                     if (updatedResult) {
                         await updatedResult.save();
-                        res.render('user/cart', { pageTitle, carts, product: products, total: total[0].total, user: req.session.name });
+                        res.render('user/cart', { pageTitle, carts, product: products, total: total[0].total, user: req.session.name,count });
                     } else {
                         // Handle the case where total is empty or undefined
-                        res.render('user/cart', { pageTitle, carts: undefined, product: products, total: 0, user });
+                        res.render('user/cart', { pageTitle, carts: undefined, product: products, total: 0, user ,customElements});
                     }
                 } catch (err) {
                     console.error('Error in aggregation:', err);
                     // Handle the error, send an error response or redirect as needed
                 }
             } else {
-                res.render('user/cart', { pageTitle, carts, product: undefined, user: req.session.name });
+                res.render('user/cart', { pageTitle, carts, product: undefined, user: req.session.name,count });
             }
         } else {
-            res.render('user/cart', { pageTitle, carts: undefined,product:undefined, total: 0, user: req.session.name })
+            res.render('user/cart', { pageTitle, carts: undefined, product: undefined, total: 0, user: req.session.name,count })
         }
     } catch (error) {
         console.log(error);
@@ -230,9 +236,14 @@ exports.checkout = async (req, res) => {
                 model: 'Product',
                 select: 'productId productName productImage'
             });
+        if(carts?.products?.length>0){
+            count=count+carts.products.length;
+        }else{
+            count=0;
+        }
         const addresses = await Address.findOne({ user: userId });
         const address = addresses.address;
-        res.render('user/checkout', { pageTitle, user: req.session.name, carts, addresses, address });
+        res.render('user/checkout', { pageTitle, user: req.session.name, carts, addresses, address,count });
     } catch (error) {
         console.log(error.message);
     }
@@ -249,7 +260,14 @@ exports.editAddress = async (req, res) => {
             { "address.$": 1 }
         );
         const address = addressData.address[0];
-        res.render('user/editAddress', { user: req.session.name, address, pageTitle });
+        const carts=await Cart?.findOne({userId:userId});
+        let count=0;
+        if(carts?.products?.length>0){
+            count=count+carts.products.length;
+        }else{
+            count=0;
+        }
+        res.render('user/editAddress', { user: req.session.name, address, pageTitle ,count});
     } catch (error) {
         console.log(error.message);
     }
@@ -258,11 +276,8 @@ exports.editAddress = async (req, res) => {
 //editAddressPost() POST request
 exports.editAddressPost = async (req, res) => {
     try {
-        // console.log('editAddressPost');
         const userId = req.session.userId;
-        // console.log(userId);
         const addressId = req.body.id;
-        // console.log(addressId);
         const { country, state, apartment, city, street, zipcode, type } = req.body;
         const updatedAddress = await Address.updateOne(
             { user: userId, 'address._id': addressId },
@@ -279,7 +294,6 @@ exports.editAddressPost = async (req, res) => {
                 },
             },
         );
-        // console.log(updatedAddress);
         res.redirect('/checkout');
     } catch (error) {
         console.log(error.message);
@@ -290,10 +304,16 @@ exports.editAddressPost = async (req, res) => {
 exports.success = async (req, res) => {
     try {
         const pageTitle = 'Success';
-        res.render('user/success', { pageTitle, user: req.session.name });
+        const userId=req.session.userId;
+        const carts=await Cart?.findOne({userId:userId});
+        let count=0;
+        if(carts?.products?.length>0){
+            count=count+carts.products.length;
+        }else{
+            count=0;
+        }
+        res.render('user/success', { pageTitle, user: req.session.name,count });
     } catch (error) {
         console.log(error.message);
     }
-}
-
-
+};

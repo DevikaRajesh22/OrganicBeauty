@@ -115,7 +115,9 @@
                 aria-hidden="true"
                 style="color: black"
               ></i>
-              <span class="badge">2</span>
+              <% if (user) { %>
+              <span class="badge"><%=count%></span>
+              <% } else { %> <% } %>
             </a>
           </div>
         </div>

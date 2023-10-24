@@ -101,7 +101,7 @@
                 />
                 <%= product.productId.productName %>
               </td>
-              <td class="align-middle">$ <%= product.productPrice%></td>
+              <td class="align-middle">₹ <%= product.productPrice%></td>
               <td class="align-middle">
                 <div class="input-group quantity mx-auto" style="width: 100px">
                   <div class="input-group-btn">
@@ -127,7 +127,7 @@
                   </div>
                 </div>
               </td>
-              <td class="align-middle">$ <%= product.totalPrice %></td>
+              <td class="align-middle">₹ <%= product.totalPrice %></td>
               <td class="align-middle">
                 <button
                   class="btn btn-sm btn-primary"
@@ -162,15 +162,15 @@
           <div class="card-body">
             <div class="d-flex justify-content-between mb-3 pt-1">
               <h6 class="font-weight-medium">Subtotal</h6>
-              <h6 class="font-weight-medium">$ <%= carts?.subTotal %></h6>
+              <h6 class="font-weight-medium">₹ <%= carts?.subTotal %></h6>
             </div>
             <div class="d-flex justify-content-between mb-3 pt-1">
               <h6 class="font-weight-medium">Shipping</h6>
-              <h6 class="font-weight-medium">$ <%= carts?.shipping %></h6>
+              <h6 class="font-weight-medium">₹ <%= carts?.shipping %></h6>
             </div>
             <div class="d-flex justify-content-between">
               <h6 class="font-weight-medium">Discount</h6>
-              <h6 class="font-weight-medium">$ 0</h6>
+              <h6 class="font-weight-medium">₹ 0</h6>
             </div>
           </div>
           <div class="card-footer border-secondary bg-transparent">
@@ -222,19 +222,32 @@
   }
 
   function removeProduct(productId) {
-    $.ajax({
-      url: "/removeProduct",
-      method: "post",
-      data: {
-        productId: productId,
-      },
-      success: function (response) {
-        if (response.success) {
-          $("#re-load").load("/cart #re-load");
-        }
-      },
-    });
-  }
+  Swal.fire({
+    title: 'Remove Product from Cart',
+    text: 'Are you sure you want to remove this product from your cart?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, remove it',
+    cancelButtonText: 'Cancel',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // User confirmed the removal, proceed with the AJAX request to remove the product.
+      $.ajax({
+        url: '/removeProduct',
+        method: 'post',
+        data: {
+          productId: productId,
+        },
+        success: function (response) {
+          if (response.success) {
+            // Reload the cart section after successful removal
+            $("#re-load").load('/cart #re-load');
+          }
+        },
+      });
+    }
+  });
+}
 </script>
 
 <hr style="border: 0px solid #787878; margin: 100px 0" />
