@@ -1,89 +1,130 @@
 <%- include('../user/userHeader.ejs') %>
-    <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
-    <!-- Navbar Start -->
-    <%- include('../user/userNavbar.ejs') %>
-        <!-- Navbar End -->
+<!-- Page Preloder -->
+<div id="preloder">
+  <div class="loader"></div>
+</div>
+<!-- Navbar Start -->
+<%- include('../user/userNavbar.ejs') %>
+<!-- Navbar End -->
 
-        <!-- Product Details Section Begin -->
-        <section class="product-details spad">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 col-md-6">
-                        <div class="product__details__pic">
-                            <div class="product__details__pic__item">
-                                <img class="product__details__pic__item--large"
-                                    src="product/img/<%=products.productImage[0]%>" alt="">
-                            </div>
-                            <div class="product__details__pic__slider owl-carousel">
+<!-- Product Details Section Begin -->
+<style>
+  .product {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s; /* Add a smooth transition effect */
+  }
 
-                                <img data-imgbigurl="product/img/<%=products.productImage[0]%>"
-                                    src="product/img/<%=products.productImage[0]%>" alt="">
-                                <img data-imgbigurl="product/img/<%=products.productImage[1]%>"
-                                    src="product/img/<%=products.productImage[1]%>" alt="">
-                                <img data-imgbigurl="product/img/<%=products.productImage[2]%>"
-                                    src="product/img/<%=products.productImage[2]%>" alt="">
-                                <img data-imgbigurl="product/img/<%=products.productImage[3]%>"
-                                    src="product/img/<%=products.productImage[3]%>" alt="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6">
-                        <div class="product__details__text">
-                            <h3>
-                                <%=products.productName%>
-                            </h3>
-                            <div class="product__details__price">₹<%=products.price%>
-                            </div>
-                            <div style="display: inline;">
-                                <a href="#" class="heart-icon"><i class="far fa-heart"></i></a>
-                                <form action="/add?id=<%= products._id %>" method="POST">
-                                    <button href="/addToCart?id=<%=products._id%>" class="btn btn-outline-success"
-                                        type="submit" onclick="addToCart()">Add to cart</button>
-                                </form>
-                            </div>
-                            <ul>
-                                <li><b>Availability</b> <span>In Stock</span></li>
-                                <li><b>Shipping</b> <span>01 day shipping. <samp>Free pickup today</samp></span></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-12">
-                        <div class="product__details__tab">
-                            <ul class="nav nav-tabs" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab"
-                                        aria-selected="true">Description</a>
-                                </li>
-                            </ul>
-                            <div class="tab-content">
-                                <div class="tab-pane active" id="tabs-1" role="tabpanel">
-                                    <div class="product__details__tab__desc">
-                                        <h6>Products Infomation</h6>
-                                        <p>
-                                            <%=products.productDetails%>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  .product img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .product:hover {
+    transform: scale(1.1); /* Scale the image up by 10% on hover */
+  }
+</style>
+<section class="product-details spad">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 col-md-6">
+        <div class="product__details__pic">
+          <div class="product__details__pic__item product">
+            <img
+              class="product__details__pic__item--large"
+              src="product/img/<%=products.productImage[0]%>"
+              alt=""
+            />
+          </div>
+          <div class="product__details__pic__slider owl-carousel">
+            <img
+              data-imgbigurl="product/img/<%=products.productImage[0]%>"
+              src="product/img/<%=products.productImage[0]%>"
+              alt=""
+            />
+            <img
+              data-imgbigurl="product/img/<%=products.productImage[1]%>"
+              src="product/img/<%=products.productImage[1]%>"
+              alt=""
+            />
+            <img
+              data-imgbigurl="product/img/<%=products.productImage[2]%>"
+              src="product/img/<%=products.productImage[2]%>"
+              alt=""
+            />
+            <img
+              data-imgbigurl="product/img/<%=products.productImage[3]%>"
+              src="product/img/<%=products.productImage[3]%>"
+              alt=""
+            />
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6">
+        <div class="product__details__text">
+          <h3><%=products.productName%></h3>
+          <div class="product__details__price">₹<%=products.price%></div>
+          <div style="display: inline">
+            <a href="#" class="heart-icon"><i class="far fa-heart"></i></a>
+            <form action="/add?id=<%= products._id %>" method="POST">
+              <button
+                href="/addToCart?id=<%=products._id%>"
+                class="btn btn-outline-success"
+                type="submit"
+                onclick="addToCart()"
+              >
+                Add to cart
+              </button>
+            </form>
+          </div>
+          <ul>
+            <li><b>Availability</b> <span>In Stock</span></li>
+            <li>
+              <b>Shipping</b>
+              <span>01 day shipping. <samp>Free pickup today</samp></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <div class="product__details__tab">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                data-toggle="tab"
+                href="#tabs-1"
+                role="tab"
+                aria-selected="true"
+                >Description</a
+              >
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+              <div class="product__details__tab__desc">
+                <h6>Products Infomation</h6>
+                <p><%=products.productDetails%></p>
+              </div>
             </div>
-        </section>
-        <!-- Product Details Section End -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Product Details Section End -->
 
-        <!-- sweetalert script -->
-        <script>
-            function addToCart() {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'The product has been added to your cart.',
-                });
-            }
-        </script>
+<!-- sweetalert script -->
+<script>
+  function addToCart() {
+    Swal.fire({
+      icon: "success",
+      title: "Success",
+      text: "The product has been added to your cart.",
+    });
+  }
+</script>
 
-        <%- include('../user/userFooter.ejs') %>
+<%- include('../user/userFooter.ejs') %>

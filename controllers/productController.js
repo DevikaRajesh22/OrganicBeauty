@@ -95,14 +95,25 @@ exports.editProductPost = async (req, res) => {
     }
 };
 
-//deleteProducts GET request
-exports.deleteProduct = async (req, res) => {
-    const productId = req.params.id;
-    try {
-        await Product.deleteOne({ _id: productId });
-        res.redirect('/admin/products');
-    } catch (error) {
-        console.log(error.message);
-        res.redirect('/admin/errors');
-    }
-}
+//hideProduct() GET request
+exports.hideProduct=async(req,res)=>{
+   try{
+    const productId=req.params.id;
+    const updatedProduct=await Product.updateOne({_id:productId},{isList:false});
+    res.redirect('/admin/products');
+   }catch(error){
+    console.log(error.message);
+   } 
+};
+
+//showProduct() GET request
+exports.showProduct=async(req,res)=>{
+    try{
+     console.log('show product get request');
+     const productId=req.params.id;
+     const updatedProduct=await Product.updateOne({_id:productId},{isList:true});
+     res.redirect('/admin/products');
+    }catch(error){
+     console.log(error.message);
+    } 
+ };

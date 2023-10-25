@@ -24,6 +24,10 @@ const ProductSchema = new mongoose.Schema({
     stock: {
         type: Number,
         required: true
+    },
+    isList:{
+        type:Boolean,
+        default:true,
     }
 });
 

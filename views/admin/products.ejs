@@ -273,10 +273,17 @@
                                                                     type="button" class="text-decoration-none my-1">
                                                                     <button class="btn btn-warning">Edit</button>
                                                                 </a>
-                                                                <a href="/admin/pdelete/<%= product._id %>"
+                                                                <% if(product.isList){ %>
+                                                                    <a href="/admin/hide/<%= product._id %>"
+                                                                        type="button" class="text-decoration-none">
+                                                                        <button class="btn btn-danger">Hide</button>
+                                                                    </a>
+                                                               <% }else{ %>
+                                                                <a href="/admin/show/<%= product._id %>"
                                                                     type="button" class="text-decoration-none">
-                                                                    <button class="btn btn-danger">Delete</button>
+                                                                    <button class="btn btn-success">Show</button>
                                                                 </a>
+                                                              <% } %>
                                                             </td>
                                                         </tr>
                                                         <% }); %>

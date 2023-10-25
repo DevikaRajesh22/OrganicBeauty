@@ -28,7 +28,8 @@ adminRoute.get('/addProducts', productController.addProducts);
 adminRoute.post('/addProducts', multer.upload.array('image', 4), productController.addProductsPost);
 adminRoute.get('/pedit', productController.editProduct);
 adminRoute.post('/pedit', productController.editProductPost);
-adminRoute.get('/pdelete/:id', productController.deleteProduct);
+adminRoute.get('/hide/:id',productController.hideProduct);
+adminRoute.get('/show/:id',productController.showProduct);
 
 //category management
 adminRoute.get('/category', categoryController.category);
