@@ -15,7 +15,7 @@
                                 <div class="row page-title-header">
                                     <div class="col-12">
                                         <div class="page-header">
-                                            <h4 class="page-title">Category Management</h4>
+                                            <h4 class="page-title">Coupon Management</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -232,24 +232,31 @@
                                                 <div class="table-title">
                                                     <div class="row">
                                                         <div class="col-sm-5 d-flex mx-5">
-                                                            <h4 class="text-white">Update category</h4>
+                                                            <h4 class="text-white">Update coupon</h4>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="container">
-                                                    <form action="/admin/cedit" method="post">
+                                                    <form action="/admin/editCouponPost" method="post">
                                                         <div class="form-group">
-                                                            <label for="name">Category Name:</label>
-                                                            <input type="text" class="form-control" id="cname"
-                                                                name="cname" value="<%=  cinfo.categoryName%>" required>
+                                                            <label for="ccode">Coupon Code:</label>
+                                                            <input type="text" class="form-control" id="ccode"
+                                                                name="ccode" value="<%= coupon.couponCode %>">
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="pdetails">Category description:</label>
-                                                            <input class="form-control" id="cdesc" name="cdesc" rows="4"
-                                                                value="<%= cinfo.categoryDescription%>" required>
+                                                            <label for="minPur">Minimum Purchase:</label>
+                                                            <input type="text" class="form-control" id="minPur" name="minPur" value="<%= coupon.minimumPurchase %>">
                                                         </div>
-                                                        <input type="hidden" value="<%= cinfo._id %>" name="id">
-                                                        <a href="/admin/category" class="text-decoration-none"
+                                                        <div class="form-group">
+                                                            <label for="maxDis">Maximum Discount:</label>
+                                                            <input type="text" class="form-control" id="maxDis" name="maxDis" value="<%= coupon.maximumDiscount%>">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="valid">Valid till:</label>
+                                                            <input type="date" class="form-control" id="datepicker" name="valid" value="<%= coupon.lastDate %>">
+                                                        </div>
+                                                        <input type="hidden" value="<%= coupon._id %>" name="id">
+                                                        <a href="" class="text-decoration-none"
                                                             type="button" class="btn btn-dark">
                                                             <button class="btn btn-outline-dark">Update</button>
                                                         </a>

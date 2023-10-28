@@ -131,18 +131,29 @@
                                                         </p>
                                                         <% const date=new Date(coupon.lastDate); const
                                                             day=String(date.getDate()).padStart(2, '0' ); const
-                                                            month=String(date.getMonth() + 1).padStart(2, '0' );
-                                                            const year=date.getFullYear(); 
-                                                            const formattedDate=`${day}-${month}-${year}`; %>
+                                                            month=String(date.getMonth() + 1).padStart(2, '0' ); const
+                                                            year=date.getFullYear(); const
+                                                            formattedDate=`${day}-${month}-${year}`; %>
                                                             <p class="text-muted font-size-sm">Valid Till: <%=
                                                                     formattedDate %>
                                                             </p>
                                                     </div>
                                                     <div class="card-footer">
                                                         <button class="btn btn-light btn-sm bg-white has-icon btn-block"
-                                                            type="button"><i class="material-icons">Edit</i></button>
-                                                        <button class="btn btn-light btn-sm bg-white has-icon ml-2"
-                                                            type="button"><i class="fas fa-trash-alt"></i></button>
+                                                            type="button"><i class="material-icons"><a
+                                                                    href="/admin/editCoupon?id=<%= coupon._id%>" style="text-decoration: none;">Edit</a></i></button>
+                                                        <% if(coupon.showStatus){ %>
+                                                            <a href="/admin/hideCoupon?id=<%= coupon._id %>"><button
+                                                                class="btn btn-light btn-sm bg-white has-icon ml-2"
+                                                                type="button"><i class="fas fa-eye">
+                                                                </i></button></a>
+                                                            <% }else{ %>
+                                                                <a
+                                                                    href="/admin/showCoupon?id=<%= coupon._id %>"><button
+                                                                    class="btn btn-light btn-sm bg-white has-icon ml-2"
+                                                                    type="button"><i class="fas fa-eye-slash">
+                                                                    </i></button></a>
+                                                                <% } %>
                                                     </div>
                                                 </div>
                                             </div>
