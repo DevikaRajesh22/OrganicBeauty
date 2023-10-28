@@ -163,8 +163,13 @@ exports.orderDet = async (req, res) => {
 //cancelOrder() GET request
 exports.cancelOrder = async (req, res) => {
     try {
-        const orderId = req.query.orderId;
-        const deletedOrder = await Order.deleteOne({ _id: orderId });
+        const orderId = req.query.id;
+        console.log(orderId);
+        const updatePayment=await Order.updateOne(
+            {_id:orderId},
+            {$set:{status:"Cancelled"}}
+        );
+        res.json({success:true});
         res.redirect('/orders');
     } catch (error) {
         console.log(error.message);

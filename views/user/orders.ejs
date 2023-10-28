@@ -1,131 +1,138 @@
 <%- include('../user/userHeader.ejs') %>
-<!-- Spinner Start -->
-<div
-  id="spinner"
-  class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"
->
-  <div
-    class="spinner-grow text-primary"
-    style="width: 3rem; height: 3rem"
-    role="status"
-  >
-    <span class="sr-only">Loading...</span>
+  <!-- Spinner Start -->
+  <div id="spinner"
+    class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+    <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
   </div>
-</div>
-<!-- Spinner End -->
+  <!-- Spinner End -->
 
-<!-- Navbar Start -->
-<%- include('../user/userNavbar.ejs') %>
-<!-- Navbar End -->
+  <!-- Navbar Start -->
+  <%- include('../user/userNavbar.ejs') %>
+    <!-- Navbar End -->
 
-<!-- Hero Start -->
-<div class="container-fluid bg-primary hero-header mb-5">
-  <div class="container text-center">
-    <h1 class="display-4 text-white mb-3 animated slideInDown">Orders</h1>
-    <p>View and manage orders and returns</p>
-    <!-- <nav aria-label="breadcrumb">
+    <!-- Hero Start -->
+    <div class="container-fluid bg-primary hero-header mb-5">
+      <div class="container text-center">
+        <h1 class="display-4 text-white mb-3 animated slideInDown">Orders</h1>
+        <p>View and manage orders and returns</p>
+        <!-- <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center mb-0 animated slideInDown">
                     <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
                     <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
                     <li class="breadcrumb-item text-white active" aria-current="page">Products</li>
                 </ol>
             </nav> -->
-  </div>
-</div>
-<!-- Hero End -->
-
-<!-- Orders Start -->
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">Sno</th>
-      <th scope="col">Order date</th>
-      <th scope="col">Delivery date</th>
-      <th scope="col">Payment</th>
-      <th scope="col">Amount</th>
-      <th scope="col">Status</th>
-      <th scope="col">Details</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% 
-    // Sort the orders by date in descending order (most recent first)
-    orders.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
-    orders.forEach(function(order,index){ %>
-    <tr>
-      <th scope="row"><%= index+1 %></th>
-      <td>
-        <%= new Date(order.date).toLocaleString('en-US', { year: 'numeric' ,
-        month: '2-digit' , day: '2-digit' }) %>
-      </td>
-      <td>
-        <%= new Date(order.deliveryDate).toLocaleString('en-US', { year:
-        'numeric' , month: '2-digit' , day: '2-digit' }) %>
-      </td>
-      <td><%= order.paymentMethod %></td>
-      <td><%= order.totalAmount %></td>
-      <td><%= order.status%></td>
-      <td>
-        <a href="/orderDet?orderId=<%= order._id %>"
-          ><button type="button" class="btn btn-success">
-            Order details
-          </button></a
-        >
-      </td>
-      <td>
-        <% if(order.status==='Delivered'){ %>
-        <a href="/returnOrder?orderId=<%= order._id %>"
-          ><button type="button" class="btn btn-warning">Return</button></a
-        >
-        <% }else{ %>
-        <a href="/cancelOrder?orderId=<%= order._id %>"
-          ><button type="button" class="btn btn-danger">Cancel</button></a
-        >
-        <% } %>
-      </td>
-    </tr>
-    <% }) %>
-  </tbody>
-</table>
-<!-- Orders End -->
-
-<!-- Newsletter Start -->
-<div class="container-fluid newsletter bg-primary py-5 my-5">
-  <div class="container py-5">
-    <div
-      class="mx-auto text-center wow fadeIn"
-      data-wow-delay="0.1s"
-      style="max-width: 600px"
-    >
-      <h1 class="text-white mb-3">
-        <span class="fw-light text-dark">Let's Subscribe</span> The Newsletter
-      </h1>
-      <p class="text-white mb-4">
-        Subscribe now to get 15% discount on any of our products
-      </p>
+      </div>
     </div>
-    <div class="row justify-content-center">
-      <div class="col-md-7 wow fadeIn" data-wow-delay="0.5s">
-        <div class="position-relative w-100 mt-3 mb-2">
-          <input
-            class="form-control w-100 py-4 ps-4 pe-5"
-            type="text"
-            placeholder="Enter Your Email"
-            style="height: 48px"
-          />
-          <button
-            type="button"
-            class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2"
-          >
-            <i class="fa fa-paper-plane text-white fs-4"></i>
-          </button>
+    <!-- Hero End -->
+
+    <!-- Orders Start -->
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Sno</th>
+          <th scope="col">Order date</th>
+          <th scope="col">Delivery date</th>
+          <th scope="col">Payment</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Status</th>
+          <th scope="col">Details</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%
+         // Sort the orders by date in descending order (most recent first)
+         orders.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+         orders.forEach(function(order,index){ %>
+          <tr>
+            <th scope="row">
+              <%= index+1 %>
+            </th>
+            <td>
+              <%= new Date(order.date).toLocaleString('en-US', { year: 'numeric' , month: '2-digit' , day: '2-digit' })
+                %>
+            </td>
+            <td>
+              <%= new Date(order.deliveryDate).toLocaleString('en-US', { year: 'numeric' , month: '2-digit' ,
+                day: '2-digit' }) %>
+            </td>
+            <td>
+              <%= order.paymentMethod %>
+            </td>
+            <td>
+              <%= order.totalAmount %>
+            </td>
+            <td>
+              <%= order.status%>
+            </td>
+            <td>
+              <a href="/orderDet?orderId=<%= order._id %>"><button type="button" class="btn btn-success">
+                  Order details
+                </button></a>
+            </td>
+            <td>
+              <% if (order.status === 'Delivered') { %>
+                <a href="/returnOrder?orderId=<%= order._id %>">
+                    <button type="button" class="btn btn-warning">Return</button>
+                </a>
+            <% } else if (order.status === 'Cancelled') { %>
+                <!-- Nothing to display if status is 'Cancelled' -->
+            <% } else { %>
+                <button class="btn btn-danger text-white" onclick="cancelOrder('<%=order._id %>')">Cancel</button>
+            <% } %>            
+            </td>
+          </tr>
+          <% }) %>
+      </tbody>
+    </table>
+    <!-- Orders End -->
+
+    <!-- Newsletter Start -->
+    <div class="container-fluid newsletter bg-primary py-5 my-5">
+      <div class="container py-5">
+        <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px">
+          <h1 class="text-white mb-3">
+            <span class="fw-light text-dark">Let's Subscribe</span> The Newsletter
+          </h1>
+          <p class="text-white mb-4">
+            Subscribe now to get 15% discount on any of our products
+          </p>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-7 wow fadeIn" data-wow-delay="0.5s">
+            <div class="position-relative w-100 mt-3 mb-2">
+              <input class="form-control w-100 py-4 ps-4 pe-5" type="text" placeholder="Enter Your Email"
+                style="height: 48px" />
+              <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2">
+                <i class="fa fa-paper-plane text-white fs-4"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-<!-- Newsletter End -->
+    <!-- Newsletter End -->
 
-<!-- Footer Start -->
-<%- include('../user/userFooter.ejs') %>
+
+
+
+    <!-- Footer Start -->
+    <!-- function orderCancel() -->
+    <script>
+      function cancelOrder(orderId) {
+        $.ajax({
+          url: `/cancelOrder?id=${orderId}`,
+          type: 'get',
+          success: function (response) {
+            if (response.success) {
+              location.reload();
+            }
+          }
+        })
+      }
+
+    </script>
+    <%- include('../user/userFooter.ejs') %>

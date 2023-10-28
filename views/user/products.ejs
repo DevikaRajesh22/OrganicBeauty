@@ -26,44 +26,11 @@
         </div>
       </div>
     </div>
-
-
-
-
-
-
     </div>
     </div>
     <!-- Hero End -->
 
     <!-- Product Start -->
-    <style>
-      ul {
-        list-style: none;
-        padding: 0;
-      }
-
-      li {
-        display: inline;
-        margin-right: 10px;
-      }
-
-      li a {
-        text-decoration: none;
-        color: #000;
-        /* Link color */
-        padding: 6px 10px;
-        border: 1px solid #ccc;
-        /* Border color */
-        border-radius: 5px;
-        transition: all 0.3s ease;
-      }
-
-      li a:hover {
-        background-color: #f0f0f0;
-        /* Hover background color */
-      }
-    </style>
     <div class="container-fluid py-5">
       <div class="container">
         <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px">
@@ -144,6 +111,8 @@
           icon: "success",
           title: "Success",
           text: "The product has been added to your cart.",
+        }).then(()=>{
+          location.href="/products"
         });
       }
     </script>

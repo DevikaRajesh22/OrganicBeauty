@@ -19,7 +19,7 @@ userRoute.get('/forgotPasswordChange',userController.forgotPasswordChange);
 userRoute.post('/forgotPasswordChange',userController.forgotPasswordChangePost);
 userRoute.get('/register', userController.registerGet);
 userRoute.post('/registerPost', userController.registerPost);
-userRoute.get('/', userController.landingPage);
+userRoute.get('/', userAuth.isLoggedIn, userController.landingPage);
 userRoute.get('/products', userController.productsGet);
 userRoute.get('/otp', userAuth.isLoggedOut, userController.otp);
 userRoute.post('/otp', userController.otpPost);

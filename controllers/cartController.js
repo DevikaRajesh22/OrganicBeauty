@@ -126,7 +126,7 @@ exports.addToCartPost = async (req, res) => {
             await cartFound.save();
         }
 
-        res.redirect('/products');
+   
     } catch (error) {
         console.log(error.message);
     }

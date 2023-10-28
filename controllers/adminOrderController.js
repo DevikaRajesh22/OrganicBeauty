@@ -31,13 +31,18 @@ exports.updateStatus = async (req, res) => {
                 { _id: orderId },
                 { $set: { status: "Delivered" } }
             );
-            res.json({success : true})
         }else if(status==="Placed"){
             const updatedStatus = await Order.findOneAndUpdate(
                 { _id: orderId },
                 { $set: { status: "Shipped" } }
             );
             res.json({success : true})
+        }else if(status==="Pending"){
+            const updatedStatus=await Order.findOneAndUpdate(
+                {_id:orderId},
+                {$set:{status:"Placed"}}
+            );
+            res.json({success:true});
         }
     } catch (error) {
         console.log(error.message);

@@ -1,7 +1,15 @@
+const User=require('../models/user/userCollection');
 exports.isLoggedIn = async(req,res,next) => {
   try {
+    const userId=req.session.userId;
+    const user=await User.findOne({_id:userId});
       if (req.session.userId) {
-          next();
+         if(user.isBlocked){
+            req.session.destroy();
+            res.redirect('/login');
+         }else{
+            next();
+         }
       }else{
           res.redirect('/login')
       }

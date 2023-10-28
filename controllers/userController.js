@@ -374,7 +374,6 @@ exports.accountPost = async (req, res) => {
             }
         } else {
             console.log('newpass and conpass doesnt match');
-            res.redirect('/changePassword');
         }
     } catch (error) {
         console.log(error.message);
