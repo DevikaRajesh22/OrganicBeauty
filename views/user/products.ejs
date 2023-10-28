@@ -37,6 +37,33 @@
     <!-- Hero End -->
 
     <!-- Product Start -->
+    <style>
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        display: inline;
+        margin-right: 10px;
+      }
+
+      li a {
+        text-decoration: none;
+        color: #000;
+        /* Link color */
+        padding: 6px 10px;
+        border: 1px solid #ccc;
+        /* Border color */
+        border-radius: 5px;
+        transition: all 0.3s ease;
+      }
+
+      li a:hover {
+        background-color: #f0f0f0;
+        /* Hover background color */
+      }
+    </style>
     <div class="container-fluid py-5">
       <div class="container">
         <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px">
@@ -46,6 +73,15 @@
           <p class="mb-5">
             Explore our product selection and start shopping today!
           </p>
+        </div>
+
+        <div style="display: flex; align-items: center;" class="text-center">
+          <h5 class="mx-3">Categories: </h5>
+          <ul>
+            <li><a style="text-decoration: none;" href="/products/category/Category A">Organic Skin</a></li>
+            <li><a  style="text-decoration: none;" href="/products/category/Category B">Organic Hair</a></li>
+            <li><a  style="text-decoration: none;" href="/products/category/Category B">Organic Oils</a></li>
+          </ul>
         </div>
 
         <div class="row g-4">

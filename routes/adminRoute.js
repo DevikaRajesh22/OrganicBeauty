@@ -2,6 +2,7 @@ const adminController = require('../controllers/adminController');
 const productController = require('../controllers/productController');
 const categoryController = require('../controllers/categoryController');
 const adminOrderController=require('../controllers/adminOrderController');
+const adminCouponController=require('../controllers/adminCouponController');
 const express = require('express');
 const adminRoute = express();
 const multer = require('../middleware/multer');
@@ -44,5 +45,8 @@ adminRoute.post('/cedit', categoryController.editCategoryPost);
 adminRoute.get('/ordersAdmin',adminOrderController.orderGet);
 adminRoute.post('/updateStatus',adminOrderController.updateStatus);
 adminRoute.get('/orderDetails',adminOrderController.orderDetails);
+
+//coupon management
+adminRoute.get('/coupon',adminCouponController.coupon);
 
 module.exports = adminRoute;
