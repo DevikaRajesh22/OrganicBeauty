@@ -4,7 +4,14 @@ const Cart = require('../models/user/cartCollection');
 const Product = require('../models/admin/productCollection');
 const Address = require('../models/user/addressCollection');
 const mongoose = require('mongoose');
+const Razorpay = require('razorpay');
 const ObjectId = mongoose.Types.ObjectId;
+
+//for razorpay
+const razorpay = new Razorpay({
+    key_id: 'rzp_test_9CCuVFywuG0qXQ',
+    key_secret: 'jRdNyz7DjK9YuZgjxZBJjGQq',
+  });
 
 //orders() GET request
 exports.orders = async (req, res) => {
@@ -37,6 +44,7 @@ exports.orders = async (req, res) => {
 exports.placeOrder = async (req, res) => {
     try {
         const userId = req.session.userId;
+      
         const user = await User.findOne({ _id: userId });
         const userName = req.session.name;
         const cartData = await Cart.findOne({ userId: userId });
@@ -71,6 +79,16 @@ exports.placeOrder = async (req, res) => {
         });
         const orderDetails = await newOrder.save();
 
+
+        //razorpay
+        if(paymentMethod==='Cash on delivery'){
+
+            const updatePayment=await Order.updateOne(
+                {user:userId},
+                {$set:{status:"Placed"}}
+            );
+            console.log(updatePayment);
+      
         //to remove products from cart when order is placed
         if (orderDetails) {
             const removeProducts = await Cart.findOneAndUpdate({ userId: userId },
@@ -80,6 +98,7 @@ exports.placeOrder = async (req, res) => {
                     }
                 })
         }
+     
 
         //to reduce stock when order is placed
         const stockReduce = cartData.products;
@@ -94,6 +113,25 @@ exports.placeOrder = async (req, res) => {
             );
         }
         res.redirect('/success');
+           
+        }else if(paymentMethod==='Online payment'){
+            const orderData={
+                amount:totalAmount,
+                currency:'INR',
+                receipt:orderId,
+            };
+            razorpay.orders.create(orderData, (err, order) => {
+                if (err) {
+                  console.error(err);
+                  res.status(500).json({ error: 'Internal Server Error' });
+                } else {
+                  // Send the Razorpay order data to the client
+                  res.json({ order });
+                }
+              });
+        }else {
+            console.log('error');
+        }
     } catch (error) {
         console.log(error.message);
     }

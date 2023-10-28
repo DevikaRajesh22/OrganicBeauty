@@ -6,7 +6,7 @@ const orderSchema = new mongoose.Schema({
     required: true,
   },
   user: {
-    type: mongoose.Types.ObjectId,
+    type: String,
     ref: 'User'
   },
   userName: {
@@ -36,7 +36,7 @@ const orderSchema = new mongoose.Schema({
   ],
   status: {
     type: String,
-    default: "Placed",
+    default: "Pending",
   },
   deliveryDate: {
     type: Date,

@@ -54,5 +54,11 @@ userRoute.get('/addAddress',userController.addAddress);
 userRoute.post('/addAddress',userController.addAddressPost);
 userRoute.get('/adelete/:id',userController.deleteAddress);
 
+//route for wallet
+userRoute.get('/wallet',userController.wallet);
+
+//route for wishlist
+userRoute.get('/wishlist',userController.wishlist);
+
 
 module.exports = userRoute;
