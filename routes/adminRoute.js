@@ -48,5 +48,7 @@ adminRoute.get('/orderDetails',adminOrderController.orderDetails);
 
 //coupon management
 adminRoute.get('/coupon',adminCouponController.coupon);
+adminRoute.get('/addCoupon',adminCouponController.addCoupon);
+adminRoute.post('/addCouponPost',adminCouponController.addCouponPost);
 
 module.exports = adminRoute;
