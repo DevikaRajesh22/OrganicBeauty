@@ -1,6 +1,7 @@
 const User = require('../models/user/userCollection');
 const Address = require('../models/user/addressCollection');
 const Cart=require('../models/user/cartCollection');
+const Category=require('../models/admin/categoryCollection');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const nodemailer = require('nodemailer');
@@ -279,9 +280,11 @@ exports.productDetails = async (req, res) => {
         }else{
             count=0;
         }
-        const products = await Product.findOne({ _id: productId })
+        const products = await Product.findOne({ _id: productId });
+        const categoryId=products.category;
+        const categories=await Category.findOne({_id:categoryId});
         const pageTitle = 'Product';
-        res.render('user/productDetails', { pageTitle, products,count, user: req.session.name });
+        res.render('user/productDetails', { pageTitle, products,count, user: req.session.name,categories });
     } catch (error) {
         console.log(error.message);
     }
