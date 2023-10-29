@@ -545,3 +545,14 @@ exports.wishlist=async(req,res)=>{
         console.log(error.message);
     }
 };
+
+//search() POST request
+// exports.search=async(req,res)=>{
+//     try{
+//         const searchTerm=req.body.searchTerm;
+//         const results= await Product.find({productName:{$regex:new RegExp(searchTerm,'i')}});
+//         res.render('user/products');
+//     }catch(error){
+//         console.log(error.message);
+//     }
+// };

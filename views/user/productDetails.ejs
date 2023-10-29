@@ -66,7 +66,7 @@
           <h3><%=products.productName%></h3>
           <div class="product__details__price">₹<%=products.price%></div>
           <div style="display: flex; align-items: center;">
-            <a href="#" class="heart-icon" style="margin-right: 10px;"><i class="far fa-heart"></i></a>
+            <a href="/wishlist" class="heart-icon" style="margin-right: 10px;"><i class="far fa-heart"></i></a>
             <form action="/add?id=<%= products._id %>" method="POST">
               <button
                 href="/addToCart?id=<%=products._id%>"

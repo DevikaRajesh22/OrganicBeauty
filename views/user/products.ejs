@@ -16,14 +16,10 @@
     <div class="container-fluid bg-primary hero-header mb-5">
       <div class="container text-center">
         <h1 class="display-4 text-white mb-3 animated slideInDown">Products</h1>
-        <div class="input-group"
-          style="width: 50%; display: flex; align-items: center; justify-content: center; margin-left: 230px;">
-          <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
-            aria-describedby="search-addon" />
-          <button type="button" class="btn btn-primary" style="color: black; background-color: green">
-            search
-          </button>
-        </div>
+        <form action="/search" method="post">
+          <input type="text" name="searchTerm" placeholder="Search for products">
+          <button type="submit" class="btn-success">Search</button>
+        </form>
       </div>
     </div>
     </div>
@@ -46,8 +42,8 @@
           <h5 class="mx-3">Categories: </h5>
           <ul>
             <li><a style="text-decoration: none;" href="/products/category/Category A">Organic Skin</a></li>
-            <li><a  style="text-decoration: none;" href="/products/category/Category B">Organic Hair</a></li>
-            <li><a  style="text-decoration: none;" href="/products/category/Category B">Organic Oils</a></li>
+            <li><a style="text-decoration: none;" href="/products/category/Category B">Organic Hair</a></li>
+            <li><a style="text-decoration: none;" href="/products/category/Category B">Organic Oils</a></li>
           </ul>
         </div>
 
@@ -111,8 +107,8 @@
           icon: "success",
           title: "Success",
           text: "The product has been added to your cart.",
-        }).then(()=>{
-          location.href="/products"
+        }).then(() => {
+          location.href = "/products"
         });
       }
     </script>

@@ -60,5 +60,8 @@ userRoute.get('/wallet',userController.wallet);
 //route for wishlist
 userRoute.get('/wishlist',userController.wishlist);
 
+//route for search and category filtering
+// userRoute.post('/search',userController.search);
+
 
 module.exports = userRoute;
