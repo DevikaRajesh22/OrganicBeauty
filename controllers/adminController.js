@@ -1,6 +1,7 @@
 const Admin = require('../models/admin/adminCollection');
 const User = require('../models/user/userCollection');
 const Product = require('../models/admin/productCollection');
+const Order=require('../models/user/orderCollection');
 const Category = require('../models/admin/categoryCollection');
 const multer = require('multer');
 const Sharp = require('sharp');
@@ -38,8 +39,8 @@ exports.loginPost = async (req, res) => {
 //landing GET request
 exports.landing=async(req,res)=>{
     const pageName='Home';
-    try{
-        res.render('admin/landing',{pageName});
+    try{ 
+        res.render('admin/landing',{pageName,userCount,totalSub});
     }catch(error){
         console.log(error.message);
     }
