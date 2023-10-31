@@ -63,5 +63,4 @@ userRoute.get('/wishlist',  userAuth.isLoggedIn, userController.wishlist);
 //route for search and category filtering
 // userRoute.post('/search',userController.search);
 
-
 module.exports = userRoute;

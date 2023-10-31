@@ -80,10 +80,10 @@
                       </tr>
                     </thead>
                     <tbody class="align-middle">
-                      <%carts?.products?.forEach(function(product,index){ %>
+                      <%carts?.products?.forEach(function(product){ %>
                         <tr>
                           <td class="d-flex px-2 mx-2 align-middle">
-                            <img class="px-2" src="/product/img/<%= product.productId.productImage[0] %>" alt=""
+                            <img class="px-2" src="/product/<%= product.image.image1 %>" alt=""
                               style="width: 50px" />
                             <%= product.productId.productName %>
                           </td>

@@ -41,10 +41,10 @@ exports.addProductsPost = async (req, res) => {
             category: req.body.category,
             price: req.body.price,
             productDetails: req.body.pdetails,
-            "image.image1" : files.image1[0].filename,
-            "image.image2" : files.image2[0].filename,
-            "image.image3" : files.image3[0].filename,
-            "image.image4" : files.image3[0].filename,
+            "image.image1": files.image1[0].filename,
+            "image.image2": files.image2[0].filename,
+            "image.image3": files.image3[0].filename,
+            "image.image4": files.image4[0].filename,
             stock: req.body.stock
         });
         const productData = await newProduct.save();
@@ -71,36 +71,44 @@ exports.editProduct = async (req, res) => {
 //editProductPost POST request
 exports.editProductPost = async (req, res) => {
     try {
-        const productId = req.body.id;
-        const imageFiles = req.files;
-        const data = await Product.findById({ _id: productId });
-        let image1 = imageFiles.image1 ? imageFiles.image1[0].filename : data.image.image1;
-        let image2 = imageFiles.image2 ? imageFiles.image2[0].filename : data.image.image2;
-        let image3 = imageFiles.image3 ? imageFiles.image3[0].filename : data.image.image3;
-        let image4 = imageFiles.image4 ? imageFiles.image4[0].filename : data.image.image4;
-        await Product.findByIdAndUpdate({
-            _id: productId
-        },
+        const { productName, category, price, productDetails, stock, id } = req.body;
+        let imageFiles = req.files || {};
+        const data = await Product.findById({ _id: id });
+        let image1 = data.image.image1;
+        let image2 = data.image.image2;
+        let image3 = data.image.image3;
+        let image4 = data.image.image4;
+
+        if (imageFiles && Object.keys(imageFiles).length > 0) {
+            image1 = imageFiles.image1 ? imageFiles.image1[0].filename : data.image.image1;
+            image2 = imageFiles.image2 ? imageFiles.image2[0].filename : data.image.image2;
+            image3 = imageFiles.image3 ? imageFiles.image3[0].filename : data.image.image3;
+            image4 = imageFiles.image4 ? imageFiles.image4[0].filename : data.image.image4;
+        }
+
+        const updatedProduct = await Product.findByIdAndUpdate(
+            { _id: id },
             {
                 $set: {
-                    productName: req.body.pname,
-                    category: req.body.category,
-                    price: req.body.price,
-                    productDetails: req.body.pdetails,
-                    "image.image1": image1,
-                    "image.image2": image2,
-                    "image.image3": image3,
-                    "image.image4": image4,
-                    stock: req.body.stock
+                    productName: productName,
+                    category: category,
+                    price: price,
+                    productDetails: productDetails,
+                    'image.image1': image1,
+                    'image.image2': image2,
+                    'image.image3': image3,
+                    'image.image4': image4,
+                    stock: stock
                 }
             }
         );
+        console.log('updatedProduct' + updatedProduct);
         res.redirect('/admin/products');
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
     }
 };
+
 
 //hideProduct() GET request
 exports.hideProduct = async (req, res) => {
