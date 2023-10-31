@@ -9,9 +9,11 @@ const Sharp = require('sharp');
 //loginGet for GET request
 exports.loginGet = async (req, res) => {
     try {
-        req.app.locals.err = "";
-       const err =  req.app.locals.err;
-        res.render('admin/adminLogin',{err});
+        let adminEmailErr=req.app.locals.adminEmailErr;
+        req.app.locals.adminEmailErr=" ";
+        let adminPasswordErr=req.app.locals.adminPasswordErr;
+        req.app.locals.adminPasswordErr=" ";
+        res.render('admin/adminLogin',{adminEmailErr,adminPasswordErr});
     } catch (error) {
         res.redirect('/admin/errors');
         console.log(error.message);
@@ -22,16 +24,25 @@ exports.loginGet = async (req, res) => {
 exports.loginPost = async (req, res) => {
     try {
         const pageName='User Management';
-        const admin = await Admin.findOne({ email: req.body.email });
-        if (admin.email == req.body.email && admin.password == req.body.password) {
-            req.session.admin = admin.email;
-            res.render('admin/landing',{pageName,admin:req.session.admin});
-        }else if(admin.email !== req.body.email || admin.password !== req.body.password){
-            req.app.locals.err = 'Invalid credentials';
-            res.redirect('/');
+        const { email, password } = req.body;
+        const admin = await Admin.findOne({ email: email });
+        if(admin){
+            if (admin.email == req.body.email && admin.password == req.body.password) {
+                req.session.admin = admin.email;
+                res.render('admin/landing',{pageName,admin:req.session.admin});
+            }else if(admin.email !== req.body.email){
+                req.app.locals.adminEmailErr = 'Invalid email!';
+                res.redirect('/admin');
+            }else if(admin.password !== req.body.password){
+                req.app.locals.adminPasswordErr='Invalid Password!';
+                res.redirect('/admin');
+            }
+        }
+        else{
+            req.app.locals.adminEmailErr = 'User doesnt exist!';
+                res.redirect('/admin');
         }
     } catch (error) {
-        res.redirect('/admin/errors');
         console.log(error.message);
     }
 };

@@ -50,7 +50,12 @@
                       </div>
                     </div>
                   </div>
-                  <p><%= err?err:""%></p>
+                  <p style="color: red; text-align: left;">
+                    <%= locals.adminEmailErr ? adminEmailErr : " " %>
+                  </p>
+                  <p style="color: red; text-align: left;">
+                    <%= locals.adminPasswordErr ? adminPasswordErr : " " %>
+                  </p>
                   <div class="form-group">
                     <button class="btn btn-primary submit-btn btn-block" style="background-color:#8BB471; border: 1px solid #8BB471; color:white">Login</button>
                   </div>

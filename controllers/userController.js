@@ -50,7 +50,6 @@ exports.loginGet = async (req, res) => {
 //userLoginPost for POST request
 exports.userLoginPost = async (req, res, next) => {
     try {
-
         const email = req.body.email;
         const password = req.body.password;
         const user = await User.findOne({ email: email });
@@ -68,15 +67,12 @@ exports.userLoginPost = async (req, res, next) => {
                 req.session.phone = user.number;
                 return res.redirect("/"); //if password match then store user session and redirect to landingPage
             } else if (!passwordMatch) {
-                console.log('a');
                 req.app.locals.passwordErr = "Incorrect password or email";
                 return res.redirect('/login');
             }else if(user.isBlocked){
-                console.log('b');
                 req.app.locals.passwordErr="User is blocked!!";
                 return res.redirect('/login');
             }else if(!user.isVerified){
-                console.log('c');
                 req.app.locals.passwordErr="Unverified user";
                 return res.redirect('/login');
             }
@@ -103,11 +99,8 @@ var emailId;
 //forgotPasswordPost() POST request
 exports.forgotPasswordPost = async (req, res) => {
     try {
-        // console.log('forgot password post request');
         emailId = req.body.email;
-        // console.log(emailId);
         const user = await User.findOne({ email: emailId });
-        // console.log(user);
         if (user) {
             res.redirect('/forgotPasswordChange');
         } else {
