@@ -253,7 +253,7 @@
                                                     <% products.forEach(function(product) { %>
                                                         <tr>
                                                             <td>
-                                                                <img src="/product/img/<%= product.productImage[0] %>" alt="<%= product.productName %>">
+                                                                <img src="/product/img/<%= product.image.image1 %>" alt="<%= product.productName %>">
                                                             </td>                                                            
                                                             <td>
                                                                 <%= product.productName %>
@@ -264,7 +264,6 @@
                                                             <td>
                                                                 ₹<%= product.price %>
                                                             </td>
-                                                            <!-- <td><button class="btn btn-danger">Block</button></td> -->
                                                             <td>
                                                                 <%= product.stock %>
                                                             </td>

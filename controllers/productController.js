@@ -35,28 +35,22 @@ exports.addProducts = async (req, res) => {
 exports.addProductsPost = async (req, res) => {
     const products = await Product.find();
     try {
-        let img = [];
-        console.log(req.files);
-        for (let i = 0; i < req.files.length; i++) {
-            img.push(req.files[i].filename);
-            await Sharp('public/product/' + req.files[i].filename)
-                .resize(500, 500)
-                .toFile('public/product/img/' + req.files[i].filename);
-        }
+        const files = await req.files;
         const newProduct = new Product({
             productName: req.body.pname,
             category: req.body.category,
             price: req.body.price,
             productDetails: req.body.pdetails,
-            productImage: img,
+            "image.image1" : files.image1[0].filename,
+            "image.image2" : files.image2[0].filename,
+            "image.image3" : files.image3[0].filename,
+            "image.image4" : files.image3[0].filename,
             stock: req.body.stock
         });
-        console.log(req.body);
         const productData = await newProduct.save();
         res.redirect('/admin/products');
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
     }
 };
 
@@ -64,7 +58,6 @@ exports.addProductsPost = async (req, res) => {
 exports.editProduct = async (req, res) => {
     const pageName = 'Product Management';
     const pid = req.query.id;
-    console.log(pid);
     const categories = await Category.find();
     const pinfo = await Product.findById({ _id: pid });
     try {
@@ -77,17 +70,31 @@ exports.editProduct = async (req, res) => {
 
 //editProductPost POST request
 exports.editProductPost = async (req, res) => {
-    const productId = req.body.id;
-    const updatedProductData = {
-        productName: req.body.pname,
-        category: req.body.category,
-        price: req.body.price,
-        productDetails: req.body.pdetails,
-        productImage: req.body.pimage,
-        stock: req.body.stock
-    };
     try {
-        await Product.findByIdAndUpdate(productId, updatedProductData);
+        const productId = req.body.id;
+        const imageFiles = req.files;
+        const data = await Product.findById({ _id: productId });
+        let image1 = imageFiles.image1 ? imageFiles.image1[0].filename : data.image.image1;
+        let image2 = imageFiles.image2 ? imageFiles.image2[0].filename : data.image.image2;
+        let image3 = imageFiles.image3 ? imageFiles.image3[0].filename : data.image.image3;
+        let image4 = imageFiles.image4 ? imageFiles.image4[0].filename : data.image.image4;
+        await Product.findByIdAndUpdate({
+            _id: productId
+        },
+            {
+                $set: {
+                    productName: req.body.pname,
+                    category: req.body.category,
+                    price: req.body.price,
+                    productDetails: req.body.pdetails,
+                    "image.image1": image1,
+                    "image.image2": image2,
+                    "image.image3": image3,
+                    "image.image4": image4,
+                    stock: req.body.stock
+                }
+            }
+        );
         res.redirect('/admin/products');
     } catch (error) {
         console.log(error.message);
@@ -96,24 +103,24 @@ exports.editProductPost = async (req, res) => {
 };
 
 //hideProduct() GET request
-exports.hideProduct=async(req,res)=>{
-   try{
-    const productId=req.params.id;
-    const updatedProduct=await Product.updateOne({_id:productId},{isList:false});
-    res.redirect('/admin/products');
-   }catch(error){
-    console.log(error.message);
-   } 
+exports.hideProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const updatedProduct = await Product.updateOne({ _id: productId }, { isList: false });
+        res.redirect('/admin/products');
+    } catch (error) {
+        console.log(error.message);
+    }
 };
 
 //showProduct() GET request
-exports.showProduct=async(req,res)=>{
-    try{
-     console.log('show product get request');
-     const productId=req.params.id;
-     const updatedProduct=await Product.updateOne({_id:productId},{isList:true});
-     res.redirect('/admin/products');
-    }catch(error){
-     console.log(error.message);
-    } 
- };
+exports.showProduct = async (req, res) => {
+    try {
+        console.log('show product get request');
+        const productId = req.params.id;
+        const updatedProduct = await Product.updateOne({ _id: productId }, { isList: true });
+        res.redirect('/admin/products');
+    } catch (error) {
+        console.log(error.message);
+    }
+};

@@ -28,7 +28,7 @@ adminRoute.get('/products', productController.products);
 adminRoute.get('/addProducts', productController.addProducts);
 adminRoute.post('/addProducts', multer.upload.array('image', 4), productController.addProductsPost);
 adminRoute.get('/pedit', productController.editProduct);
-adminRoute.post('/pedit', productController.editProductPost);
+adminRoute.post('/pedit', multer.upload.fields([{name:"image1",maxCount:1},{name:"image2",maxCount:1},{name:"image3",maxCount:1},{name:"image4",maxCount:1}]), productController.editProductPost);
 adminRoute.get('/hide/:id',productController.hideProduct);
 adminRoute.get('/show/:id',productController.showProduct);
 
@@ -54,5 +54,8 @@ adminRoute.get('/editCoupon',adminCouponController.editCoupon);
 adminRoute.post('/editCouponPost',adminCouponController.editCouponPost);
 adminRoute.get('/hideCoupon',adminCouponController.hideCoupon);
 adminRoute.get('/showCoupon',adminCouponController.showCoupon);
+
+//sales report
+adminRoute.get('/salesReport',adminController.salesReport);
 
 module.exports = adminRoute;

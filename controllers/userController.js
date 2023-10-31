@@ -1,7 +1,7 @@
 const User = require('../models/user/userCollection');
 const Address = require('../models/user/addressCollection');
-const Cart=require('../models/user/cartCollection');
-const Category=require('../models/admin/categoryCollection');
+const Cart = require('../models/user/cartCollection');
+const Category = require('../models/admin/categoryCollection');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const nodemailer = require('nodemailer');
@@ -36,7 +36,11 @@ const securePassword = async (password) => {
 exports.loginGet = async (req, res) => {
 
     try {
-        res.render('user/userLogin');
+        let emailErr = req.app.locals.emailErr;
+        req.app.locals.emailErr = " ";
+        let passwordErr = req.app.locals.passwordErr;
+        req.app.locals.passwordErr = " ";
+        res.render('user/userLogin', { emailErr,passwordErr });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -50,7 +54,10 @@ exports.userLoginPost = async (req, res, next) => {
         const email = req.body.email;
         const password = req.body.password;
         const user = await User.findOne({ email: email });
-        console.log(user);
+        if (!user) {
+            req.app.locals.emailErr = " User not found!!!";
+            return res.redirect("/login");
+        }
         if (user) {
             const passwordMatch = await bcrypt.compare(password, user.spassword);
             if (passwordMatch && !user.isBlocked && user.isVerified) {
@@ -60,8 +67,18 @@ exports.userLoginPost = async (req, res, next) => {
                 req.session.email = user.email;
                 req.session.phone = user.number;
                 return res.redirect("/"); //if password match then store user session and redirect to landingPage
-            } else {
-                res.redirect('/login');
+            } else if (!passwordMatch) {
+                console.log('a');
+                req.app.locals.passwordErr = "Incorrect password or email";
+                return res.redirect('/login');
+            }else if(user.isBlocked){
+                console.log('b');
+                req.app.locals.passwordErr="User is blocked!!";
+                return res.redirect('/login');
+            }else if(!user.isVerified){
+                console.log('c');
+                req.app.locals.passwordErr="Unverified user";
+                return res.redirect('/login');
             }
         }
     } catch (error) {
@@ -177,17 +194,17 @@ exports.landingPage = async (req, res) => {
     try {
         const userId = req.session.userId;
         const user = await User.findOne({ _id: userId });
-        const carts=await Cart?.findOne({userId:userId});
+        const carts = await Cart?.findOne({ userId: userId });
         const pageTitle = 'Home';
-        let count=0;
+        let count = 0;
         const products = await Product.find();
-        if(carts){
-            count=count+carts.products.length;
-        }else{
-            count=0;
+        if (carts) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
         }
 
-        res.render('user/landingPage', { products, pageTitle, count,user: req.session.name });
+        res.render('user/landingPage', { products, pageTitle, count, user: req.session.name });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -198,18 +215,18 @@ exports.landingPage = async (req, res) => {
 exports.productsGet = async (req, res) => {
     try {
         console.log('productsGet request');
-        const userId=req.session.userId;
-        const carts=await Cart?.findOne({userId:userId});
-        let count=0;
-        if(carts?.products?.length>0){
-            count=count+carts.products.length;
-        }else{
-            count=0;
+        const userId = req.session.userId;
+        const carts = await Cart?.findOne({ userId: userId });
+        let count = 0;
+        if (carts?.products?.length > 0) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
         }
         const pageTitle = 'Products';
         const products = await Product.find();
         console.log(req.session.name);
-        res.render('user/products', { pageTitle, products,count, user: req.session.name });
+        res.render('user/products', { pageTitle, products, count, user: req.session.name });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -239,8 +256,9 @@ exports.otpPost = async (req, res) => {
             );
             if (verified) {
                 req.session.otp = otp;
-                req.session.user = user.name;
-                res.redirect('/login');
+                req.session.userId = user._id;
+                req.session.name = user.name;
+                res.redirect('/');
             } else {
                 res.redirect('/otp');
             }
@@ -272,19 +290,19 @@ exports.logout = async (req, res) => {
 exports.productDetails = async (req, res) => {
     try {
         const productId = req.query.id;
-        const userId=req.session.userId;
-        const carts=await Cart?.findOne({userId:userId});
-        let count=0;
-        if(carts?.products?.length>0){
-            count=count+carts.products.length;
-        }else{
-            count=0;
+        const userId = req.session.userId;
+        const carts = await Cart?.findOne({ userId: userId });
+        let count = 0;
+        if (carts?.products?.length > 0) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
         }
         const products = await Product.findOne({ _id: productId });
-        const categoryId=products.category;
-        const categories=await Category.findOne({_id:categoryId});
+        const categoryId = products.category;
+        const categories = await Category.findOne({ _id: categoryId });
         const pageTitle = 'Product';
-        res.render('user/productDetails', { pageTitle, products,count, user: req.session.name,categories });
+        res.render('user/productDetails', { pageTitle, products, count, user: req.session.name, categories });
     } catch (error) {
         console.log(error.message);
     }
@@ -295,15 +313,15 @@ exports.about = async (req, res) => {
     try {
         const userId = req.session.userId;
         const user = await User.findOne({ _id: userId });
-        const carts=await Cart?.findOne({userId:userId});
-        let count=0;
-        if(carts?.products?.length>0){
-            count=count+carts.products.length;
-        }else{
-            count=0;
+        const carts = await Cart?.findOne({ userId: userId });
+        let count = 0;
+        if (carts?.products?.length > 0) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
         }
         const pageTitle = 'About';
-        res.render('user/about', { pageTitle, user:req.session.name,count });
+        res.render('user/about', { pageTitle, user: req.session.name, count });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -314,15 +332,15 @@ exports.about = async (req, res) => {
 exports.contact = async (req, res) => {
     try {
         const pageTitle = 'contact';
-        const userId=req.session.userId;
-        const carts=await Cart.findOne({userId:userId});
-        let count=0;
-        if(carts?.products?.length>0){
-            count=count+carts.products.length;
-        }else{
-            count=0;
+        const userId = req.session.userId;
+        const carts = await Cart.findOne({ userId: userId });
+        let count = 0;
+        if (carts?.products?.length > 0) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
         }
-        res.render('user/contact', { pageTitle, user: req.session.name, count});
+        res.render('user/contact', { pageTitle, user: req.session.name, count });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -335,12 +353,12 @@ exports.account = async (req, res) => {
         const pageTitle = 'Account';
         console.log('account get request');
         const userId = req.session.userId;
-        const carts=await Cart?.findOne({userId:userId});
-        let count=0;
-        if(carts?.products?.length>0){
-            count=count+carts.products.length;
-        }else{
-            count=0;
+        const carts = await Cart?.findOne({ userId: userId });
+        let count = 0;
+        if (carts?.products?.length > 0) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
         }
         if (userId === undefined) {
             return res.redirect('/login');
@@ -350,7 +368,7 @@ exports.account = async (req, res) => {
             res.redirect('/login');
         }
         console.log(users);
-        res.render('user/account', { pageTitle, user: req.session.name, users, pageTitle,count });
+        res.render('user/account', { pageTitle, user: req.session.name, users, pageTitle, count });
     } catch (error) {
         console.log(error.message);
     }
@@ -387,16 +405,16 @@ exports.accountPost = async (req, res) => {
 exports.changePassword = async (req, res) => {
     try {
         console.log('change password get');
-        const userId=req.session.userId;
-        const carts=await Cart?.findOne({userId:userId});
-        let count=0;
-        if(carts?.products?.length>0){
-            count=count+carts.products.length;
-        }else{
-            count=0;
+        const userId = req.session.userId;
+        const carts = await Cart?.findOne({ userId: userId });
+        let count = 0;
+        if (carts?.products?.length > 0) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
         }
         const pageTitle = 'Account';
-        res.render('user/changePassword', { pageTitle, user: req.session.name,count});
+        res.render('user/changePassword', { pageTitle, user: req.session.name, count });
     } catch (error) {
         console.log(error.message);
     }
@@ -411,17 +429,17 @@ exports.address = async (req, res) => {
             res.redirect('/login');
         }
         const addresses = await Address.findOne({ user: userId });
-        const carts=await Cart?.findOne({userId:userId});
-        let count=0;
-        if(carts?.products?.length>0){
-            count=count+carts.products.length;
-        }else{
-            count=0;
+        const carts = await Cart?.findOne({ userId: userId });
+        let count = 0;
+        if (carts?.products?.length > 0) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
         }
         if (addresses != null) {
-            res.render('user/address', { pageTitle, user: req.session.name, addresses: addresses, number: req.session.phone,count });
+            res.render('user/address', { pageTitle, user: req.session.name, addresses: addresses, number: req.session.phone, count });
         } else {
-            res.render('user/address', { pageTitle, user: req.session.name, addresses: undefined, number: req.session.phone,count });
+            res.render('user/address', { pageTitle, user: req.session.name, addresses: undefined, number: req.session.phone, count });
         }
     } catch (error) {
         console.log(error.message);
@@ -433,15 +451,15 @@ exports.addAddress = async (req, res) => {
     try {
         console.log('req received at addAddress get')
         const pageTitle = 'Address';
-        const userId=req.session.userId;
-        const carts=await Cart?.findOne({userId:userId});
-        let count=0;
-        if(carts?.products?.length>0){
-            count=count+carts.products.length;
-        }else{
-            count=0;
+        const userId = req.session.userId;
+        const carts = await Cart?.findOne({ userId: userId });
+        let count = 0;
+        if (carts?.products?.length > 0) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
         }
-        res.render('user/addAddress', { pageTitle, user: req.session.name, count});
+        res.render('user/addAddress', { pageTitle, user: req.session.name, count });
     } catch (error) {
         console.log(error.message);
     }
@@ -514,37 +532,37 @@ exports.deleteAddress = async (req, res) => {
 };
 
 //wallet() GET request
-exports.wallet=async(req,res)=>{
-    try{
-        const pageTitle='Wallet';
-        const userId=req.session.userId;
-        const carts=await Cart.findOne({userId:userId});
-        let count=0;
-        if(carts?.products?.length>0){
-            count=count+carts.products.length;
-        }else{
-            count=0;
+exports.wallet = async (req, res) => {
+    try {
+        const pageTitle = 'Wallet';
+        const userId = req.session.userId;
+        const carts = await Cart.findOne({ userId: userId });
+        let count = 0;
+        if (carts?.products?.length > 0) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
         }
-        res.render('user/wallet',{user:req.session.name,pageTitle,count});
-    }catch(error){
+        res.render('user/wallet', { user: req.session.name, pageTitle, count });
+    } catch (error) {
         console.log(error.message);
     }
 };
 
 //wishlist() GET request
-exports.wishlist=async(req,res)=>{
-    try{
-        const pageTitle='Wishlist';
-        const userId=req.session.userId;
-        const carts=await Cart.findOne({userId:userId});
-        let count=0;
-        if(carts?.products?.length>0){
-            count=count+carts.products.length;
-        }else{
-            count=0;
+exports.wishlist = async (req, res) => {
+    try {
+        const pageTitle = 'Wishlist';
+        const userId = req.session.userId;
+        const carts = await Cart.findOne({ userId: userId });
+        let count = 0;
+        if (carts?.products?.length > 0) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
         }
-        res.render('user/wishlist',{user:req.session.name, pageTitle, count});
-    }catch(error){
+        res.render('user/wishlist', { user: req.session.name, pageTitle, count });
+    } catch (error) {
         console.log(error.message);
     }
 };

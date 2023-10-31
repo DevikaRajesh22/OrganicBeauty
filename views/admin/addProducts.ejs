@@ -270,9 +270,31 @@
                             <textarea class="form-control" id="message" name="pdetails" rows="4" required></textarea>
                           </div>
                           <div class="form-group">
-                            <label for="pimage">Product Images:</label><br>
-                            <input type="file" name="image" multiple>
-                            <br><br>
+                            <label for="pimage">Product Images:</label><br />
+                            <input
+                              type="file"
+                              name="image1"
+                              value="<%= pinfo.image.image1 %>"
+                            /><br />
+                            <input
+                              type="file"
+                              name="image2"
+                              value="<%= pinfo.image.image2 %>"
+                            />
+                            <br />
+                            <input
+                              type="file"
+                              name="image3"
+                              value="<%= pinfo.image.image3 %>"
+                            />
+                            <br />
+                            <input
+                              type="file"
+                              name="image4"
+                              value="<%= pinfo.image.image4 %>"
+                            />
+                            <br />
+                            <br /><br />
                           </div>
                           <a href="/admin/product" class="text-decoration-none" type="button" class="btn btn-dark">
                             <button class="btn btn-outline-dark">Save</button>

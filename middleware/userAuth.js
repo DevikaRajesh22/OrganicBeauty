@@ -3,7 +3,7 @@ exports.isLoggedIn = async(req,res,next) => {
   try {
     const userId=req.session.userId;
     const user=await User.findOne({_id:userId});
-      if (req.session.userId) {
+      if (req.session.name) {
          if(user.isBlocked){
             req.session.destroy();
             res.redirect('/login');

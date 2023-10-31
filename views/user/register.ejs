@@ -22,6 +22,12 @@
   <link rel="stylesheet" href="../../admin/css/demo_1/style.css">
   <!-- End Layout styles -->
   <link rel="shortcut icon" href="../../admin/images/favicon.png" />
+  <style>
+    p{
+      color: red;
+      font-size: 12px;
+    }
+  </style>
 </head>
 
 <body style="background-image: url('../../admin/images/background.png');">
@@ -41,9 +47,8 @@
                         <!-- <i class="mdi mdi-check-circle-outline"></i> -->
                       </span>
                     </div>
-                    <div id="nameError"></div>
-                    <p id="validationMessage"></p>
                   </div>
+                  <p id="nameError"></p>
                 </div>
                 <div class="form-group">
                   <div class="input-group">
@@ -53,8 +58,8 @@
                         <!-- <i class="mdi mdi-check-circle-outline"></i> -->
                       </span>
                     </div>
-                    <div id="emailError"></div>
                   </div>
+                  <p id="emailError"></p>
                 </div>
                 <div class="form-group">
                   <div class="input-group">
@@ -64,36 +69,33 @@
                         <!-- <i class="mdi mdi-check-circle-outline"></i> -->
                       </span>
                     </div>
-                    <div id="numberError"></div>
                   </div>
+                  <p id="numberError"></p>
                 </div>
                 <div class="form-group">
                   <div class="input-group">
-                    <input type="password" class="form-control" placeholder="Password" name="spassword"
-                      id="passwordInput">
+                    <input type="password" class="form-control" placeholder="Password" name="spassword" id="passwordInput">
                     <div class="input-group-append">
                       <span class="input-group-text">
                         <!-- <i class="mdi mdi-check-circle-outline"></i> -->
                       </span>
                     </div>
                   </div>
+                  <p id="passwordError"></p>
                 </div>
                 <div class="form-group">
                   <div class="input-group">
-                    <input type="password" class="form-control" placeholder="Confirm Password" name="cpassword"
-                      id="confirmPasswordInput">
+                    <input type="password" class="form-control" placeholder="Confirm Password" name="cpassword" id="confirmPasswordInput">
                     <div class="input-group-append">
                       <span class="input-group-text">
                         <!-- <i class="mdi mdi-check-circle-outline"></i> -->
                       </span>
                     </div>
-                    <div id="passwordError"></div>
                   </div>
+                  <p id="confirmPasswordError"></p>
                 </div>
                 <div class="form-group">
-                  <button class="btn btn-primary submit-btn btn-block"
-                    style="background-color:#8BB471; border: 1px solid #8BB471; color:white"
-                    id="registerButton">Register</button>
+                  <button class="btn btn-primary submit-btn btn-block" style="background-color:#8BB471; border: 1px solid #8BB471; color:white" id="registerButton">Register</button>
                 </div>
                 <div class="text-block text-center my-3">
                   <span class="text-small font-weight-semibold">Already have an account ?</span>
@@ -108,6 +110,67 @@
     </div>
     <!-- page-body-wrapper ends -->
   </div>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var name = document.getElementById('nameInput').value;
+        var email = document.getElementById('emailInput').value;
+        var phoneNumber = document.getElementById('phoneNumberInput').value;
+        var password = document.getElementById('passwordInput').value;
+        var confirmPassword = document.getElementById('confirmPasswordInput').value;
+
+        var nameError = document.getElementById('nameError');
+        var emailError = document.getElementById('emailError');
+        var phoneNumberError = document.getElementById('numberError');
+        var passwordError = document.getElementById('passwordError');
+        var confirmPasswordError = document.getElementById('confirmPasswordError');
+
+        nameError.innerHTML = '';
+        emailError.innerHTML = '';
+        phoneNumberError.innerHTML = '';
+        passwordError.innerHTML = '';
+        confirmPasswordError.innerHTML = '';
+
+        var isValid = true;
+
+        if (name.trim() === '' || name.length < 3) {
+            nameError.innerHTML = 'Name must be at least 3 characters long';
+            isValid = false;
+        }
+
+        if (email.trim() === '' || !isValidEmail(email)) {
+            emailError.innerHTML = 'Please enter a valid email address';
+            isValid = false;
+        }
+
+        if (phoneNumber.trim() === '') {
+            phoneNumberError.innerHTML = 'Please enter a phone number';
+            isValid = false;
+        }
+
+        if (password.trim() === '' || password.length < 5) {
+            passwordError.innerHTML = 'Password must be at least 5 characters long';
+            isValid = false;
+        }
+
+        if (confirmPassword !== password) {
+            confirmPasswordError.innerHTML = 'Passwords do not match';
+            isValid = false;
+        }
+
+        if (isValid) {
+            this.submit();
+        }
+    });
+
+    function isValidEmail(email) {
+        var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    }
+  </script>
+
   <!-- container-scroller -->
   <!-- plugins:js -->
   <script src="../../admin/vendors/js/vendor.bundle.base.js"></script>

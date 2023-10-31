@@ -49,10 +49,13 @@
                     </div>
                   </div>
                 </div>
-                <a href="forgotPassword">Forgot password?</a>
-                <p class="text-center" style="color: red;">
-                  <%=locals.emailError? emailError : " " %>
+                <p style="color: red; text-align: left;">
+                  <%= locals.emailErr ? emailErr : " " %>
                 </p>
+                <p style="color: red; text-align: left;">
+                  <%= locals.passwordErr ? passwordErr : " " %>
+                </p>
+                <a href="forgotPassword">Forgot password?</a>                
                 <div class="form-group">
                   <button class="btn submit-btn btn-block"
                     style="background-color:#8BB471; border: 1px solid #8BB471; color:white">Login</button>

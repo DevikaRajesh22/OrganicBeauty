@@ -40,7 +40,7 @@ exports.loginPost = async (req, res) => {
 exports.landing=async(req,res)=>{
     const pageName='Home';
     try{ 
-        res.render('admin/landing',{pageName,userCount,totalSub});
+        res.render('admin/landing',{pageName});
     }catch(error){
         console.log(error.message);
     }
@@ -106,7 +106,6 @@ exports.unblockUser = async (req, res) => {
         const userId = req.params.id;
         const user = await User.findById(userId);
         if (!user) {
-            // return res.status(404).json({ message: 'User not found' });
             console.log('unblockUser: user not found')
         } else {
             user.isBlocked = false;
@@ -114,8 +113,17 @@ exports.unblockUser = async (req, res) => {
             res.redirect('/admin/users');
         }
     } catch (error) {
-        // return res.status(500).json({ error: 'Internal Server Error' });
         console.log('unblockUser: internal server error');
         res.redirect('/admin/errors');
+    }
+};
+
+//salesReport() GET request
+exports.salesReport=async(req,res)=>{
+    try{
+        const pageName='Sales Report';
+        res.render('admin/salesReport',{pageName});
+    }catch(error){
+        console.log(error.message);
     }
 };

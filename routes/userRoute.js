@@ -20,45 +20,45 @@ userRoute.post('/forgotPasswordChange',userController.forgotPasswordChangePost);
 userRoute.get('/register', userController.registerGet);
 userRoute.post('/registerPost', userController.registerPost);
 userRoute.get('/', userAuth.isLoggedIn, userController.landingPage);
-userRoute.get('/products', userController.productsGet);
-userRoute.get('/otp', userAuth.isLoggedOut, userController.otp);
+userRoute.get('/products',  userAuth.isLoggedIn, userController.productsGet);
+userRoute.get('/otp', userAuth.isLoggedOut, userAuth.isLoggedIn, userController.otp);
 userRoute.post('/otp', userController.otpPost);
 userRoute.get('/logout', userController.logout);
-userRoute.get('/productDetails',userController.productDetails);
-userRoute.get('/about',userController.about);
-userRoute.get('/contact',userController.contact);
+userRoute.get('/productDetails', userAuth.isLoggedIn, userController.productDetails);
+userRoute.get('/about', userAuth.isLoggedIn, userController.about);
+userRoute.get('/contact', userAuth.isLoggedIn, userController.contact);
 
 //routes for cart management
-userRoute.get('/cart',cartController.cartGet);
-userRoute.post('/add',cartController.addToCartPost);
-userRoute.post('/cartModify',cartController.updateCartQuantity);
+userRoute.get('/cart',  userAuth.isLoggedIn, cartController.cartGet);
+userRoute.post('/add', cartController.addToCartPost);
+userRoute.post('/cartModify', cartController.updateCartQuantity);
 userRoute.post('/removeProduct',cartController.removeProduct);
-userRoute.get('/checkout',cartController.checkout);
-userRoute.get('/editAddress',cartController.editAddress);
+userRoute.get('/checkout', userAuth.isLoggedIn, cartController.checkout);
+userRoute.get('/editAddress',  userAuth.isLoggedIn, cartController.editAddress);
 userRoute.post('/editAddressPost',cartController.editAddressPost);
-userRoute.get('/success',cartController.success);
+userRoute.get('/success',  userAuth.isLoggedIn, cartController.success);
 
 //routes for order management
-userRoute.get('/orders',orderController.orders);
+userRoute.get('/orders',  userAuth.isLoggedIn, orderController.orders);
 userRoute.post('/placeOrder',orderController.placeOrder);
-userRoute.get('/orderDet',orderController.orderDet);
+userRoute.get('/orderDet',  userAuth.isLoggedIn, orderController.orderDet);
 userRoute.get('/cancelOrder',orderController.cancelOrder);
-userRoute.get('/returnOrder',orderController.returnOrder);
+userRoute.get('/returnOrder',  userAuth.isLoggedIn, orderController.returnOrder);
 
 //routes for profile management
-userRoute.get('/account',userController.account);
+userRoute.get('/account',  userAuth.isLoggedIn, userController.account);
 userRoute.post('/accountPost',userController.accountPost); //change password post request route
-userRoute.get('/changePassword',userController.changePassword);
-userRoute.get('/address',userController.address);
-userRoute.get('/addAddress',userController.addAddress);
+userRoute.get('/changePassword',  userAuth.isLoggedIn, userController.changePassword);
+userRoute.get('/address',  userAuth.isLoggedIn, userController.address);
+userRoute.get('/addAddress',  userAuth.isLoggedIn, userController.addAddress);
 userRoute.post('/addAddress',userController.addAddressPost);
 userRoute.get('/adelete/:id',userController.deleteAddress);
 
 //route for wallet
-userRoute.get('/wallet',userController.wallet);
+userRoute.get('/wallet',  userAuth.isLoggedIn, userController.wallet);
 
 //route for wishlist
-userRoute.get('/wishlist',userController.wishlist);
+userRoute.get('/wishlist',  userAuth.isLoggedIn, userController.wishlist);
 
 //route for search and category filtering
 // userRoute.post('/search',userController.search);
