@@ -80,10 +80,10 @@
                       </tr>
                     </thead>
                     <tbody class="align-middle">
-                      <%carts?.products?.forEach(function(product){ %>
+                      <%cartProduct.forEach(function(product){ %>
                         <tr>
                           <td class="d-flex px-2 mx-2 align-middle">
-                            <img class="px-2" src="/product/<%= product.image.image1 %>" alt=""
+                            <img class="px-2" src="/product/<%=product.productId.image.image1%>" alt=""
                               style="width: 50px" />
                             <%= product.productId.productName %>
                           </td>
@@ -116,7 +116,6 @@
                             </button>
                           </td>
                         </tr>
-
                         <% })%>
                     </tbody>
                   </table>
@@ -129,7 +128,8 @@
                         <button class="btn btn-primary">Apply Coupon</button>
                       </div>
                     </div>
-                  </form>
+
+                  </form action="/checkout" method="post">
                   <div class="card border-secondary mb-5">
                     <div class="card-header bg-secondary border-0">
                       <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
@@ -166,67 +166,68 @@
               </div>
             </div>
           </div>
+
+          <% } %>
       </div>
-      <% } %>
 
-        <!-- Cart End -->
+      <!-- Cart End -->
 
-        <!-- ajax for quantity updation -->
-        <script>
-          //for changing quantity
-          function changeQuantity(productId, count) {
-            console.log(productId, count);
-            $.ajax({
-              type: "post",
-              url: "/cartModify",
-              data: {
-                productId: productId,
-                count: count,
-              },
-              success: function (response) {
-                if (response.success) {
-                  $("#re-load").load("/cart #re-load");
-                } else {
-                  Swal.fire({
-                    position: "center",
-                    icon: "warning",
-                    text: response.message,
-                    timer: 1500,
-                    showConfirmButton: false,
-                  });
-                }
-              },
-            });
-          }
-
-          function removeProduct(productId) {
-            Swal.fire({
-              title: 'Remove Product from Cart',
-              text: 'Are you sure you want to remove this product from your cart?',
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'Yes, remove it',
-              cancelButtonText: 'Cancel',
-            }).then((result) => {
-              if (result.isConfirmed) {
-                // User confirmed the removal, proceed with the AJAX request to remove the product.
-                $.ajax({
-                  url: '/removeProduct',
-                  method: 'post',
-                  data: {
-                    productId: productId,
-                  },
-                  success: function (response) {
-                    if (response.success) {
-                      // Reload the cart section after successful removal
-                      $("#re-load").load('/cart #re-load');
-                    }
-                  },
+      <!-- ajax for quantity updation -->
+      <script>
+        //for changing quantity
+        function changeQuantity(productId, count) {
+          console.log(productId, count);
+          $.ajax({
+            type: "post",
+            url: "/cartModify",
+            data: {
+              productId: productId,
+              count: count,
+            },
+            success: function (response) {
+              if (response.success) {
+                $("#re-load").load("/cart #re-load");
+              } else {
+                Swal.fire({
+                  position: "center",
+                  icon: "warning",
+                  text: response.message,
+                  timer: 1500,
+                  showConfirmButton: false,
                 });
               }
-            });
-          }
-        </script>
+            },
+          });
+        }
 
-        <hr style="border: 0px solid #787878; margin: 100px 0" />
-        <%- include('../user/userFooter.ejs') %>
+        function removeProduct(productId) {
+          Swal.fire({
+            title: 'Remove Product from Cart',
+            text: 'Are you sure you want to remove this product from your cart?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, remove it',
+            cancelButtonText: 'Cancel',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // User confirmed the removal, proceed with the AJAX request to remove the product.
+              $.ajax({
+                url: '/removeProduct',
+                method: 'post',
+                data: {
+                  productId: productId,
+                },
+                success: function (response) {
+                  if (response.success) {
+                    // Reload the cart section after successful removal
+                    $("#re-load").load('/cart #re-load');
+                  }
+                },
+              });
+            }
+          });
+        }
+      </script>
+
+      <hr style="border: 0px solid #787878; margin: 100px 0" />
+      <%- include('../user/userFooter.ejs') %>

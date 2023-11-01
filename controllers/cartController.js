@@ -3,6 +3,9 @@ const Product = require('../models/admin/productCollection');
 const User = require('../models/user/userCollection');
 const Category = require('../models/admin/categoryCollection');
 const Address = require('../models/user/addressCollection');
+const Order=require('../models/user/orderCollection');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
 
 //cartGet() GET request
 exports.cartGet = async (req, res) => {
@@ -15,12 +18,8 @@ exports.cartGet = async (req, res) => {
         }
         const user = req.session.name;
         const pageTitle = 'Cart';
-        const carts = await Cart.findOne({ userId: userId })
-            .populate({
-                path: 'products.productId',
-                model: 'Product',
-                select: 'productId productName productImage'
-            });
+        const carts = await Cart.findOne({ userId: userId }).populate('products.productId')
+
         let count = 0;
         if (carts?.products?.length > 0) {
             count = count + carts.products.length;
@@ -31,44 +30,8 @@ exports.cartGet = async (req, res) => {
         if (carts) {
             const products = carts.products.length;
             if (products > 0) { // Check if there are products in the cart
-                try {
-                    const total = await Cart.aggregate([
-                        { $match: { userId: userId } },
-                        { $unwind: "$products" },
-                        {
-                            $group: {
-                                _id: null,
-                                total: {
-                                    $sum: {
-                                        $multiply: ["$products.productPrice", "$products.count"],
-                                    },
-                                },
-                            },
-                        },
-                    ]);
-                    const totalValue = total[0].total;
-                    const finalPriceValue = carts.shipping + totalValue;
-                    await Cart.updateOne(
-                        { userId: userId },
-                        {
-                            $set: {
-                                finalPrice: finalPriceValue,
-                                subTotal: totalValue
-                            }
-                        }
-                    );
-                    const updatedResult = await Cart.findOne({ userId: userId });
-                    if (updatedResult) {
-                        await updatedResult.save();
-                        res.render('user/cart', { pageTitle, carts, product: products, total: total[0].total, user: req.session.name, count });
-                    } else {
-                        // Handle the case where total is empty or undefined
-                        res.render('user/cart', { pageTitle, carts: undefined, product: products, total: 0, user, customElements });
-                    }
-                } catch (err) {
-                    console.error('Error in aggregation:', err);
-                    // Handle the error, send an error response or redirect as needed
-                }
+                let cartProduct = carts.products;
+                res.render('user/cart', { pageTitle, carts, product: products, user: req.session.name, count, cartProduct });
             } else {
                 res.render('user/cart', { pageTitle, carts, product: undefined, user: req.session.name, count });
             }
@@ -80,6 +43,7 @@ exports.cartGet = async (req, res) => {
     }
 };
 
+//addToCart() POST request
 exports.addToCartPost = async (req, res) => {
     try {
         const user = req.session.userId; // Find the user
@@ -126,7 +90,7 @@ exports.addToCartPost = async (req, res) => {
             await cartFound.save();
         }
 
-   
+
     } catch (error) {
         console.log(error.message);
     }
@@ -135,9 +99,7 @@ exports.addToCartPost = async (req, res) => {
 //updateCartQuantity() POST request
 exports.updateCartQuantity = async (req, res) => {
     try {
-        // console.log('req received');
         const userId = req.session.userId;
-        // console.log(userId);
         const user = await User.findOne({ _id: userId });
         const productId = req.body.productId;
         let count = req.body.count;
@@ -146,8 +108,6 @@ exports.updateCartQuantity = async (req, res) => {
         const cartData = await Cart.findOne({ userId: userId });
 
         const productData = await Product.findOne({ _id: productId });
-        // console.log(cartData);
-
 
         if (!cartData || !productData) {
             res.json({ success: false, message: "Cart or product not found." });
@@ -174,9 +134,6 @@ exports.updateCartQuantity = async (req, res) => {
             res.json({ success: false, message: "Invalid quantity." });
             return;
         }
-        if (updatedQuantity <= 0 || updatedQuantity > productQuantity) {
-            return;
-        }
         // Update the product count and total price in the cart
         cartData.products[existingProductIndex].count = updatedQuantity;
         // console.log(cartData.products[existingProductIndex].count);
@@ -185,8 +142,35 @@ exports.updateCartQuantity = async (req, res) => {
         const productPrice = productData.price;
         const productTotal = productPrice * updatedQuantity;
         cartData.products[existingProductIndex].totalPrice = productTotal;
-        cartData.finalPrice = cartData.shipping + productTotal;
 
+        const total = await Cart.aggregate([
+            { $match: { userId: userId } },
+            { $unwind: "$products" },
+            {
+                $group: {
+                    _id: null,
+                    total: {
+                        $sum: {
+                            $multiply: ["$products.productPrice", "$products.count"],
+                        },
+                    },
+                },
+            },
+        ]);
+        const totalValue = total[0].total;
+        console.log(totalValue);
+        const finalPriceValue = cartData.shipping + totalValue;
+        console.log(finalPriceValue);
+
+        await Cart.updateOne(
+            { userId: userId },
+            {
+                $set: {
+                    finalPrice: finalPriceValue,
+                    subTotal: totalValue
+                }
+            }
+        );
         // Save the updated cart
         await cartData.save();
 
@@ -244,7 +228,8 @@ exports.checkout = async (req, res) => {
         }
         const addresses = await Address.findOne({ user: userId });
         const address = addresses.address;
-        res.render('user/checkout', { pageTitle, user: req.session.name, carts, addresses, address, count });
+        const products = carts.products;
+        res.render('user/checkout', { pageTitle, user: req.session.name, carts, addresses, address, count, products });
     } catch (error) {
         console.log(error.message);
     }
@@ -314,6 +299,57 @@ exports.success = async (req, res) => {
             count = 0;
         }
         res.render('user/success', { pageTitle, user: req.session.name, count });
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+//verifyPayment() POST request
+exports.verifyPayment = async (req, res) => {
+    try {
+        console.log('verify payment post request');
+        const details = req.body;
+        console.log(details);
+        const userId = req.session.userId
+        const cart = await Cart.findOne({ userId });
+        const hmac = crypto.createHmac("sha256", process.env.RAZ_SECRET);
+        hmac.update(
+            details.payment.razorpay_order_id +
+            "|" +
+            details.payment.razorpay_payment_id
+        );
+        const hmacValue = hmac.digest("hex");
+        console.log("Computed HMAC:", hmacValue);
+        console.log("Razorpay Signature:", details.payment.razorpay_signature);
+        if (hmacValue === details.payment.razorpay_signature) {
+            const stockReduce = cart.products
+            console.log(stockReduce[0].count);
+            for (let i = 0; i < stockReduce.length; i++) {
+                const productId = stockReduce[i].productId;
+                const updatedProduct = await Product.findByIdAndUpdate(
+                    productId,
+                    {
+                        $inc: { stock: -stockReduce[i].count }
+                    },
+                    { new: true }
+                );
+            }
+            console.log('hi',details.order.receipt);
+            const removeCart = await Cart.findOneAndUpdate({ userId: userId },
+                {
+                    $pull: {
+                        products: {}
+                    }
+                })
+            await Order.updateOne(
+                { orderId: details.order.receipt },
+                { $set: { status: "Placed" } }
+            );
+         
+            res.json({ payment: true })
+        } else {
+            console.log("not equal");
+        }
     } catch (error) {
         console.log(error.message);
     }

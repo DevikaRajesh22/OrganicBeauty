@@ -37,6 +37,7 @@ userRoute.get('/checkout', userAuth.isLoggedIn, cartController.checkout);
 userRoute.get('/editAddress',  userAuth.isLoggedIn, cartController.editAddress);
 userRoute.post('/editAddressPost',cartController.editAddressPost);
 userRoute.get('/success',  userAuth.isLoggedIn, cartController.success);
+userRoute.post('/verifyPayment',cartController.verifyPayment);
 
 //routes for order management
 userRoute.get('/orders',  userAuth.isLoggedIn, orderController.orders);

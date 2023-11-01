@@ -9,8 +9,8 @@ const ObjectId = mongoose.Types.ObjectId;
 
 //for razorpay
 const razorpay = new Razorpay({
-    key_id: 'rzp_test_9CCuVFywuG0qXQ',
-    key_secret: 'jRdNyz7DjK9YuZgjxZBJjGQq',
+    key_id: process.env.RAZ_KEY,
+    key_secret: process.env.RAZ_SECRET,
   });
 
 //orders() GET request
@@ -44,7 +44,6 @@ exports.orders = async (req, res) => {
 exports.placeOrder = async (req, res) => {
     try {
         const userId = req.session.userId;
-      
         const user = await User.findOne({ _id: userId });
         const userName = req.session.name;
         const cartData = await Cart.findOne({ userId: userId });
@@ -58,6 +57,7 @@ exports.placeOrder = async (req, res) => {
         const deliveryDate = new Date(date);
         deliveryDate.setDate(date.getDate() + 10);
         const paymentMethod = req.body.payment;
+        console.log('1',paymentMethod);
         //orderId
         function generateOrderId() {
             const prefix = "ORD";
@@ -82,13 +82,14 @@ exports.placeOrder = async (req, res) => {
 
         //razorpay
         if(paymentMethod==='Cash on delivery'){
+            console.log(paymentMethod);
 
             const updatePayment=await Order.updateOne(
                 {user:userId},
                 {$set:{status:"Placed"}}
             );
             console.log(updatePayment);
-      
+        
         //to remove products from cart when order is placed
         if (orderDetails) {
             const removeProducts = await Cart.findOneAndUpdate({ userId: userId },
@@ -112,21 +113,20 @@ exports.placeOrder = async (req, res) => {
                 { new: true }
             );
         }
-        res.redirect('/success');
-           
+        res.json({codSuccess:true});
         }else if(paymentMethod==='Online payment'){
+            console.log(paymentMethod);
             const orderData={
-                amount:totalAmount,
+                amount:totalAmount*100,
                 currency:'INR',
                 receipt:orderId,
             };
             razorpay.orders.create(orderData, (err, order) => {
-                if (err) {
-                  console.error(err);
-                  res.status(500).json({ error: 'Internal Server Error' });
-                } else {
-                  // Send the Razorpay order data to the client
-                  res.json({ order });
+                if(err){
+                    console.log(err);
+                }else{
+                    console.log("razorpay order",order);
+                    res.json({order});
                 }
               });
         }else {

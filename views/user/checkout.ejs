@@ -7,40 +7,38 @@
             <div class="row px-xl-5">
                 <div class="col-lg-8">
                     <div class="mb-4">
-                        <form action="/placeOrder" method="post" name="form1">
-                            <h4 class="font-weight-semi-bold mb-4">Billing Address</h4>
-                            <div class="row">
-                                <div class="col-lg-9 mx-3 my-3 px-3">
-                                    <% addresses?.address?.forEach(function(add){ %>
-                                        <div class="col-lg-9 mx-3 my-3">
-                                            <div class="card card-dashboard">
-                                                <div class="card-body">
-                                                    <input type="radio" name="selectedAddress" value="<%= add._id %> "
-                                                        <%=(add._id===addresses.address[0]._id) ? 'checked' : '' %>>
-                                                    <p>
-                                                    <h3>
-                                                        <%= user?user:'User'%>
-                                                    </h3><br>
-                                                    <h6>
-                                                        <%=add.type%>
-                                                    </h6><br>
-                                                    <%=add.country%><br>
-                                                        <%= add.state %>, <%= add.city %><br>
-                                                                <%=add.apartment%>, <%=add.street%>, <%=add.zipcode%>
-                                                                            <br>
-                                                                            <a href="/editAddress?id=<%=add._id%>">Edit
-                                                                                Address <i class="fas fa-edit"></i></a>
-                                                                            </p>
+                        <h4 class="font-weight-semi-bold mb-4">Billing Address</h4>
+                        <div class="row">
+                            <div class="col-lg-9 mx-3 my-3 px-3">
+                                <% addresses?.address?.forEach(function(add){ %>
+                                    <div class="col-lg-9 mx-3 my-3">
+                                        <div class="card card-dashboard">
+                                            <div class="card-body">
+                                                <input type="radio" id="selectedAddress" name="selectedAddress"
+                                                    value="<%= add._id %> " <%=(add._id===addresses.address[0]._id)
+                                                    ? 'checked' : '' %>>
+                                                <p>
+                                                <h3>
+                                                    <%= user?user:'User'%>
+                                                </h3><br>
+                                                <h6>
+                                                    <%=add.type%>
+                                                </h6><br>
+                                                <%=add.country%><br>
+                                                    <%= add.state %>, <%= add.city %><br>
+                                                            <%=add.apartment%>, <%=add.street%>, <%=add.zipcode%>
+                                                                        <br>
+                                                                        <a href="/editAddress?id=<%=add._id%>">Edit
+                                                                            Address <i class="fas fa-edit"></i></a>
+                                                                        </p>
 
-                                                </div><!-- End .card-body -->
+                                            </div><!-- End .card-body -->
 
-                                            </div><!-- End .card-dashboard -->
-                                        </div><!-- End .col-lg-6 -->
-                                        <% }); %>
-
-                                </div>
+                                        </div><!-- End .card-dashboard -->
+                                    </div><!-- End .col-lg-6 -->
+                                    <% }); %>
                             </div>
-
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -67,7 +65,7 @@
                         <div class="card-footer border-secondary bg-transparent">
                             <div class="d-flex justify-content-between mt-2">
                                 <h5 class="font-weight-bold">Total</h5>
-                                <h5 class="font-weight-bold">₹<%= carts?.finalPrice %>
+                                <h5 class="font-weight-bold" id="total">₹<%= carts?.finalPrice %>
                                 </h5>
                             </div>
                         </div>
@@ -96,14 +94,91 @@
                             </div>
                         </div>
                         <div class="card-footer border-secondary bg-transparent">
-                            <a href="/success" class="text-decoration-none"><button
-                                    class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3"
-                                    type="submit">Place Order</button></a>
+                            <a  class="text-decoration-none"><button
+                                    class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3" type="submit"
+                                    onclick="order('<% products.productId %>')">Place Order</button></a>
                         </div>
-                        </form>
                     </div>
                 </div>
             </div>
         </div>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script>
+            function order(pid) {
+                let sA = document.getElementById('selectedAddress');
+                let selectedAddress = sA.value
+                let payment = $("input[name=payment]:checked").val();
+                let total = document.getElementById('total').value;
+                console.log(total);
+                console.log(payment);
+                let productId = pid
+                $.ajax({
+                    url: '/placeOrder',
+                    type: 'POST',
+                    data: {
+                        productId: productId,
+                        selectedAddress: selectedAddress,
+                        payment: payment,
+                        Total: total
+                    },
+                    success: (response) => {
+                        if (response.codSuccess) {
+                            console.log('cash');
+                            location.href = '/success'
+                        } else {
+                            console.log('online');
+                            razorpay(response.order);
+                        }
+                    }
+                })
+            }
+            function razorpay(order) {
+                console.log(order);
+                var options = {
+                    "key": "rzp_test_9CCuVFywuG0qXQ", // Enter the Key ID generated from the Dashboard
+                    "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                    "currency": "INR",
+                    "name": "Organic Beauty", //your business name
+                    "description": "Test Transaction",
+                    "image": "https://example.com/your_logo",
+                    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                    "handler": function (response) {
+                        verifyPayment(response, order);
+                    },
+                    "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information, especially their phone number
+                        "name": "Gaurav Kumar", //your customer's name
+                        "email": "gaurav.kumar@example.com",
+                        "contact": "9000090000"  //Provide the customer's phone number for better conversion rates 
+                    },
+                    "notes": {
+                        "address": "Razorpay Corporate Office"
+                    },
+                    "theme": {
+                        "color": "#3399cc"
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+                rzp1.open();
+            };
+
+            function verifyPayment(payment, order) {
+                const amount = document.getElementById('total').value;
+                $.ajax({
+                    url: '/verifyPayment',
+                    type: 'POST',
+                    data: {
+                        payment: payment,
+                        amount: amount*100,
+                        order: order
+                    },
+                    success: function (response) {
+                        if (response.payment) {
+                            window.location.href = "/success"
+                        }
+                    }
+                })
+            };
+
+        </script>
         <!-- Checkout End -->
         <%- include('../user/userFooter.ejs') %>
