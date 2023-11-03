@@ -16,8 +16,8 @@
     <div class="container-fluid bg-primary hero-header mb-5">
       <div class="container text-center">
         <h1 class="display-4 text-white mb-3 animated slideInDown">Products</h1>
-        <form action="/search" method="post">
-          <input type="text" name="searchTerm" placeholder="Search for products">
+        <form id="searchForm">
+          <input type="text" id="searchTerm" name="searchTerm" value="<%= searchTerm %>" placeholder="Search for Products">
           <button type="submit" class="btn-success">Search</button>
         </form>
       </div>
@@ -47,29 +47,31 @@
           </ul>
         </div>
 
-        <div class="row g-4">
-          <% products.forEach(function(product,index){ %>
-            <% if(product.isList){ %>
-              <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.1s">
-                <div class="product-item text-center border h-100 p-4">
-                  <img class="img-fluid mb-4" src="/product/<%=product.image.image1%>" alt="" />
-                  <a href="/productDetails?id=<%=product._id%>" class="h6 d-inline-block mb-2">
-                    <%=product.productName%>
-                  </a>
-                  <h5 class="text-primary mb-3">₹ <%=product.price%>
-                  </h5>
-                  <!-- <a href="" class="btn btn-outline-primary px-3">Add To Cart</a> -->
-                  <form action="/add?id=<%= product._id %>" method="POST">
-                    <button href="/addToCart?id=<%=products._id%>" class="btn btn-outline-success" type="submit"
-                      onclick="addToCart()">
-                      Add to cart
-                    </button>
-                  </form>
+        <% if(items.length===0){ %>
+          <h6 class="mt-5 d-flex ">no item found!!!!</h6>
+          <% }else{ %>
+            <div class="row g-4">
+              <% items.forEach(function(item){ %>
+                <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.1s">
+                  <div class="product-item text-center border h-100 p-4">
+                    <img class="img-fluid mb-4" src="/product/<%=item.image.image1%>" alt="" />
+                    <a href="/productDetails?id=<%=item._id%>" class="h6 d-inline-block mb-2">
+                      <%=item.productName%>
+                    </a>
+                    <h5 class="text-primary mb-3">₹ <%=item.price%>
+                    </h5>
+                    <!-- <a href="" class="btn btn-outline-primary px-3">Add To Cart</a> -->
+                    <form action="/add?id=<%= item._id %>" method="POST">
+                      <button href="/addToCart?id=<%=item._id%>" class="btn btn-outline-success" type="submit"
+                        onclick="addToCart()">
+                        Add to cart
+                      </button>
+                    </form>
+                  </div>
                 </div>
-              </div>
-              <% } %>
                 <% }); %>
-        </div>
+            </div>
+            <% } %>
       </div>
     </div>
     <!-- Product End -->
@@ -111,6 +113,8 @@
           location.href = "/products"
         });
       }
+
+
     </script>
 
     <!-- Footer Start -->

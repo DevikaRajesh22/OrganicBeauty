@@ -120,15 +120,46 @@
                     </tbody>
                   </table>
                 </div>
+
                 <div class="col-lg-4">
                   <form class="mb-5" action="">
-                    <div class="input-group">
-                      <input type="text" class="form-control p-4" placeholder="Coupon Code" />
-                      <div class="input-group-append">
-                        <button class="btn btn-primary">Apply Coupon</button>
+                    <% if(couponSelected===undefined){ %>
+                      <div class="input-group">
+                        <input type="text" class="form-control p-4" placeholder="Coupon Code" id="coupon"
+                          name="couponcode">
+                        <div class="input-group-append">
+                          <button class="btn btn-primary" onclick="applyCoupon()" type="submit">Apply Coupon</button>
+                        </div>
                       </div>
-                    </div>
-
+                      <% }else{ %>
+                        <div class="d-flex border p-3 w-100 justify-content-between my-2"
+                          style="background-color:#8BB471;">
+                          <h6 class="p-2 text-white">Coupon Applied : <b>
+                              <%=couponSelected.couponCode%>
+                            </b></h6>
+                          <a href="/removeCoupon"><i class="fas fa-solid fa-trash text-white"
+                              style="color: #666b70;"></i></a>
+                        </div>
+                        <% } %>
+                          <div class="border border-1 p-2 mt-4" style="width: 31rem; height: 14rem ; overflow: auto;">
+                            <%coupon.forEach((val)=>{ %>
+                              <% if(val.showStatus){ %>
+                                <div class="border border-1 w-100 p-2 mb-1">
+                                  <h5>
+                                    <%=val.couponCode%>
+                                  </h5>
+                                  <h6>save ₹<%=val.maximumDiscount%>
+                                  </h6>
+                                  <p>₹<%=val.maximumDiscount%> of on minimum purchase of ₹
+                                      <%=val.minimumPurchase%>
+                                  </p>
+                                  <p>expires on <%= val.lastDate.toISOString().split('T')[0] %>
+                                  </p>
+                                  </p>
+                                </div>
+                                <% } %>
+                                  <% })%>
+                          </div>
                   </form action="/checkout" method="post">
                   <div class="card border-secondary mb-5">
                     <div class="card-header bg-secondary border-0">
@@ -147,13 +178,14 @@
                       </div>
                       <div class="d-flex justify-content-between">
                         <h6 class="font-weight-medium">Discount</h6>
-                        <h6 class="font-weight-medium">₹ 0</h6>
+                        <h6 class="font-weight-medium">₹ <%=couponApplied?couponApplied.maximumDiscount : 0%>
+                        </h6>
                       </div>
                     </div>
                     <div class="card-footer border-secondary bg-transparent">
                       <div class="d-flex justify-content-between mt-2">
                         <h5 class="font-weight-bold">Total</h5>
-                        <h5 class="font-weight-bold">$ <%= carts?.finalPrice %>
+                        <h5 class="font-weight-bold">₹ <%= carts?.finalPrice %>
                         </h5>
                       </div>
                       <a href="/checkout" class="text-decoration-none"><button
@@ -227,6 +259,46 @@
             }
           });
         }
+
+        function applyCoupon() {
+          console.log('ajax');
+          const couponcode = document.getElementById('couponcode')
+          const value = couponcode.value;
+          console.log(couponcode);
+          $.ajax({
+            url: '/applyCoupon',
+            type: 'POST',
+            data: {
+              coupon: value
+            },
+            success: function (response) {
+              if (response.applied) {
+                Swal.fire({
+                  icon: "success",
+                  title: "Coupon Applied",
+                  text: response.message,
+                  confirmButtonText: "OK", // Change the text of the confirm button to "OK"
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    location.href = "/cart"; // Redirect to the specified URL if the user clicks "OK"
+                  }
+                });
+              } else if (response.expired) {
+                Swal.fire({
+                  icon: "error",
+                  title: "Coupon Expired",
+                  text: "Sorry, the coupon has expired.",
+                });
+              } else if (response.applied === false) {
+                Swal.fire({
+                  icon: "error",
+                  text: response.message
+                });
+              }
+            }
+          })
+        }
+
       </script>
 
       <hr style="border: 0px solid #787878; margin: 100px 0" />

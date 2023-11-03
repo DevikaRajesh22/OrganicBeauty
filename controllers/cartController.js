@@ -1,39 +1,61 @@
 const Cart = require('../models/user/cartCollection');
 const Product = require('../models/admin/productCollection');
 const User = require('../models/user/userCollection');
-const Category = require('../models/admin/categoryCollection');
+const Coupon = require('../models/admin/couponCollection');
 const Address = require('../models/user/addressCollection');
-const Order=require('../models/user/orderCollection');
+const Order = require('../models/user/orderCollection');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
 //cartGet() GET request
 exports.cartGet = async (req, res) => {
     try {
-
+        let couponSelected;
+        let couponApplied;
         const userId = req.session.userId;
+        const coupon = await Coupon.find({
+            $and: [
+                { usedUsers: { $nin: [userId] } },
+                { showStatus: true }
+            ]
+        });
         const users = await User.findOne({ _id: userId });
         if (!users) {
             res.redirect('/login');
         }
-        const user = req.session.name;
         const pageTitle = 'Cart';
-        const carts = await Cart.findOne({ userId: userId }).populate('products.productId')
-
+        const carts = await Cart.findOne({ userId: userId }).populate('products.productId');
+        if (carts) {
+            const subTotal = carts.products.reduce((acc, val) => acc + val.totalPrice, 0);
+            let finalPrice = subTotal + 10;
+            couponApplied = await Coupon.findOne({ couponCode: carts?.couponApplied });
+            if (couponApplied) {
+                finalPrice = finalPrice - couponApplied.maximumDiscount;
+                couponSelected = await Coupon.findOne({ couponCode: carts?.couponApplied });
+            }
+            const filter = { userId: userId };
+            const update = {
+                $set: {
+                    subTotal: subTotal,
+                    finalPrice: finalPrice,
+                }
+            };
+            const updatedCart = await Cart.updateOne(filter, update);
+            console.log(updatedCart);
+        }
         let count = 0;
         if (carts?.products?.length > 0) {
             count = count + carts.products.length;
         } else {
             count = 0;
         }
-
         if (carts) {
             const products = carts.products.length;
             if (products > 0) { // Check if there are products in the cart
                 let cartProduct = carts.products;
-                res.render('user/cart', { pageTitle, carts, product: products, user: req.session.name, count, cartProduct });
+                res.render('user/cart', { pageTitle, carts, product: products, user: req.session.name, count, cartProduct, coupon,couponSelected,couponApplied});
             } else {
-                res.render('user/cart', { pageTitle, carts, product: undefined, user: req.session.name, count });
+                res.render('user/cart', { pageTitle, carts, product: undefined, user: req.session.name, count});
             }
         } else {
             res.render('user/cart', { pageTitle, carts: undefined, product: undefined, total: 0, user: req.session.name, count })
@@ -136,45 +158,11 @@ exports.updateCartQuantity = async (req, res) => {
         }
         // Update the product count and total price in the cart
         cartData.products[existingProductIndex].count = updatedQuantity;
-        // console.log(cartData.products[existingProductIndex].count);
-
         // Calculate the updated total price for the product
         const productPrice = productData.price;
         const productTotal = productPrice * updatedQuantity;
         cartData.products[existingProductIndex].totalPrice = productTotal;
-
-        const total = await Cart.aggregate([
-            { $match: { userId: userId } },
-            { $unwind: "$products" },
-            {
-                $group: {
-                    _id: null,
-                    total: {
-                        $sum: {
-                            $multiply: ["$products.productPrice", "$products.count"],
-                        },
-                    },
-                },
-            },
-        ]);
-        const totalValue = total[0].total;
-        console.log(totalValue);
-        const finalPriceValue = cartData.shipping + totalValue;
-        console.log(finalPriceValue);
-
-        await Cart.updateOne(
-            { userId: userId },
-            {
-                $set: {
-                    finalPrice: finalPriceValue,
-                    subTotal: totalValue
-                }
-            }
-        );
-        // Save the updated cart
         await cartData.save();
-
-
         res.status(200).json({ success: true, message: 'Cart item updated successfully' });
     } catch (error) {
         console.log(error.message);
@@ -184,13 +172,9 @@ exports.updateCartQuantity = async (req, res) => {
 //removeProduct() GET request
 exports.removeProduct = async (req, res) => {
     try {
-        // console.log('removeProduct() get request');
         const userId = req.session.userId;
         const productId = req.body.productId;
-        // console.log('userid', userId);
-        // console.log('productId', productId);
         const cart = await Cart.findOne({ userId: userId });
-        // console.log('cart',cart);
         if (cart) {
             await Cart.findOneAndUpdate(
                 { userId: userId },
@@ -307,9 +291,7 @@ exports.success = async (req, res) => {
 //verifyPayment() POST request
 exports.verifyPayment = async (req, res) => {
     try {
-        console.log('verify payment post request');
         const details = req.body;
-        console.log(details);
         const userId = req.session.userId
         const cart = await Cart.findOne({ userId });
         const hmac = crypto.createHmac("sha256", process.env.RAZ_SECRET);
@@ -319,11 +301,8 @@ exports.verifyPayment = async (req, res) => {
             details.payment.razorpay_payment_id
         );
         const hmacValue = hmac.digest("hex");
-        console.log("Computed HMAC:", hmacValue);
-        console.log("Razorpay Signature:", details.payment.razorpay_signature);
         if (hmacValue === details.payment.razorpay_signature) {
             const stockReduce = cart.products
-            console.log(stockReduce[0].count);
             for (let i = 0; i < stockReduce.length; i++) {
                 const productId = stockReduce[i].productId;
                 const updatedProduct = await Product.findByIdAndUpdate(
@@ -334,7 +313,6 @@ exports.verifyPayment = async (req, res) => {
                     { new: true }
                 );
             }
-            console.log('hi',details.order.receipt);
             const removeCart = await Cart.findOneAndUpdate({ userId: userId },
                 {
                     $pull: {
@@ -345,10 +323,8 @@ exports.verifyPayment = async (req, res) => {
                 { orderId: details.order.receipt },
                 { $set: { status: "Placed" } }
             );
-         
+
             res.json({ payment: true })
-        } else {
-            console.log("not equal");
         }
     } catch (error) {
         console.log(error.message);

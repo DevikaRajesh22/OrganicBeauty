@@ -1,8 +1,8 @@
 const adminController = require('../controllers/adminController');
 const productController = require('../controllers/productController');
 const categoryController = require('../controllers/categoryController');
-const adminOrderController=require('../controllers/adminOrderController');
-const adminCouponController=require('../controllers/adminCouponController');
+const orderController=require('../controllers/orderController');
+const couponController=require('../controllers/couponController');
 const adminAuth=require('../middleware/adminAuth');
 const express = require('express');
 const adminRoute = express();
@@ -43,18 +43,18 @@ adminRoute.get('/cedit', categoryController.editCategory);
 adminRoute.post('/cedit', categoryController.editCategoryPost);
 
 //order management
-adminRoute.get('/ordersAdmin', adminOrderController.orderGet);
-adminRoute.post('/updateStatus',adminOrderController.updateStatus);
-adminRoute.get('/orderDetails', adminOrderController.orderDetails);
+adminRoute.get('/ordersAdmin', orderController.orderGet);
+adminRoute.post('/updateStatus',orderController.updateStatus);
+adminRoute.get('/orderDetails', orderController.orderDetails);
 
 //coupon management
-adminRoute.get('/coupon', adminCouponController.coupon);
-adminRoute.get('/addCoupon', adminCouponController.addCoupon);
-adminRoute.post('/addCouponPost',adminCouponController.addCouponPost);
-adminRoute.get('/editCoupon', adminCouponController.editCoupon);
-adminRoute.post('/editCouponPost',adminCouponController.editCouponPost);
-adminRoute.get('/hideCoupon',adminCouponController.hideCoupon);
-adminRoute.get('/showCoupon',adminCouponController.showCoupon);
+adminRoute.get('/coupon', couponController.coupon);
+adminRoute.get('/addCoupon', couponController.addCoupon);
+adminRoute.post('/addCouponPost',couponController.addCouponPost);
+adminRoute.get('/editCoupon', couponController.editCoupon);
+adminRoute.post('/editCouponPost',couponController.editCouponPost);
+adminRoute.get('/hideCoupon',couponController.hideCoupon);
+adminRoute.get('/showCoupon',couponController.showCoupon);
 
 //sales report
 adminRoute.get('/salesReport', adminController.salesReport);

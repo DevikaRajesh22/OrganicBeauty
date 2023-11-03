@@ -1,6 +1,7 @@
 const Coupon = require('../models/admin/couponCollection');
+const Cart = require('../models/user/cartCollection');
 
-//coupon() GET request
+//admin coupon() GET request
 exports.coupon = async (req, res) => {
     try {
         const pageName = 'Coupons';
@@ -11,7 +12,7 @@ exports.coupon = async (req, res) => {
     }
 };
 
-//addCoupon() GET request
+//admin addCoupon() GET request
 exports.addCoupon = async (req, res) => {
     try {
         const pageName = 'Coupons';
@@ -21,7 +22,7 @@ exports.addCoupon = async (req, res) => {
     }
 };
 
-//addCouponPost() POST request
+//admin addCouponPost() POST request
 exports.addCouponPost = async (req, res) => {
     try {
         const coupon = new Coupon({
@@ -37,7 +38,7 @@ exports.addCouponPost = async (req, res) => {
     }
 };
 
-//editCoupon() GET request
+//admin editCoupon() GET request
 exports.editCoupon = async (req, res) => {
     try {
         const pageName = 'Coupon';
@@ -49,7 +50,7 @@ exports.editCoupon = async (req, res) => {
     }
 };
 
-//editCouponPost() POST request
+//admin editCouponPost() POST request
 exports.editCouponPost = async (req, res) => {
     try {
         const couponId = req.body.id;
@@ -68,7 +69,7 @@ exports.editCouponPost = async (req, res) => {
     }
 };
 
-//hideCoupon() GET request
+//admin hideCoupon() GET request
 exports.hideCoupon = async (req, res) => {
     try {
         const couponId = req.query.id;
@@ -79,7 +80,7 @@ exports.hideCoupon = async (req, res) => {
     }
 };
 
-//showCoupon() GET request
+//admin showCoupon() GET request
 exports.showCoupon = async (req, res) => {
     try {
         const couponId = req.query.id;
@@ -89,3 +90,48 @@ exports.showCoupon = async (req, res) => {
         console.log(error.message);
     }
 };
+
+//user applyCoupon() POST request
+exports.applyCoupon = async (req, res) => {
+    try {
+        console.log('apply coupon post request');
+        const user = req.session.userId;
+        const couponCode = req.body.coupon;
+        console.log(couponCode);
+        const cart = await Cart.findOne({ userId: user }).populate('products.productId');
+        const Total = cart.products.reduce((acc, val) => acc + val.totalPrice, 0);
+        const couponFound = await Coupon.findOne({ couponCode });
+        const currentDate = new Date();
+        const usedCoupon = await Coupon.find({ couponCode, usedUsers: { $in: [user] } })
+        if (couponFound === null) {
+            res.redirect('/cart');
+        } else if (couponFound.lastDate < currentDate) {
+            res.json({ expired: true });
+        } else if (couponFound && usedCoupon.length == 0) {
+            if (Total < couponFound.minimumPurchase) {
+                res.json({ applied: false, message: "minimum purchase doesnt match" })
+            } else {
+                await Cart.findOneAndUpdate({ userId: user }, { $set: { couponApplied: couponCode } });
+                res.json({ applied: true, message: 'Coupon applied' })
+            }
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+//user removeCoupon() GET request
+exports.removeCoupon=async(req,res)=>{
+    try{
+        const userId=req.session.userId;
+        await Cart.updateOne({userId},{
+            $set :{
+                couponApplied : ""
+            }
+        });
+        res.redirect('/cart');
+    }catch(error){
+        console.log(error.message);
+    }
+};
+

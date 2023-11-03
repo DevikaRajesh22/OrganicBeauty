@@ -1,7 +1,10 @@
 const userController = require('../controllers/userController');
-const productController = require('../controllers/productController');
 const cartController=require('../controllers/cartController');
 const orderController=require('../controllers/orderController');
+const profileController=require('../controllers/profileController');
+const couponController=require('../controllers/couponController');
+const walletController=require('../controllers/walletController');
+const wishlistController=require('../controllers/wishlistController');
 const userAuth = require('../middleware/userAuth');
 const express = require('express');
 const userRoute = express();
@@ -47,21 +50,22 @@ userRoute.get('/cancelOrder',orderController.cancelOrder);
 userRoute.get('/returnOrder',  userAuth.isLoggedIn, orderController.returnOrder);
 
 //routes for profile management
-userRoute.get('/account',  userAuth.isLoggedIn, userController.account);
-userRoute.post('/accountPost',userController.accountPost); //change password post request route
-userRoute.get('/changePassword',  userAuth.isLoggedIn, userController.changePassword);
-userRoute.get('/address',  userAuth.isLoggedIn, userController.address);
-userRoute.get('/addAddress',  userAuth.isLoggedIn, userController.addAddress);
-userRoute.post('/addAddress',userController.addAddressPost);
-userRoute.get('/adelete/:id',userController.deleteAddress);
+userRoute.get('/account',  userAuth.isLoggedIn, profileController.account);
+userRoute.post('/accountPost',profileController.changePasswordPost); //change password post request route
+userRoute.get('/changePassword',  userAuth.isLoggedIn, profileController.changePassword);
+userRoute.get('/address',  userAuth.isLoggedIn, profileController.address);
+userRoute.get('/addAddress',  userAuth.isLoggedIn, profileController.addAddress);
+userRoute.post('/addAddress',profileController.addAddressPost);
+userRoute.get('/adelete/:id',profileController.deleteAddress);
+
+//route for coupons
+userRoute.post('/applyCoupon',couponController.applyCoupon);
+userRoute.get('/removeCoupon',couponController.removeCoupon);
 
 //route for wallet
-userRoute.get('/wallet',  userAuth.isLoggedIn, userController.wallet);
+userRoute.get('/wallet',  userAuth.isLoggedIn, walletController.wallet);
 
 //route for wishlist
-userRoute.get('/wishlist',  userAuth.isLoggedIn, userController.wishlist);
-
-//route for search and category filtering
-// userRoute.post('/search',userController.search);
+userRoute.get('/wishlist',  userAuth.isLoggedIn, wishlistController.wishlist);
 
 module.exports = userRoute;
