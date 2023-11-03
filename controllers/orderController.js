@@ -123,11 +123,9 @@ exports.placeOrder = async (req, res) => {
         const deliveryDate = new Date(date);
         deliveryDate.setDate(date.getDate() + 10);
         const paymentMethod = req.body.payment;
-        console.log('1',paymentMethod);
-        //orderId
         function generateOrderId() {
             const prefix = "ORD";
-            const timestamp = Date.now(); // Get the current timestamp in milliseconds
+            const timestamp = Date.now();
             const uniqueId = prefix + timestamp;
             return uniqueId;
         }
@@ -206,6 +204,7 @@ exports.placeOrder = async (req, res) => {
 //userDet() GET request
 exports.orderDet = async (req, res) => {
     try {
+
         const pageTitle = 'Orders';
         const orderId = req.query.orderId;
         const orders = await Order.findOne({ _id: orderId }).populate(
@@ -235,8 +234,8 @@ exports.cancelOrder = async (req, res) => {
             {_id:orderId},
             {$set:{status:"Cancelled"}}
         );
+        console.log(updatePayment);
         res.json({success:true});
-        res.redirect('/orders');
     } catch (error) {
         console.log(error.message);
     }

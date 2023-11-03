@@ -178,7 +178,8 @@
                       </div>
                       <div class="d-flex justify-content-between">
                         <h6 class="font-weight-medium">Discount (<%=couponApplied?couponApplied.couponCode :""%>)</h6>
-                        <h6 class="font-weight-medium text-danger">- ₹  <%=couponApplied?couponApplied.maximumDiscount : 0%>
+                        <h6 class="font-weight-medium text-danger">- ₹ <%=couponApplied?couponApplied.maximumDiscount :
+                            0%>
                         </h6>
                       </div>
                     </div>
@@ -260,47 +261,58 @@
         }
 
         function applyCoupon() {
-  console.log('ajax');
-  const couponcode = document.getElementById('coupon').value;
-  console.log(couponcode);
-  // Assuming you're using jQuery for AJAX
-  $.ajax({
-    url: '/applyCoupon',
-    type: 'POST',
-    data: { coupon: couponcode },
-    success: function (response) {
-      if (response.applied) {
-        Swal.fire({
-          icon: "success",
-          title: "Coupon Applied",
-          text: response.message,
-          confirmButtonText: "OK",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.location.href = "/cart";
-          }
-        });
-      } else if (response.expired) {
-        Swal.fire({
-          icon: "error",
-          title: "Coupon Expired",
-          text: "Sorry, the coupon has expired.",
-          confirmButtonText:"OK",
-        });
-      } else if (response.applied === false) {
-        Swal.fire({
-          icon: "error",
-          text: response.message
-        });
-      }
-    },
-    error: function (error) {
-      console.log("Error in AJAX request:", error);
-      // You can handle the error here or log it for debugging
-    }
-  });
-}
-
+          const couponcode = document.getElementById('coupon').value;
+          $.ajax({
+            url: '/applyCoupon',
+            type: 'POST',
+            data: { coupon: couponcode },
+            success: function (response) {
+              if (response.applied) {
+                Swal.fire({
+                  icon: "success",
+                  title: "Coupon Applied",
+                  text: response.message,
+                  showConfirmButton: true,
+                  confirmButtonText: "OK",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    redirectToCart();
+                  }
+                });
+              } else if (response.expired) {
+                Swal.fire({
+                  icon: "error",
+                  title: "Coupon Expired",
+                  text: "Sorry, the coupon has expired.",
+                  showConfirmButton: true,
+                  confirmButtonText: "OK",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    redirectToCart();
+                  }
+                });
+              } else if (response.applied === false) {
+                Swal.fire({
+                  icon: "error",
+                  text: response.message,
+                  showConfirmButton: true, // Ensure the confirm button is visible
+                  confirmButtonText: "OK",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    redirectToCart();
+                  }
+                });
+              }
+            },
+            error: function (error) {
+              console.log("Error in AJAX request:", error);
+              displayErrorAlert("Error applying the coupon");
+            }
+          });
+        }
+        function redirectToCart() {
+          window.location.href = "/cart";
+        }
 
       </script>
 

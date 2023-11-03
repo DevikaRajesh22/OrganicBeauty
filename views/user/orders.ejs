@@ -39,7 +39,6 @@
           <th scope="col">Amount</th>
           <th scope="col">Status</th>
           <th scope="col">Details</th>
-          <th scope="col">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -73,17 +72,6 @@
                   Order details
                 </button></a>
             </td>
-            <td>
-              <% if (order.status === 'Delivered') { %>
-                <a href="/returnOrder?orderId=<%= order._id %>">
-                    <button type="button" class="btn btn-warning">Return</button>
-                </a>
-            <% } else if (order.status === 'Cancelled') { %>
-                <!-- Nothing to display if status is 'Cancelled' -->
-            <% } else { %>
-                <button class="btn btn-danger text-white" onclick="cancelOrder('<%=order._id %>')">Cancel</button>
-            <% } %>            
-            </td>
           </tr>
           <% }) %>
       </tbody>
@@ -115,24 +103,6 @@
       </div>
     </div>
     <!-- Newsletter End -->
-
-
-
-
     <!-- Footer Start -->
-    <!-- function orderCancel() -->
-    <script>
-      function cancelOrder(orderId) {
-        $.ajax({
-          url: `/cancelOrder?id=${orderId}`,
-          type: 'get',
-          success: function (response) {
-            if (response.success) {
-              location.reload();
-            }
-          }
-        })
-      }
-
     </script>
     <%- include('../user/userFooter.ejs') %>

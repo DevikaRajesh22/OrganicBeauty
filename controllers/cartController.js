@@ -10,7 +10,6 @@ const crypto = require('crypto');
 //cartGet() GET request
 exports.cartGet = async (req, res) => {
     try {
-        console.log('coupon cart get');
         let couponSelected;
         let couponApplied;
         const userId = req.session.userId;
@@ -37,8 +36,6 @@ exports.cartGet = async (req, res) => {
             if (couponApplied) {
                 finalPrice = finalPrice - couponApplied.maximumDiscount;
                 couponSelected = await Coupon.findOne({ couponCode: carts?.couponApplied });
-                console.log('finalPrice',finalPrice);
-                console.log('couponSellecetd',couponSelected);
             }
             const filter = { userId: userId };
             const update = {
@@ -48,7 +45,6 @@ exports.cartGet = async (req, res) => {
                 }
             };
             const updatedCart = await Cart.updateOne(filter, update);
-            console.log(updatedCart);
         }
         let count = 0;
         if (carts?.products?.length > 0) {

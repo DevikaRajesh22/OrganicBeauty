@@ -17,7 +17,8 @@
       <div class="container text-center">
         <h1 class="display-4 text-white mb-3 animated slideInDown">Products</h1>
         <form id="searchForm">
-          <input type="text" id="searchTerm" name="searchTerm" value="<%= searchTerm %>" placeholder="Search for Products">
+          <input type="text" id="searchTerm" name="searchTerm" value="<%= searchTerm %>"
+            placeholder="Search for Products">
           <button type="submit" class="btn-success">Search</button>
         </form>
       </div>
@@ -63,7 +64,7 @@
                     <form action="/add?id=<%= item._id %>" method="POST">
                       <a href="#" class="mx-3 text-decoration-none">
                         <i class="fas fa-heart fa-lg"></i>
-                      </a>                      
+                      </a>
                       <button href="/addToCart?id=<%=item._id%>" class="btn btn-outline-success" type="submit"
                         onclick="addToCart()">
                         Add to cart
