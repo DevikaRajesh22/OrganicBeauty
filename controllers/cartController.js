@@ -10,6 +10,7 @@ const crypto = require('crypto');
 //cartGet() GET request
 exports.cartGet = async (req, res) => {
     try {
+        console.log('coupon cart get');
         let couponSelected;
         let couponApplied;
         const userId = req.session.userId;
@@ -28,10 +29,16 @@ exports.cartGet = async (req, res) => {
         if (carts) {
             const subTotal = carts.products.reduce((acc, val) => acc + val.totalPrice, 0);
             let finalPrice = subTotal + 10;
+            console.log(subTotal);
+            console.log(finalPrice);
+            console.log(carts.couponApplied);
             couponApplied = await Coupon.findOne({ couponCode: carts?.couponApplied });
+            console.log('couponApplied',couponApplied);
             if (couponApplied) {
                 finalPrice = finalPrice - couponApplied.maximumDiscount;
                 couponSelected = await Coupon.findOne({ couponCode: carts?.couponApplied });
+                console.log('finalPrice',finalPrice);
+                console.log('couponSellecetd',couponSelected);
             }
             const filter = { userId: userId };
             const update = {
@@ -53,7 +60,7 @@ exports.cartGet = async (req, res) => {
             const products = carts.products.length;
             if (products > 0) { // Check if there are products in the cart
                 let cartProduct = carts.products;
-                res.render('user/cart', { pageTitle, carts, product: products, user: req.session.name, count, cartProduct, coupon,couponSelected,couponApplied});
+                res.render('user/cart', { pageTitle, carts, product: products, user: req.session.name, count, cartProduct,coupon,couponSelected,couponApplied});
             } else {
                 res.render('user/cart', { pageTitle, carts, product: undefined, user: req.session.name, count});
             }

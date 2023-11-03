@@ -60,8 +60,10 @@
                     </a>
                     <h5 class="text-primary mb-3">₹ <%=item.price%>
                     </h5>
-                    <!-- <a href="" class="btn btn-outline-primary px-3">Add To Cart</a> -->
                     <form action="/add?id=<%= item._id %>" method="POST">
+                      <a href="#" class="mx-3 text-decoration-none">
+                        <i class="fas fa-heart fa-lg"></i>
+                      </a>                      
                       <button href="/addToCart?id=<%=item._id%>" class="btn btn-outline-success" type="submit"
                         onclick="addToCart()">
                         Add to cart

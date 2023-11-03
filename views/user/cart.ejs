@@ -57,7 +57,7 @@
                   <img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3" />
                   <h3><strong>Your Cart is Empty</strong></h3>
                   <h4>Add something to make me happy :)</h4>
-                  <a href="/products" class="btn btn-primary cart-btn-transform m-3" data-abc="true">continue
+                  <a href="/products" class="btn btn-success cart-btn-transform m-3" data-abc="true">continue
                     shopping</a>
                 </div>
               </div>
@@ -177,8 +177,8 @@
                         </h6>
                       </div>
                       <div class="d-flex justify-content-between">
-                        <h6 class="font-weight-medium">Discount</h6>
-                        <h6 class="font-weight-medium">₹ <%=couponApplied?couponApplied.maximumDiscount : 0%>
+                        <h6 class="font-weight-medium">Discount (<%=couponApplied?couponApplied.couponCode :""%>)</h6>
+                        <h6 class="font-weight-medium text-danger">- ₹  <%=couponApplied?couponApplied.maximumDiscount : 0%>
                         </h6>
                       </div>
                     </div>
@@ -208,7 +208,6 @@
       <script>
         //for changing quantity
         function changeQuantity(productId, count) {
-          console.log(productId, count);
           $.ajax({
             type: "post",
             url: "/cartModify",
@@ -261,43 +260,47 @@
         }
 
         function applyCoupon() {
-          console.log('ajax');
-          const couponcode = document.getElementById('couponcode')
-          const value = couponcode.value;
-          console.log(couponcode);
-          $.ajax({
-            url: '/applyCoupon',
-            type: 'POST',
-            data: {
-              coupon: value
-            },
-            success: function (response) {
-              if (response.applied) {
-                Swal.fire({
-                  icon: "success",
-                  title: "Coupon Applied",
-                  text: response.message,
-                  confirmButtonText: "OK", // Change the text of the confirm button to "OK"
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    location.href = "/cart"; // Redirect to the specified URL if the user clicks "OK"
-                  }
-                });
-              } else if (response.expired) {
-                Swal.fire({
-                  icon: "error",
-                  title: "Coupon Expired",
-                  text: "Sorry, the coupon has expired.",
-                });
-              } else if (response.applied === false) {
-                Swal.fire({
-                  icon: "error",
-                  text: response.message
-                });
-              }
-            }
-          })
-        }
+  console.log('ajax');
+  const couponcode = document.getElementById('coupon').value;
+  console.log(couponcode);
+  // Assuming you're using jQuery for AJAX
+  $.ajax({
+    url: '/applyCoupon',
+    type: 'POST',
+    data: { coupon: couponcode },
+    success: function (response) {
+      if (response.applied) {
+        Swal.fire({
+          icon: "success",
+          title: "Coupon Applied",
+          text: response.message,
+          confirmButtonText: "OK",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "/cart";
+          }
+        });
+      } else if (response.expired) {
+        Swal.fire({
+          icon: "error",
+          title: "Coupon Expired",
+          text: "Sorry, the coupon has expired.",
+          confirmButtonText:"OK",
+        });
+      } else if (response.applied === false) {
+        Swal.fire({
+          icon: "error",
+          text: response.message
+        });
+      }
+    },
+    error: function (error) {
+      console.log("Error in AJAX request:", error);
+      // You can handle the error here or log it for debugging
+    }
+  });
+}
+
 
       </script>
 

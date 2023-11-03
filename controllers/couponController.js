@@ -100,17 +100,25 @@ exports.applyCoupon = async (req, res) => {
         console.log(couponCode);
         const cart = await Cart.findOne({ userId: user }).populate('products.productId');
         const Total = cart.products.reduce((acc, val) => acc + val.totalPrice, 0);
+        console.log('Total',Total);
         const couponFound = await Coupon.findOne({ couponCode });
+        console.log('couponFound',couponFound);
         const currentDate = new Date();
-        const usedCoupon = await Coupon.find({ couponCode, usedUsers: { $in: [user] } })
+        console.log('currentDate',currentDate);
+        const usedCoupon = await Coupon.find({ couponCode, usedUsers: { $in: [user] } });
+        console.log('usedCoupon',usedCoupon);
         if (couponFound === null) {
+            console.log('couponFound is null');
             res.redirect('/cart');
         } else if (couponFound.lastDate < currentDate) {
+            console.log('expired');
             res.json({ expired: true });
         } else if (couponFound && usedCoupon.length == 0) {
             if (Total < couponFound.minimumPurchase) {
+                console.log('minimum purchase');
                 res.json({ applied: false, message: "minimum purchase doesnt match" })
             } else {
+                console.log('couponApplied');
                 await Cart.findOneAndUpdate({ userId: user }, { $set: { couponApplied: couponCode } });
                 res.json({ applied: true, message: 'Coupon applied' })
             }
