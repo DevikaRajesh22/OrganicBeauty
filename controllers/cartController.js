@@ -28,11 +28,7 @@ exports.cartGet = async (req, res) => {
         if (carts) {
             const subTotal = carts.products.reduce((acc, val) => acc + val.totalPrice, 0);
             let finalPrice = subTotal + 10;
-            console.log(subTotal);
-            console.log(finalPrice);
-            console.log(carts.couponApplied);
             couponApplied = await Coupon.findOne({ couponCode: carts?.couponApplied });
-            console.log('couponApplied',couponApplied);
             if (couponApplied) {
                 finalPrice = finalPrice - couponApplied.maximumDiscount;
                 couponSelected = await Coupon.findOne({ couponCode: carts?.couponApplied });
@@ -45,6 +41,17 @@ exports.cartGet = async (req, res) => {
                 }
             };
             const updatedCart = await Cart.updateOne(filter, update);
+            const discountCode = carts.couponApplied;
+            const discountPrice = couponApplied.maximumDiscount;
+            const filterOrder = { user: userId };
+            const updateOrder = {
+                $set: {
+                    discountCode: discountCode,
+                    discountPrice: discountPrice,
+                }
+            }
+            const updatedOrder = await Order.updateOne(filterOrder, updateOrder);
+            console.log(updatedOrder);
         }
         let count = 0;
         if (carts?.products?.length > 0) {
@@ -56,9 +63,9 @@ exports.cartGet = async (req, res) => {
             const products = carts.products.length;
             if (products > 0) { // Check if there are products in the cart
                 let cartProduct = carts.products;
-                res.render('user/cart', { pageTitle, carts, product: products, user: req.session.name, count, cartProduct,coupon,couponSelected,couponApplied});
+                res.render('user/cart', { pageTitle, carts, product: products, user: req.session.name, count, cartProduct, coupon, couponSelected, couponApplied });
             } else {
-                res.render('user/cart', { pageTitle, carts, product: undefined, user: req.session.name, count});
+                res.render('user/cart', { pageTitle, carts, product: undefined, user: req.session.name, count });
             }
         } else {
             res.render('user/cart', { pageTitle, carts: undefined, product: undefined, total: 0, user: req.session.name, count })
@@ -114,7 +121,7 @@ exports.addToCartPost = async (req, res) => {
 
             await cartFound.save();
         }
-
+        res.json({ success: true });
 
     } catch (error) {
         console.log(error.message);

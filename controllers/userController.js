@@ -38,7 +38,7 @@ exports.loginGet = async (req, res) => {
         req.app.locals.emailErr = " ";
         let passwordErr = req.app.locals.passwordErr;
         req.app.locals.passwordErr = " ";
-        res.render('user/userLogin', { emailErr,passwordErr });
+        res.render('user/userLogin', { emailErr, passwordErr });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -67,11 +67,11 @@ exports.userLoginPost = async (req, res, next) => {
             } else if (!passwordMatch) {
                 req.app.locals.passwordErr = "Incorrect password or email";
                 return res.redirect('/login');
-            }else if(user.isBlocked){
-                req.app.locals.passwordErr="User is blocked!!";
+            } else if (user.isBlocked) {
+                req.app.locals.passwordErr = "User is blocked!!";
                 return res.redirect('/login');
-            }else if(!user.isVerified){
-                req.app.locals.passwordErr="Unverified user";
+            } else if (!user.isVerified) {
+                req.app.locals.passwordErr = "Unverified user";
                 return res.redirect('/login');
             }
         }
@@ -205,6 +205,7 @@ exports.landingPage = async (req, res) => {
 //productsGet GET request
 exports.productsGet = async (req, res) => {
     try {
+        let similar;
         const userId = req.session.userId;
         const carts = await Cart?.findOne({ userId: userId });
         let count = 0;
@@ -214,15 +215,20 @@ exports.productsGet = async (req, res) => {
             count = 0;
         }
         const pageTitle = 'Products';
-        const searchTerm=req.query.searchTerm?req.query.searchTerm:"";
-        const items=await Product.find({
-            isList:true,
-            productName: { $regex: '^' + searchTerm, $options: "i" }
+        const searchTerm = req.query.searchTerm ? req.query.searchTerm : "";
+        const items = await Product.find({
+            isList: true,
+            productName: { $regex: searchTerm, $options: "i" }
         });
-        res.render('user/products', { pageTitle, count, items, user: req.session.name,searchTerm});
+        const categories = await Category.find({ isBlocked: false });
+        const pdata = await Product.find().populate('category');
+        const categoryId = req.query.categoryFilter;
+        if (categoryId !== undefined) {
+            similar = await Product.find({ category: categoryId });
+        }
+        res.render('user/products', { pageTitle, count, items, user: req.session.name, searchTerm, categories, similar });
     } catch (error) {
         console.log(error.message);
-        res.render('user/error');
     }
 };
 

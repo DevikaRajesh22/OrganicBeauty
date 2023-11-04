@@ -9,9 +9,11 @@ const orderSchema = new mongoose.Schema({
     type: String,
     ref: 'User'
   },
-  discount:{
+  discountCode:{
     type:String,
-    ref:'Coupon'
+  },
+  discountPrice:{
+    type:String,
   },
   userName: {
     type: String,

@@ -38,43 +38,80 @@
             Explore our product selection and start shopping today!
           </p>
         </div>
-
-        <div style="display: flex; align-items: center;" class="text-center">
-          <h5 class="mx-3">Categories: </h5>
-          <ul>
-            <li><a style="text-decoration: none;" href="/products/category/Category A">Organic Skin</a></li>
-            <li><a style="text-decoration: none;" href="/products/category/Category B">Organic Hair</a></li>
-            <li><a style="text-decoration: none;" href="/products/category/Category B">Organic Oils</a></li>
-          </ul>
+        <div class="row px-xl-5">
+          <!-- Shop Sidebar Start -->
+          <div class="col-lg-3 col-md-12">
+            <!-- Price Start -->
+            <div class="border-bottom mb-4 pb-4">
+              <h5 class="font-weight-semi-bold mb-4">Filter by Category</h5>
+              <form id="categoryForm">
+                <% categories.forEach(function(category, index){ %>
+                  <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                    <input type="checkbox" class="custom-control-input" id="categoryFilter<%= index %>"
+                      name="categoryFilter" value="<%= category._id %>">
+                    <label class="custom-control-label" for="categoryFilter<%= index %>">
+                      <%= category.categoryName %>
+                    </label>
+                  </div>
+                  <% }); %>
+                    <button class="btn btn-outline-success" type="submit">Filter</button>
+              </form>
+            </div>
+          </div>
         </div>
-
         <% if(items.length===0){ %>
           <h6 class="mt-5 d-flex ">no item found!!!!</h6>
           <% }else{ %>
-            <div class="row g-4">
-              <% items.forEach(function(item){ %>
-                <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.1s">
-                  <div class="product-item text-center border h-100 p-4">
-                    <img class="img-fluid mb-4" src="/product/<%=item.image.image1%>" alt="" />
-                    <a href="/productDetails?id=<%=item._id%>" class="h6 d-inline-block mb-2">
-                      <%=item.productName%>
-                    </a>
-                    <h5 class="text-primary mb-3">₹ <%=item.price%>
-                    </h5>
-                    <form action="/add?id=<%= item._id %>" method="POST">
-                      <a href="#" class="mx-3 text-decoration-none">
-                        <i class="fas fa-heart fa-lg"></i>
+            <% if(similar){ %>
+              <div class="row g-4">
+                <% similar.forEach(function(item){ %>
+                  <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.1s">
+                    <div class="product-item text-center border h-100 p-4">
+                      <img class="img-fluid mb-4" src="/product/<%=item.image.image1%>" alt="" />
+                      <a href="/productDetails?id=<%=item._id%>" class="h6 d-inline-block mb-2">
+                        <%=item.productName%>
                       </a>
-                      <button href="/addToCart?id=<%=item._id%>" class="btn btn-outline-success" type="submit"
-                        onclick="addToCart()">
-                        Add to cart
-                      </button>
-                    </form>
+                      <h5 class="text-primary mb-3">₹ <%=item.price%>
+                      </h5>
+                      <form action="/add?id=<%= item._id %>" method="POST">
+                        <a href="#" class="mx-3 text-decoration-none">
+                          <i class="fas fa-heart fa-lg"></i>
+                        </a>
+                        <button href="/addToCart?id=<%=item._id%>" class="btn btn-outline-success" type="submit"
+                          onclick="addToCart()">
+                          Add to cart
+                        </button>
+                      </form>
+                    </div>
                   </div>
+                  <% }); %>
+              </div>
+              <% }else{ %>
+                <div class="row g-4">
+                  <% items.forEach(function(item){ %>
+                    <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.1s">
+                      <div class="product-item text-center border h-100 p-4">
+                        <img class="img-fluid mb-4" src="/product/<%=item.image.image1%>" alt="" />
+                        <a href="/productDetails?id=<%=item._id%>" class="h6 d-inline-block mb-2">
+                          <%=item.productName%>
+                        </a>
+                        <h5 class="text-primary mb-3">₹ <%=item.price%>
+                        </h5>
+                        <form action="/add?id=<%= item._id %>" method="POST">
+                          <a href="#" class="mx-3 text-decoration-none">
+                            <i class="fas fa-heart fa-lg"></i>
+                          </a>
+                          <button href="/addToCart?id=<%=item._id%>" class="btn btn-outline-success" type="submit"
+                            onclick="addToCart()">
+                            Add to cart
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                    <% }); %>
                 </div>
-                <% }); %>
-            </div>
-            <% } %>
+                <% } %>
+                  <% } %>
       </div>
     </div>
     <!-- Product End -->
