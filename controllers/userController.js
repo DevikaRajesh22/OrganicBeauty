@@ -2,9 +2,9 @@ const User = require('../models/user/userCollection');
 const Cart = require('../models/user/cartCollection');
 const Category = require('../models/admin/categoryCollection');
 const Product = require('../models/admin/productCollection');
+const Wishlist = require('../models/user/wishlistCollection');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-const { log } = require('console');
 require('dotenv').config();
 
 //for otp using nodemailer
@@ -65,13 +65,13 @@ exports.userLoginPost = async (req, res, next) => {
                 req.session.phone = user.number;
                 return res.redirect("/"); //if password match then store user session and redirect to landingPage
             } else if (!passwordMatch) {
-                req.app.locals.passwordErr = "Incorrect password or email";
+                req.app.locals.passwordErr = "Incorrect password or email!!";
                 return res.redirect('/login');
             } else if (user.isBlocked) {
                 req.app.locals.passwordErr = "User is blocked!!";
                 return res.redirect('/login');
             } else if (!user.isVerified) {
-                req.app.locals.passwordErr = "Unverified user";
+                req.app.locals.passwordErr = "Unverified user!!";
                 return res.redirect('/login');
             }
         }
@@ -184,7 +184,9 @@ exports.registerPost = async (req, res) => {
 exports.landingPage = async (req, res) => {
     try {
         const userId = req.session.userId;
-        const user = await User.findOne({ _id: userId });
+        let wishlistCount = 0;
+        const wishlist = await Wishlist.findOne({ user: userId });
+        wishlist ? wishlistCount = wishlist.products.length : 0;
         const carts = await Cart?.findOne({ userId: userId });
         const pageTitle = 'Home';
         let count = 0;
@@ -194,8 +196,7 @@ exports.landingPage = async (req, res) => {
         } else {
             count = 0;
         }
-
-        res.render('user/landingPage', { products, pageTitle, count, user: req.session.name });
+        res.render('user/landingPage', { products, pageTitle, count, user: req.session.name, wishlistCount });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
@@ -205,7 +206,14 @@ exports.landingPage = async (req, res) => {
 //productsGet GET request
 exports.productsGet = async (req, res) => {
     try {
+        let wishlistCount = 0;
+        const wishlist = await wishlist.findOne({ user: req.session.userId });
+        wishlist ? wishlistCount = wishlist.products.length : 0;
         let similar;
+        let wishlistString = [];
+        wishlist?.products.map((ele) => {
+            wishlistString.push(ele.productId)
+        })
         const userId = req.session.userId;
         const carts = await Cart?.findOne({ userId: userId });
         let count = 0;
@@ -226,7 +234,7 @@ exports.productsGet = async (req, res) => {
         if (categoryId !== undefined) {
             similar = await Product.find({ category: categoryId });
         }
-        res.render('user/products', { pageTitle, count, items, user: req.session.name, searchTerm, categories, similar });
+        res.render('user/products', { pageTitle, count, items, user: req.session.name, searchTerm, categories, similar, wishlistString, wishlistCount });
     } catch (error) {
         console.log(error.message);
     }
@@ -288,6 +296,13 @@ exports.logout = async (req, res) => {
 //productDetails GET request
 exports.productDetails = async (req, res) => {
     try {
+        let wishlistCount = 0;
+        const wishlist = await wishlist.findOne({ user: req.session.userId });
+        wishlist ? wishlistCount = wishlist.products.length : 0;
+        let wishlistString = [];
+        wishlist?.products.map((ele) => {
+            wishlistString.push(ele.productId)
+        })
         const productId = req.query.id;
         const userId = req.session.userId;
         const carts = await Cart?.findOne({ userId: userId });
@@ -301,7 +316,7 @@ exports.productDetails = async (req, res) => {
         const categoryId = products.category;
         const categories = await Category.findOne({ _id: categoryId });
         const pageTitle = 'Product';
-        res.render('user/productDetails', { pageTitle, products, count, user: req.session.name, categories });
+        res.render('user/productDetails', { pageTitle, products, count, user: req.session.name, categories, wishlistString, wishlistCount });
     } catch (error) {
         console.log(error.message);
     }
@@ -310,8 +325,11 @@ exports.productDetails = async (req, res) => {
 //about GET request
 exports.about = async (req, res) => {
     try {
+        console.log(req.session.name);
         const userId = req.session.userId;
-        const user = await User.findOne({ _id: userId });
+        let wishlistCount = 0;
+        const wishlist = await Wishlist.findOne({ user: userId });
+        wishlist ? wishlistCount = wishlist.products.length : 0;
         const carts = await Cart?.findOne({ userId: userId });
         let count = 0;
         if (carts?.products?.length > 0) {
@@ -320,16 +338,18 @@ exports.about = async (req, res) => {
             count = 0;
         }
         const pageTitle = 'About';
-        res.render('user/about', { pageTitle, user: req.session.name, count });
+        res.render('user/about', { pageTitle, user: req.session.name, count, wishlistCount });
     } catch (error) {
         console.log(error.message);
-        res.render('user/error');
     }
 };
 
-//contact GET request
+//user contact GET request
 exports.contact = async (req, res) => {
     try {
+        let wishlistCount = 0;
+        const wishlist = await Wishlist.findOne({ user: req.session.userId });
+        wishlist ? wishlistCount = wishlist.products.length : 0;
         const pageTitle = 'contact';
         const userId = req.session.userId;
         const carts = await Cart.findOne({ userId: userId });
@@ -339,7 +359,7 @@ exports.contact = async (req, res) => {
         } else {
             count = 0;
         }
-        res.render('user/contact', { pageTitle, user: req.session.name, count });
+        res.render('user/contact', { pageTitle, user:req.session.name, count, wishlistCount });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');

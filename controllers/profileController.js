@@ -1,13 +1,16 @@
 const User = require('../models/user/userCollection');
 const Cart = require('../models/user/cartCollection');
 const Address=require('../models/user/addressCollection');
+const Wishlist=require('../models/user/wishlistCollection');
 const bcrypt = require('bcrypt');
 
-//account() GET request
+//user account() GET request
 exports.account = async (req, res) => {
     try {
+        let wishlistCount=0;
+        const wishlist=await Wishlist.findOne({user:req.session.userId});
+        wishlist?wishlistCount=wishlist.products.length:0;
         const pageTitle = 'Account';
-        console.log('account get request');
         const userId = req.session.userId;
         const carts = await Cart?.findOne({ userId: userId });
         let count = 0;
@@ -23,14 +26,13 @@ exports.account = async (req, res) => {
         if (!users) {
             res.redirect('/login');
         }
-        console.log(users);
-        res.render('user/account', { pageTitle, user: req.session.name, users, pageTitle, count });
+        res.render('user/account', { pageTitle, user: req.session.name, users, pageTitle, count, wishlistCount});
     } catch (error) {
         console.log(error.message);
     }
 };
 
-//accountPost() POST request
+//user accountPost() POST request
 exports.changePasswordPost = async (req, res) => {
     try {
         const pass = req.body.currentpassword;
@@ -40,7 +42,6 @@ exports.changePasswordPost = async (req, res) => {
         const user = await User.findOne({ _id: userId });
         const hashPass = user.spassword;
         if (newPass === conPass) {
-            console.log('newpass and conpass match');
             const same = await bcrypt.compare(pass, hashPass);
             const updatedPassword = await bcrypt.hash(newPass, 10);
             if (same) {
@@ -57,10 +58,12 @@ exports.changePasswordPost = async (req, res) => {
     }
 };
 
-//changePassword() GET request
+//user changePassword() GET request
 exports.changePassword = async (req, res) => {
     try {
-        console.log('change password get');
+        let wishlistCount=0;
+        const wishlist=await Wishlist.findOne({user:req.session.userId});
+        wishlist?wishlistCount=wishlist.products.length:0;
         const userId = req.session.userId;
         const carts = await Cart?.findOne({ userId: userId });
         let count = 0;
@@ -70,16 +73,19 @@ exports.changePassword = async (req, res) => {
             count = 0;
         }
         const pageTitle = 'Account';
-        res.render('user/changePassword', { pageTitle, user: req.session.name, count });
+        res.render('user/changePassword', { pageTitle, user: req.session.name, count, wishlistCount });
     } catch (error) {
         console.log(error.message);
     }
 };
 
-//address() GET request
+//user address() GET request
 exports.address = async (req, res) => {
     try {
         const pageTitle = 'Address';
+        let wishlistCount=0;
+        const wishlist=await Wishlist.findOne({user:req.session.userId});
+        wishlist?wishlistCount=wishlist.products.length:0;
         const userId = req.session.userId;
         if (userId === undefined) {
             res.redirect('/login');
@@ -93,19 +99,21 @@ exports.address = async (req, res) => {
             count = 0;
         }
         if (addresses != null) {
-            res.render('user/address', { pageTitle, user: req.session.name, addresses: addresses, number: req.session.phone, count });
+            res.render('user/address', { pageTitle, user: req.session.name, addresses: addresses, number: req.session.phone, count,wishlistCount });
         } else {
-            res.render('user/address', { pageTitle, user: req.session.name, addresses: undefined, number: req.session.phone, count });
+            res.render('user/address', { pageTitle, user: req.session.name, addresses: undefined, number: req.session.phone, count, wishlistCount });
         }
     } catch (error) {
         console.log(error.message);
     }
 };
 
-//addAddress() GET request
+//user addAddress() GET request
 exports.addAddress = async (req, res) => {
     try {
-        console.log('req received at addAddress get')
+        let wishlistCount=0;
+        const wishlist=await Wishlist.findOne({user:req.session.userId});
+        wishlist?wishlistCount=wishlist.products.length:0;
         const pageTitle = 'Address';
         const userId = req.session.userId;
         const carts = await Cart?.findOne({ userId: userId });
@@ -115,16 +123,15 @@ exports.addAddress = async (req, res) => {
         } else {
             count = 0;
         }
-        res.render('user/addAddress', { pageTitle, user: req.session.name, count });
+        res.render('user/addAddress', { pageTitle, user: req.session.name, count, wishlistCount});
     } catch (error) {
         console.log(error.message);
     }
 };
 
-//addAddressPost() POST request
+//user addAddressPost() POST request
 exports.addAddressPost = async (req, res) => {
     try {
-        console.log('post req received at addAddressPost');
         const userId = req.session.userId;
         const address = await Address.findOne({ user: userId });
         if (!address) {
@@ -156,19 +163,16 @@ exports.addAddressPost = async (req, res) => {
                 }
             })
         }
-        console.log(req.body);
         res.redirect('/address');
     } catch (error) {
         console.log(error.message);
     }
 };
 
-//deleteAddress() GET request
+//user deleteAddress() GET request
 exports.deleteAddress = async (req, res) => {
     try {
-        console.log('deleteAddress get request')
         const addressId = req.params.id;
-        console.log(addressId);
         const userId = req.session.userId;
         const delAdd = await Address.updateOne(
             { user: userId },
@@ -180,7 +184,6 @@ exports.deleteAddress = async (req, res) => {
                 }
             }
         );
-        console.log(delAdd)
         res.redirect('/address');
     } catch (error) {
         console.log(error.message);

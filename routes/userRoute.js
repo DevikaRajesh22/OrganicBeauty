@@ -22,7 +22,7 @@ userRoute.get('/forgotPasswordChange',userController.forgotPasswordChange);
 userRoute.post('/forgotPasswordChange',userController.forgotPasswordChangePost);
 userRoute.get('/register', userController.registerGet);
 userRoute.post('/registerPost', userController.registerPost);
-userRoute.get('/', userAuth.isLoggedIn, userController.landingPage);
+userRoute.get('/', userController.landingPage);
 userRoute.get('/products',  userAuth.isLoggedIn, userController.productsGet);
 userRoute.get('/otp', userAuth.isLoggedOut, userAuth.isLoggedIn, userController.otp);
 userRoute.post('/otp', userController.otpPost);
@@ -67,5 +67,7 @@ userRoute.get('/wallet',  userAuth.isLoggedIn, walletController.wallet);
 
 //route for wishlist
 userRoute.get('/wishlist',  userAuth.isLoggedIn, wishlistController.wishlist);
+userRoute.post('/addToWishlist',userAuth.isLoggedIn,wishlistController.addToWishlist);
+userRoute.post('/removeFromWishlist',userAuth.isLoggedIn,wishlistController.removeFromWishlist);
 
 module.exports = userRoute;

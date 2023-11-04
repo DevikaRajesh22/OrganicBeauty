@@ -4,12 +4,17 @@ const User = require('../models/user/userCollection');
 const Coupon = require('../models/admin/couponCollection');
 const Address = require('../models/user/addressCollection');
 const Order = require('../models/user/orderCollection');
+const Wishlist=require('../models/user/wishlistCollection');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
+const { wishlist } = require('./wishlistController');
 
-//cartGet() GET request
+//user cartGet() GET request
 exports.cartGet = async (req, res) => {
     try {
+        let wishlistCount=0;
+        const wishlist=await Wishlist.findOne({user:req.session.userId});
+        wishlist?wishlistCount=Wishlist.products.length:0;
         let couponSelected;
         let couponApplied;
         const userId = req.session.userId;
@@ -63,72 +68,74 @@ exports.cartGet = async (req, res) => {
             const products = carts.products.length;
             if (products > 0) { // Check if there are products in the cart
                 let cartProduct = carts.products;
-                res.render('user/cart', { pageTitle, carts, product: products, user: req.session.name, count, cartProduct, coupon, couponSelected, couponApplied });
+                res.render('user/cart', { pageTitle, carts, product: products, user: req.session.name, count, cartProduct, coupon, couponSelected, couponApplied, wishlistCount });
             } else {
-                res.render('user/cart', { pageTitle, carts, product: undefined, user: req.session.name, count });
+                res.render('user/cart', { pageTitle, carts, product: undefined, user: req.session.name, count, wishlistCount });
             }
         } else {
-            res.render('user/cart', { pageTitle, carts: undefined, product: undefined, total: 0, user: req.session.name, count })
+            res.render('user/cart', { pageTitle, carts: undefined, product: undefined, total: 0, user: req.session.name, count, wishlistCount })
         }
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-//addToCart() POST request
-exports.addToCartPost = async (req, res) => {
-    try {
-        const user = req.session.userId; // Find the user
-        if (!user) {
-            return res.redirect('/login');
-        }
-        const productId = req.query.id; // Get the ID from the query parameter
-        const product = await Product.findById(productId); // Find the product by its ID
-        let cartFound = await Cart.findOne({ userId: user }); // Check if there is a cart for the user
-        let userFound = await User.findOne({ _id: user });
-
-        if (!cartFound) {
-            // Create a new cart
-            const newCart = new Cart({
-                userId: user,
-                finalPrice: product.price + 10,
-                subTotal: product.price,
-                products: [{
-                    productId: productId,
-                    count: 1,
-                    productPrice: product.price,
-                    totalPrice: product.price
-                }]
-            });
-            await newCart.save();
-        } else {
-            // Check if the product is already in the cart
-            const existingProductIndex = cartFound.products.findIndex(p => p.productId.toString() === productId);
-
-            if (existingProductIndex === -1) {
-                // If the product is not in the cart, add it as a new product
-                cartFound.products.push({
-                    productId: product._id,
-                    count: 1,
-                    productPrice: product.price,
-                    totalPrice: product.price
-                });
-            } else {
-                // If the product is already in the cart, increase the count and adjust the price
-                cartFound.products[existingProductIndex].count += 1;
-                cartFound.products[existingProductIndex].totalPrice = cartFound.products[existingProductIndex].count * product.price;
-            }
-
-            await cartFound.save();
-        }
-        res.json({ success: true });
-
     } catch (error) {
         console.log(error.message);
     }
 };
 
-//updateCartQuantity() POST request
+//user addToCart() POST request
+exports.addToCartPost = async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const productId = req.body.product;
+        const user = await User.findOne({ _id: userId });
+        const product = await Product.findOne({ _id: productId }).populate('category');
+        const cart = await Cart.findOne({ userId: userId });
+        const price=product.price;
+        if (userId === undefined) {
+            res.json({ login: true });
+        } else {
+            if (!cart && product.stock > 0) {
+                const cart = new Cart({
+                    userId: userId,
+                    userName: user.username,
+                    products: [{
+                        productId: productId,
+                        count: 1,
+                        productPrice: price,
+                        totalPrice: 1 * price
+                    }]
+
+                })
+                const cartAdded = await cart.save();
+            } else {
+                const existingProduct = await cart.products.find(
+                    (product) => product.productId.toString() === productId.toString()
+                );
+                if (existingProduct) {
+                    res.json({ exist: true })
+                } else if (product.stock > 0) {
+                    const newProduct = {
+                        productId: productId,
+                        count: 1,
+                        productPrice: price,
+                        totalPrice: 1 * price
+                    }
+                    const updatedCart = await Cart.findOneAndUpdate(
+                        { userId: userId },
+                        { $push: { products: newProduct } },
+                        { new: true }
+                    );
+                    res.json({ success: true })
+                }else{
+                    res.json({outOfStock : true})
+                }
+            }
+        }
+        res.json({success:true});
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+//user updateCartQuantity() POST request
 exports.updateCartQuantity = async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -136,32 +143,22 @@ exports.updateCartQuantity = async (req, res) => {
         const productId = req.body.productId;
         let count = req.body.count;
         count = parseInt(count);
-
         const cartData = await Cart.findOne({ userId: userId });
-
         const productData = await Product.findOne({ _id: productId });
-
         if (!cartData || !productData) {
             res.json({ success: false, message: "Cart or product not found." });
             return;
         }
-
         const productQuantity = productData.stock;
         const existingProductIndex = cartData.products.findIndex(
             (product) => product.productId.toString() === productId.toString()
         );
-
-
         if (existingProductIndex === -1) {
             res.json({ success: false, message: "Product not found in the cart." });
             return;
         }
-
         const existingProduct = cartData.products[existingProductIndex];
         const updatedQuantity = existingProduct.count + count;
-
-        // console.log('existingProduct', existingProduct);
-
         if (updatedQuantity <= 0 || updatedQuantity > productQuantity) {
             res.json({ success: false, message: "Invalid quantity." });
             return;
@@ -179,7 +176,7 @@ exports.updateCartQuantity = async (req, res) => {
     }
 };
 
-//removeProduct() GET request
+//user removeProduct() GET request
 exports.removeProduct = async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -203,9 +200,12 @@ exports.removeProduct = async (req, res) => {
     }
 };
 
-//checkout() GET request
+//user checkout() GET request
 exports.checkout = async (req, res) => {
     try {
+        let wishlistCount=0;
+        const wishlist=await Wishlist.findOne({user:req.session.userId});
+        wishlist?wishlistCount=wishlist.products.length:0;
         const pageTitle = 'Checkout';
         const userId = req.session.userId;
         const carts = await Cart.findOne({ userId: userId })
@@ -223,15 +223,18 @@ exports.checkout = async (req, res) => {
         const addresses = await Address.findOne({ user: userId });
         const address = addresses.address;
         const products = carts.products;
-        res.render('user/checkout', { pageTitle, user: req.session.name, carts, addresses, address, count, products });
+        res.render('user/checkout', { pageTitle, user: req.session.name, carts, addresses, address, count, products,wishlistCount });
     } catch (error) {
         console.log(error.message);
     }
 };
 
-//editAddress() GET request
+//user editAddress() GET request
 exports.editAddress = async (req, res) => {
     try {
+        let wishlistCount=0;
+        const wishlist=await Wishlist.findOne({user:req.session.userId});
+        wishlist?wishlistCount=wishlist.products.length:0;
         const pageTitle = 'Address';
         const userId = req.session.userId;
         const addressId = req.query.id;
@@ -247,13 +250,13 @@ exports.editAddress = async (req, res) => {
         } else {
             count = 0;
         }
-        res.render('user/editAddress', { user: req.session.name, address, pageTitle, count });
+        res.render('user/editAddress', { user: req.session.name, address, pageTitle, count, wishlistCount });
     } catch (error) {
         console.log(error.message);
     }
 };
 
-//editAddressPost() POST request
+//user editAddressPost() POST request
 exports.editAddressPost = async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -280,9 +283,12 @@ exports.editAddressPost = async (req, res) => {
     }
 };
 
-//success() GET request
+//user success() GET request
 exports.success = async (req, res) => {
     try {
+        let wishlistCount=0;
+        const wishlist=await Wishlist.findOne({user:req.session.userId});
+        wishlist?wishlistCount=wishlist.products.length:0;
         const pageTitle = 'Success';
         const userId = req.session.userId;
         const carts = await Cart?.findOne({ userId: userId });
@@ -292,13 +298,13 @@ exports.success = async (req, res) => {
         } else {
             count = 0;
         }
-        res.render('user/success', { pageTitle, user: req.session.name, count });
+        res.render('user/success', { pageTitle, user: req.session.name, count, wishlistCount });
     } catch (error) {
         console.log(error.message);
     }
 };
 
-//verifyPayment() POST request
+//user verifyPayment() POST request
 exports.verifyPayment = async (req, res) => {
     try {
         const details = req.body;

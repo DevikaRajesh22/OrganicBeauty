@@ -3,6 +3,7 @@ const Order = require('../models/user/orderCollection');
 const Cart = require('../models/user/cartCollection');
 const Product = require('../models/admin/productCollection');
 const Address = require('../models/user/addressCollection');
+const Wishlist=require('../models/user/wishlistCollection');
 const mongoose = require('mongoose');
 const Razorpay = require('razorpay');
 const ObjectId = mongoose.Types.ObjectId;
@@ -21,11 +22,9 @@ exports.orderGet = async (req, res) => {
 //admin updateStatus() POST request
 exports.updateStatus = async (req, res) => {
     try {
-        console.log("update status post request");
         const orderId = req.body.orderId;
         const order = await Order.findOne({ _id: orderId });
         const status = order.status;
-        console.log(status);
         if (status === "Shipped") {
             const updatedStatus = await Order.findOneAndUpdate(
                 { _id: orderId },
@@ -63,7 +62,6 @@ exports.orderDetails = async (req, res) => {
         const orders = await Order.findOne({ _id: orderId }).populate(
             "products.productId"
         );
-        console.log(orders);
         const userId = orders.user;
         const cart = await Cart.findOne({ userId: userId });
         const subTotal = cart.subTotal;
@@ -79,9 +77,12 @@ const razorpay = new Razorpay({
     key_secret: process.env.RAZ_SECRET,
   });
 
-//orders() GET request
+//user orders() GET request
 exports.orders = async (req, res) => {
     try {
+        let wishlistCount=0;
+        const wishlist=await Wishlist.findOne({user:req.session.userId});
+        wishlist?wishlistCount=wishlist.products.length:0;
         const pageTitle = 'Orders';
         const userId = req.session.userId;
         const users = await User.findOne({ _id: userId });
@@ -100,13 +101,13 @@ exports.orders = async (req, res) => {
         }else{
             count=0;
         }
-        res.render('user/orders', { user: req.session.name, pageTitle, orders, products: products ,count})
+        res.render('user/orders', { user: req.session.name, pageTitle, orders, products: products ,count, wishlistCount})
     } catch (error) {
         console.log(error.message);
     }
 };
 
-//placeOrder() POST request
+//user placeOrder() POST request
 exports.placeOrder = async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -142,18 +143,12 @@ exports.placeOrder = async (req, res) => {
             orderId: orderId,
         });
         const orderDetails = await newOrder.save();
-
-
         //razorpay
         if(paymentMethod==='Cash on delivery'){
-            console.log(paymentMethod);
-
             const updatePayment=await Order.updateOne(
                 {user:userId},
                 {$set:{status:"Placed"}}
             );
-            console.log(updatePayment);
-        
         //to remove products from cart when order is placed
         if (orderDetails) {
             const removeProducts = await Cart.findOneAndUpdate({ userId: userId },
@@ -163,8 +158,6 @@ exports.placeOrder = async (req, res) => {
                     }
                 })
         }
-     
-
         //to reduce stock when order is placed
         const stockReduce = cartData.products;
         for (let i = 0; i < stockReduce.length; i++) {
@@ -179,7 +172,6 @@ exports.placeOrder = async (req, res) => {
         }
         res.json({codSuccess:true});
         }else if(paymentMethod==='Online payment'){
-            console.log(paymentMethod);
             const orderData={
                 amount:totalAmount*100,
                 currency:'INR',
@@ -189,7 +181,6 @@ exports.placeOrder = async (req, res) => {
                 if(err){
                     console.log(err);
                 }else{
-                    console.log("razorpay order",order);
                     res.json({order});
                 }
               });
@@ -201,10 +192,12 @@ exports.placeOrder = async (req, res) => {
     }
 };
 
-//userDet() GET request
+//user userDet() GET request
 exports.orderDet = async (req, res) => {
     try {
-
+        let wishlistCount=0;
+        const wishlist=await Wishlist.findOne({user:req.session.userId});
+        wishlist?wishlistCount=wishlist.products.length:0;
         const pageTitle = 'Orders';
         const orderId = req.query.orderId;
         const orders = await Order.findOne({ _id: orderId }).populate(
@@ -219,35 +212,32 @@ exports.orderDet = async (req, res) => {
         }else{
             count=0;
         }
-        res.render('user/orderDet', { user: req.session.name, pageTitle, orders, subTotal,count });
+        res.render('user/orderDet', { user: req.session.name, pageTitle, orders, subTotal,count, wishlistCount });
     } catch (error) {
         console.log(error.message);
     }
 };
 
-//cancelOrder() GET request
+//user cancelOrder() GET request
 exports.cancelOrder = async (req, res) => {
     try {
         const orderId = req.query.id;
-        console.log(orderId);
         const updatePayment=await Order.updateOne(
             {_id:orderId},
             {$set:{status:"Cancelled"}}
         );
-        console.log(updatePayment);
         res.json({success:true});
     } catch (error) {
         console.log(error.message);
     }
 };
 
-//returnOrder() GET request
+//user returnOrder() GET request
 exports.returnOrder = async (req, res) => {
     try {
-        console.log('return order get request received');
         const orderId = req.query.orderId;
         console.log(orderId);
     } catch (error) {
         console.log(error.message);
     }
-}
+};

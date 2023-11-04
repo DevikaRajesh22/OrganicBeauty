@@ -3,7 +3,7 @@ const Category = require('../models/admin/categoryCollection');
 const Product = require('../models/admin/productCollection');
 const Sharp = require('sharp');
 
-//product section GET request
+//admin products() GET request
 exports.products = async (req, res) => {
     const pageName = 'Product Management';
     const products = await Product.find()
@@ -19,7 +19,7 @@ exports.products = async (req, res) => {
     }
 };
 
-//addProducts GET request
+//admin addProducts() GET request
 exports.addProducts = async (req, res) => {
     const pageName = 'Product Management';
     const categories = await Category.find();
@@ -31,7 +31,7 @@ exports.addProducts = async (req, res) => {
     }
 };
 
-//addProducts POST request
+//admin addProductsPost() POST request
 exports.addProductsPost = async (req, res) => {
     const products = await Product.find();
     try {
@@ -54,7 +54,7 @@ exports.addProductsPost = async (req, res) => {
     }
 };
 
-//editProduct GET request
+//user editProduct() GET request
 exports.editProduct = async (req, res) => {
     const pageName = 'Product Management';
     const pid = req.query.id;
@@ -68,7 +68,7 @@ exports.editProduct = async (req, res) => {
     }
 };
 
-//editProductPost POST request
+//user editProductPost() POST request
 exports.editProductPost = async (req, res) => {
     try {
         const { productName, category, price, productDetails, stock, id } = req.body;
@@ -78,14 +78,12 @@ exports.editProductPost = async (req, res) => {
         let image2 = data.image.image2;
         let image3 = data.image.image3;
         let image4 = data.image.image4;
-
         if (imageFiles && Object.keys(imageFiles).length > 0) {
             image1 = imageFiles.image1 ? imageFiles.image1[0].filename : data.image.image1;
             image2 = imageFiles.image2 ? imageFiles.image2[0].filename : data.image.image2;
             image3 = imageFiles.image3 ? imageFiles.image3[0].filename : data.image.image3;
             image4 = imageFiles.image4 ? imageFiles.image4[0].filename : data.image.image4;
         }
-
         const updatedProduct = await Product.findByIdAndUpdate(
             { _id: id },
             {
@@ -102,7 +100,6 @@ exports.editProductPost = async (req, res) => {
                 }
             }
         );
-        console.log('updatedProduct' + updatedProduct);
         res.redirect('/admin/products');
     } catch (error) {
         console.log(error.message);
@@ -110,7 +107,7 @@ exports.editProductPost = async (req, res) => {
 };
 
 
-//hideProduct() GET request
+//user hideProduct() GET request
 exports.hideProduct = async (req, res) => {
     try {
         const productId = req.params.id;
@@ -121,10 +118,9 @@ exports.hideProduct = async (req, res) => {
     }
 };
 
-//showProduct() GET request
+//user showProduct() GET request
 exports.showProduct = async (req, res) => {
     try {
-        console.log('show product get request');
         const productId = req.params.id;
         const updatedProduct = await Product.updateOne({ _id: productId }, { isList: true });
         res.redirect('/admin/products');
