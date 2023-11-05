@@ -109,12 +109,12 @@
                       <td class="text-end">₹ 10</td>
                     </tr>
                     <tr>
-                      <td colspan="2">Discount <%= orders.discountCode?orders.discountCode:"" %></td>
-                      <td class="text-danger text-end">₹ <%= orders.discountPrice?orders.discountPrice:0 %></td>
+                      <td colspan="2">Discount <b><%=couponApplied?couponApplied.couponCode :""%></b></td>
+                      <td class="text-danger text-end">- ₹ <%=couponApplied?couponApplied.maximumDiscount : 0%></td>
                     </tr>
                     <tr class="fw-bold">
                       <td colspan="2"><b>TOTAL</b></td>
-                      <td class="text-end">₹ <%= orders.totalAmount %>
+                      <td class="text-end">₹ <%= finalPrice%>
                       </td>
                     </tr>
                   </tfoot>
@@ -132,20 +132,18 @@
                     </p>
                   </div>
                   <div class="col-lg-6">
-                    <% orders.deliveryDetails.address.forEach(function(add){ %>
+                   
                       <h3 class="h6"><b>Billing address</b></h3>
                       <address>
                         <%= orders.userName %><br />
-                          <%= add.country %>, <%= add.state %><br />
-                              <%= add.city %>, <%= add.street %><br />
-                                  <%= add.apartment %>, <%= add.zipcode %><br />
+                          <%= address.country %>, <%= address.state %><br />
+                              <%= address.city %>, <%= address.street %><br />
+                                  <%= address.apartment %>, <%= address.zipcode %><br />
                       </address>
-                      <% }); %>
+                   
                         <% if (orders.status==='Delivered' ) { %>
-                          <a href="/returnOrder?orderId=<%= orders._id %>">
-                            <button type="button" class="btn btn-warning">Return</button>
-                          </a>
-                          <% } else if (orders.status==='Cancelled' ) { %>
+                            <button class="btn btn-warning text-white" onclick="returnOrder('<%= orders._id %>')">Return</button>
+                          <% } else if (orders.status==='Cancelled' || orders.status==='Returned' ) { %>
                             <!-- Nothing to display if status is 'Cancelled' -->
                             <% } else { %>
                               <button class="btn btn-danger text-white"
@@ -198,6 +196,19 @@
             }
           }
         })
+      }
+      function returnOrder(orderId){
+        console.log('ajax');
+        $.ajax({
+          url:`/returnOrder?id=${orderId}`,
+          type:'get',
+          success:function(response){
+            if(response.success){
+              location.reload();
+              location.href="/orders";
+            }
+          }
+        });
       }
     </script>
     <%- include('../user/userFooter.ejs') %>

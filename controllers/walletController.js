@@ -1,5 +1,6 @@
 const Cart=require('../models/user/cartCollection');
 const Wishlist=require('../models/user/wishlistCollection');
+const User=require('../models/user/userCollection');
 
 //wallet() GET request
 exports.wallet = async (req, res) => {
@@ -16,7 +17,9 @@ exports.wallet = async (req, res) => {
         } else {
             count = 0;
         }
-        res.render('user/wallet', { user: req.session.name, pageTitle, count, wishlistCount });
+        const userData=await User.findOne({_id:userId});
+        const historyDetails=userData.walletHistory;
+        res.render('user/wallet', { user: req.session.name, pageTitle, count,userData, wishlistCount, historyDetails });
     } catch (error) {
         console.log(error.message);
     }

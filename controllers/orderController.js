@@ -4,7 +4,7 @@ const Cart = require('../models/user/cartCollection');
 const Product = require('../models/admin/productCollection');
 const Address = require('../models/user/addressCollection');
 const Wishlist = require('../models/user/wishlistCollection');
-const Coupon=require('../models/admin/couponCollection');
+const Coupon = require('../models/admin/couponCollection');
 const mongoose = require('mongoose');
 const Razorpay = require('razorpay');
 const ObjectId = mongoose.Types.ObjectId;
@@ -31,7 +31,6 @@ exports.updateStatus = async (req, res) => {
                 { _id: orderId },
                 { $set: { status: "Out for delivery" } }
             );
-            res.json({ success: true })
         } else if (status === "Out for delivery") {
             const updatedStatus = await Order.findOneAndUpdate(
                 { _id: orderId },
@@ -42,14 +41,13 @@ exports.updateStatus = async (req, res) => {
                 { _id: orderId },
                 { $set: { status: "Shipped" } }
             );
-            res.json({ success: true })
         } else if (status === "Pending") {
             const updatedStatus = await Order.findOneAndUpdate(
                 { _id: orderId },
                 { $set: { status: "Placed" } }
             );
-            res.json({ success: true });
         }
+        res.json({ success: true });
     } catch (error) {
         console.log(error.message);
     }
@@ -128,7 +126,6 @@ exports.placeOrder = async (req, res) => {
         const userData = await User.findOne({ _id: userId });
         const name = userData.name;
         console.log(name);
-       
         const date = new Date();
         const selectedAddress = await Address.findOne(
             { user: userId, 'address._id': addressId },
@@ -167,7 +164,7 @@ exports.placeOrder = async (req, res) => {
         if (couponFound) {
             await Coupon.findOneAndUpdate({ couponName: cartData.couponApplied }, { $addToSet: { usedUsers: userId } });
         }
-        //razorpay
+        //payment methods
         if (paymentMethods === 'Cash on delivery') {
             console.log('cash');
             const updatePayment = await Order.updateOne(
@@ -190,10 +187,44 @@ exports.placeOrder = async (req, res) => {
             }
             res.json({ cash: true });
         } else if (paymentMethods === "Wallet") {
-            res.json({ wallet: true });
+            if (userData.wallet > orderDetails.totalAmount) {
+                let result = await User.updateOne({ _id: req.session.userId }, {
+                    $inc: {
+                        wallet: -orderDetails.totalAmount
+                    },
+                    $push: {
+                        walletHistory: {
+                            amount: orderDetails.totalAmount,
+                            status: "Debit",
+                            date: new Date()
+                        }
+                    }
+                });
+                //to reduce stock
+                const stockReduce = cartData.products
+                for (let i = 0; i < stockReduce.length; i++) {
+                    const productId = stockReduce[i].productId;
+                    const updatedProduct = await Product.findByIdAndUpdate(
+                        productId,
+                        {
+                            $inc: { stock: -stockReduce[i].count }
+                        },
+                        { new: true }
+                    );
+                }
+                //to pull cart and coupon
+                await Cart.findOneAndUpdate({ userId }, { $set: { products: [], couponApplied: '' } });
+                await Order.findByIdAndUpdate(
+                    { _id: oId },
+                    { $set: { status: "Placed" } }
+                );
+                res.json({ wallet: true })
+            } else {
+                res.json({ balance: true })
+            }
         } else if (paymentMethods === "Online payment") {
             console.log('online');
-            let Total = await Order.findOne({_id : oId})
+            let Total = await Order.findOne({ _id: oId })
             console.log(Total);
             const orderData = {
                 amount: Total.totalAmount * 100,
@@ -226,16 +257,22 @@ exports.orderDet = async (req, res) => {
         const orders = await Order.findOne({ _id: orderId }).populate(
             "products.productId"
         );
+        const address = orders.deliveryDetails;
         const userId = orders.user;
         const cart = await Cart.findOne({ userId: userId });
-        const subTotal = cart.subTotal;
         let count = 0;
         if (cart?.products?.length > 0) {
             count = count + cart.products.length;
         } else {
             count = 0;
         }
-        res.render('user/orderDet', { user: req.session.name, pageTitle, orders, subTotal, count, wishlistCount });
+        let subTotal = cart.products.reduce((acc, val) => acc + val.totalPrice, 0);
+        let finalPrice = cart.products.reduce((acc, val) => acc + val.totalPrice, 0) + 10;
+        let couponApplied = await Coupon.findOne({ couponCode: cart?.couponApplied });
+        if (couponApplied) {
+            finalPrice = finalPrice - couponApplied.maximumDiscount;
+        }
+        res.render('user/orderDet', { user: req.session.name, pageTitle, orders, subTotal, address, finalPrice, couponApplied, count, wishlistCount });
     } catch (error) {
         console.log(error.message);
     }
@@ -245,11 +282,34 @@ exports.orderDet = async (req, res) => {
 exports.cancelOrder = async (req, res) => {
     try {
         const orderId = req.query.id;
+        const user = req.session.userId;
+        let totalAmount = await Order.findOne({ _id: orderId });
         const updatePayment = await Order.updateOne(
             { _id: orderId },
             { $set: { status: "Cancelled" } }
         );
-        res.json({ success: true });
+        const cartData = await Cart.findOne({ userId: user });
+        const couponFound = await Coupon.findOne({ couponName: cartData?.couponApplied });
+        if (couponFound) {
+            await Coupon.findOneAndUpdate({ couponName: cartData.couponApplied }, { $addToSet: { usedUsers: userId } });
+        }
+        let walletBal = await User.findOne({ _id: user }, { wallet: 1 });
+        const wallet = await User.updateOne(
+            { _id: user },
+            {
+                $set: { wallet: walletBal.wallet + totalAmount.totalAmount },
+                $push: {
+                    walletHistory: {
+                        date: new Date(),
+                        amount: totalAmount.totalAmount,
+                        status: "Credit"
+                    }
+                }
+            }
+        );
+        if (updatePayment) {
+            res.json({ success: true });
+        }
     } catch (error) {
         console.log(error.message);
     }
@@ -258,8 +318,38 @@ exports.cancelOrder = async (req, res) => {
 //user returnOrder() GET request
 exports.returnOrder = async (req, res) => {
     try {
-        const orderId = req.query.orderId;
+        console.log('retirn order')
+        const orderId = req.query.id;
         console.log(orderId);
+        const user = req.session.userId;
+        let totalAmount = await Order.findOne({ _id: orderId });
+        console.log(totalAmount);
+        const updatePayment = await Order.updateOne(
+            { _id: orderId },
+            { $set: { status: "Returned" } }
+        );
+        const cartData = await Cart.findOne({ userId: user });
+        const couponFound = await Coupon.findOne({ couponName: cartData?.couponApplied });
+        if (couponFound) {
+            await Coupon.findOneAndUpdate({ couponName: cartData.couponApplied }, { $addToSet: { usedUsers: userId } });
+        }
+        let walletBal = await User.findOne({ _id: user }, { wallet: 1 });
+        const wallet = await User.updateOne(
+            { _id: user },
+            {
+                $set: { wallet: walletBal.wallet + totalAmount.totalAmount },
+                $push: {
+                    walletHistory: {
+                        date: new Date(),
+                        amount: totalAmount.totalAmount,
+                        status: "Credit"
+                    }
+                }
+            }
+        );
+        if (updatePayment) {
+            res.json({ success: true });
+        }
     } catch (error) {
         console.log(error.message);
     }

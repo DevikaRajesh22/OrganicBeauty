@@ -18,13 +18,6 @@
             <div class="container text-center">
                 <h1 class="display-4 text-white mb-3 animated slideInDown">My wallet</h1>
                 <p>Access and manage funds</p>
-                <!-- <nav aria-label="breadcrumb">
-        <ol class="breadcrumb justify-content-center mb-0 animated slideInDown">
-            <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
-            <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
-            <li class="breadcrumb-item text-white active" aria-current="page">Products</li>
-        </ol>
-    </nav> -->
             </div>
         </div>
         <!-- Hero End -->
@@ -34,32 +27,31 @@
             <div class="col-md-9 p-3 text-center">
                 <div class="py-5 mb-2" style="background-color: #f7f7f7;">
                     <h5>Total Wallet Balance</h5>
-                    <h1>₹ 1,500</h1> <!-- Dummy balance -->
+                    <h1>₹ <%= userData.wallet %></h1> <!-- Dummy balance -->
                 </div><br><br>
                 <div class="table-responsive">
                     <table class="table table-striped">
-                        <h5 class="fw-bold mb-1">Wallet History</h5>
+                        <h5 class="fw-bold mb-1">Wallet History</h5><br><br>
                         <thead class="table-header">
                             <tr>
                                 <th><a id="name" class="filter__link">Date</a></th>
-                                <th><a id="draws" class="filter__link filter__link--number">Method</a></th>
-                                <th><a id="losses" class="filter__link filter__link--number">Type</a></th>
+                                <th><a id="draws" class="filter__link filter__link--number">Type</a></th>
                                 <th><a id="losses" class="filter__link filter__link--number">Amount</a></th>
                             </tr>
                         </thead>
                         <tbody class="table-content">
-                            <tr class="table-row">
-                                <td class="table-data">Oct 15, 2023</td>
-                                <td class="table-data">Credit Card</td>
-                                <td class="table-data">Deposit</td>
-                                <td class="table-data">₹ 500</td>
-                            </tr>
-                            <tr class="table-row">
-                                <td class="table-data">Oct 12, 2023</td>
-                                <td class="table-data">PayPal</td>
-                                <td class="table-data">Withdrawal</td>
-                                <td class="table-data">₹ 200</td>
-                            </tr>
+                            <% historyDetails.forEach(function(history){ %>
+                                <tr class="table-row">
+                                    <td class="table-data"><%= new Date(history.date).toLocaleString('en-US', { year: 'numeric' , month: '2-digit' , day: '2-digit' })%></td>
+                                    <td class="table-data"><%= history.status%></td>
+                                    <% if(history.status==='Credit'){ %>
+                                        <td class="table-data text-success">+ ₹ <%= history.amount %></td>
+                                   <% }else if(history.status==='Debit'){ %>
+                                    <td class="table-data text-danger">- ₹ <%= history.amount %></td>
+                                  <% } %>
+                                    
+                                </tr>
+                          <%  })%>
                         </tbody>
                     </table>
                 </div>

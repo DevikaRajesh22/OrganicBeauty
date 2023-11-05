@@ -25,6 +25,21 @@ const UsersSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  wallet :{
+    type : Number,
+    default : 0,
+  },
+  walletHistory :[{
+    date :{
+      type : Date
+    },
+    amount :{
+      type : Number
+    },
+    status :{
+      type : String
+    }
+  }]
 });
 
 
