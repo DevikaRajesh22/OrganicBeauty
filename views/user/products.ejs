@@ -188,6 +188,8 @@
                 title: "Product added to cart",
                 showConfirmButton: false,
                 timer: 1500,
+              }).then(()=>{
+                location.reload();
               });
             } else if (response.exist) {
               Swal.fire({

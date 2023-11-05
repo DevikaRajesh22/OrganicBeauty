@@ -14,9 +14,7 @@
                                     <div class="col-lg-9 mx-3 my-3">
                                         <div class="card card-dashboard">
                                             <div class="card-body">
-                                                <input type="radio" id="selectedAddress" name="selectedAddress"
-                                                    value="<%= add._id %> " <%=(add._id===addresses.address[0]._id)
-                                                    ? 'checked' : '' %>>
+                                                <input type="radio" id="selectedAddress" name="selectedAddress" value="<%= add._id %> " <%=(add._id===addresses.address[0]._id) ? 'checked' : '' %>>
                                                 <p>
                                                 <h3>
                                                     <%= user?user:'User'%>
@@ -49,23 +47,28 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <h6 class="font-weight-medium">Subtotal</h6>
-                                <h6 class="font-weight-medium">₹ <%= carts?.subTotal%>
+                                <h6 class="font-weight-medium">₹ <%= subTotal%>
                                 </h6>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <h6 class="font-weight-medium">Shipping</h6>
-                                <h6 class="font-weight-medium">₹ <%= carts?.shipping %>
+                                <h6 class="font-weight-medium">₹ 10
                                 </h6>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <h6 class="font-weight-medium">Discount</h6>
-                                <h6 class="font-weight-medium">₹ 0</h6>
+                                <h6 class="font-weight-medium">Discount <b>
+                                        <%=couponApplied?couponApplied.couponCode :""%>
+                                    </b></h6>
+                                <h6 class="font-weight-medium text-danger">- ₹
+                                    <%=couponApplied?couponApplied.maximumDiscount : 0%>
+                                </h6>
                             </div>
                         </div>
                         <div class="card-footer border-secondary bg-transparent">
                             <div class="d-flex justify-content-between mt-2">
                                 <h5 class="font-weight-bold">Total</h5>
-                                <h5 class="font-weight-bold" id="total">₹<%= carts?.finalPrice %>
+                                <h5 class="font-weight-bold" id="total">₹<%= finalPrice %>
+                                    <input id="finalPrice" type="hidden" value="<%=finalPrice%>" name="finalPrice">
                                 </h5>
                             </div>
                         </div>
@@ -92,9 +95,16 @@
                                     <label class="custom-control-label" for="Online-payment">Online payment</label>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" name="payment" id="Wallet"
+                                        value="Wallet">
+                                    <label class="custom-control-label" for="Wallet">Wallet</label>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-footer border-secondary bg-transparent">
-                            <a  class="text-decoration-none"><button
+                            <a class="text-decoration-none"><button
                                     class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3" type="submit"
                                     onclick="order('<% products.productId %>')">Place Order</button></a>
                         </div>
@@ -105,13 +115,15 @@
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         <script>
             function order(pid) {
-                let sA = document.getElementById('selectedAddress');
-                let selectedAddress = sA.value
+                console.log('ajax');
+                let selectedAddress = document.getElementById('selectedAddress').value;
+                console.log(selectedAddress);
                 let payment = $("input[name=payment]:checked").val();
-                let total = document.getElementById('total').value;
-                console.log(total);
                 console.log(payment);
-                let productId = pid
+                let total = document.getElementById('finalPrice').value;
+                console.log(total);
+                let productId = pid;
+                console.log(productId);
                 $.ajax({
                     url: '/placeOrder',
                     type: 'POST',
@@ -122,18 +134,32 @@
                         Total: total
                     },
                     success: (response) => {
-                        if (response.codSuccess) {
-                            console.log('cash');
+                        console.log('cash');
+                        if (response.cash) {
                             location.href = '/success'
-                        } else {
-                            console.log('online');
+                        } else if (response.balance) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Insufficient Balance',
+                                text: 'You do not have enough balance to make this withdrawal.',
+                                showCancelButton: true,
+                                confirmButtonText: 'OK',
+                                cancelButtonText: 'Cancel',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '/checkout';
+                                }
+                            });
+                        } else if (response.wallet) {
+                            window.location.href = '/success';
+                        }else {
                             razorpay(response.order);
                         }
                     }
                 })
             }
+
             function razorpay(order) {
-                console.log(order);
                 var options = {
                     "key": "rzp_test_9CCuVFywuG0qXQ", // Enter the Key ID generated from the Dashboard
                     "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -168,7 +194,7 @@
                     type: 'POST',
                     data: {
                         payment: payment,
-                        amount: amount*100,
+                        amount: amount * 100,
                         order: order
                     },
                     success: function (response) {

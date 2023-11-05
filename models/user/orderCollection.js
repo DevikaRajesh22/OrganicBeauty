@@ -9,12 +9,6 @@ const orderSchema = new mongoose.Schema({
     type: String,
     ref: 'User'
   },
-  discountCode:{
-    type:String,
-  },
-  discountPrice:{
-    type:String,
-  },
   userName: {
     type: String,
     required: true,

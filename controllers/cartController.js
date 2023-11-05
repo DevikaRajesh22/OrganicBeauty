@@ -4,7 +4,7 @@ const User = require('../models/user/userCollection');
 const Coupon = require('../models/admin/couponCollection');
 const Address = require('../models/user/addressCollection');
 const Order = require('../models/user/orderCollection');
-const Wishlist=require('../models/user/wishlistCollection');
+const Wishlist = require('../models/user/wishlistCollection');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const { wishlist } = require('./wishlistController');
@@ -12,11 +12,13 @@ const { wishlist } = require('./wishlistController');
 //user cartGet() GET request
 exports.cartGet = async (req, res) => {
     try {
-        let wishlistCount=0;
-        const wishlist=await Wishlist.findOne({user:req.session.userId});
-        wishlist?wishlistCount=wishlist.products.length:0;
+        let wishlistCount = 0;
+        const wishlist = await Wishlist.findOne({ user: req.session.userId });
+        wishlist ? wishlistCount = wishlist.products.length : 0;
         let couponSelected;
         let couponApplied;
+        let finalPrice;
+        let subTotal;
         const userId = req.session.userId;
         const coupon = await Coupon.find({
             $and: [
@@ -31,21 +33,13 @@ exports.cartGet = async (req, res) => {
         const pageTitle = 'Cart';
         const carts = await Cart.findOne({ userId: userId }).populate('products.productId');
         if (carts) {
-            const subTotal = carts.products.reduce((acc, val) => acc + val.totalPrice, 0);
-            let finalPrice = subTotal + 10;
+            subTotal = carts.products.reduce((acc, val) => acc + val.totalPrice, 0);
+            finalPrice = carts.products.reduce((acc, val) => acc + val.totalPrice, 0) + 10;
             couponApplied = await Coupon.findOne({ couponCode: carts?.couponApplied });
-            if (couponApplied!==null) {
+            if (couponApplied !== null) {
                 finalPrice = finalPrice - couponApplied.maximumDiscount;
                 couponSelected = await Coupon.findOne({ couponCode: carts?.couponApplied });
             }
-            const filter = { userId: userId };
-            const update = {
-                $set: {
-                    subTotal: subTotal,
-                    finalPrice: finalPrice,
-                }
-            };
-            const updatedCart = await Cart.updateOne(filter, update);
         }
         let count = 0;
         if (carts?.products?.length > 0) {
@@ -57,9 +51,9 @@ exports.cartGet = async (req, res) => {
             const products = carts.products.length;
             if (products > 0) { // Check if there are products in the cart
                 let cartProduct = carts.products;
-                res.render('user/cart', { pageTitle, carts, product: products, user: req.session.name, count, cartProduct, coupon, couponSelected, couponApplied, wishlistCount });
+                res.render('user/cart', { pageTitle, carts, product: products, user: req.session.name, count, cartProduct, coupon, subTotal, total: finalPrice, couponSelected, couponApplied, wishlistCount });
             } else {
-                res.render('user/cart', { pageTitle, carts, product: undefined, user: req.session.name, count, wishlistCount });
+                res.render('user/cart', { pageTitle, carts, product: undefined, total: 0, user: req.session.name, count, wishlistCount });
             }
         } else {
             res.render('user/cart', { pageTitle, carts: undefined, product: undefined, total: 0, user: req.session.name, count, wishlistCount })
@@ -77,7 +71,7 @@ exports.addToCartPost = async (req, res) => {
         const user = await User.findOne({ _id: userId });
         const product = await Product.findOne({ _id: productId }).populate('category');
         const cart = await Cart.findOne({ userId: userId });
-        const price=product.price;
+        const price = product.price;
         if (userId === undefined) {
             res.json({ login: true });
         } else {
@@ -113,12 +107,12 @@ exports.addToCartPost = async (req, res) => {
                         { new: true }
                     );
                     res.json({ success: true })
-                }else{
-                    res.json({outOfStock : true})
+                } else {
+                    res.json({ outOfStock: true })
                 }
             }
         }
-        res.json({success:true});
+        res.json({ success: true });
     } catch (error) {
         console.log(error.message);
     }
@@ -128,7 +122,6 @@ exports.addToCartPost = async (req, res) => {
 exports.updateCartQuantity = async (req, res) => {
     try {
         const userId = req.session.userId;
-        const user = await User.findOne({ _id: userId });
         const productId = req.body.productId;
         let count = req.body.count;
         count = parseInt(count);
@@ -159,7 +152,7 @@ exports.updateCartQuantity = async (req, res) => {
         const productTotal = productPrice * updatedQuantity;
         cartData.products[existingProductIndex].totalPrice = productTotal;
         await cartData.save();
-        res.status(200).json({ success: true, message: 'Cart item updated successfully' });
+        res.json({ success: true, message: 'Cart item updated successfully' });
     } catch (error) {
         console.log(error.message);
     }
@@ -192,9 +185,9 @@ exports.removeProduct = async (req, res) => {
 //user checkout() GET request
 exports.checkout = async (req, res) => {
     try {
-        let wishlistCount=0;
-        const wishlist=await Wishlist.findOne({user:req.session.userId});
-        wishlist?wishlistCount=wishlist.products.length:0;
+        let wishlistCount = 0;
+        const wishlist = await Wishlist.findOne({ user: req.session.userId });
+        wishlist ? wishlistCount = wishlist.products.length : 0;
         const pageTitle = 'Checkout';
         const userId = req.session.userId;
         const carts = await Cart.findOne({ userId: userId })
@@ -209,10 +202,17 @@ exports.checkout = async (req, res) => {
         } else {
             count = 0;
         }
+        let subTotal = carts.products.reduce((acc, val) => acc + val.totalPrice, 0);
+        let finalPrice = carts.products.reduce((acc, val) => acc + val.totalPrice, 0) + 10;
+        let couponApplied = await Coupon.findOne({ couponCode: carts?.couponApplied });
+        if (couponApplied) {
+            finalPrice = finalPrice - couponApplied.maximumDiscount;
+        }
+
         const addresses = await Address.findOne({ user: userId });
         const address = addresses.address;
         const products = carts.products;
-        res.render('user/checkout', { pageTitle, user: req.session.name, carts, addresses, address, count, products,wishlistCount });
+        res.render('user/checkout', { pageTitle, user: req.session.name, carts, subTotal, finalPrice, couponApplied, addresses, address, count, products, wishlistCount });
     } catch (error) {
         console.log(error.message);
     }
@@ -221,9 +221,9 @@ exports.checkout = async (req, res) => {
 //user editAddress() GET request
 exports.editAddress = async (req, res) => {
     try {
-        let wishlistCount=0;
-        const wishlist=await Wishlist.findOne({user:req.session.userId});
-        wishlist?wishlistCount=wishlist.products.length:0;
+        let wishlistCount = 0;
+        const wishlist = await Wishlist.findOne({ user: req.session.userId });
+        wishlist ? wishlistCount = wishlist.products.length : 0;
         const pageTitle = 'Address';
         const userId = req.session.userId;
         const addressId = req.query.id;
@@ -275,9 +275,9 @@ exports.editAddressPost = async (req, res) => {
 //user success() GET request
 exports.success = async (req, res) => {
     try {
-        let wishlistCount=0;
-        const wishlist=await Wishlist.findOne({user:req.session.userId});
-        wishlist?wishlistCount=wishlist.products.length:0;
+        let wishlistCount = 0;
+        const wishlist = await Wishlist.findOne({ user: req.session.userId });
+        wishlist ? wishlistCount = wishlist.products.length : 0;
         const pageTitle = 'Success';
         const userId = req.session.userId;
         const carts = await Cart?.findOne({ userId: userId });
@@ -318,12 +318,8 @@ exports.verifyPayment = async (req, res) => {
                     { new: true }
                 );
             }
-            const removeCart = await Cart.findOneAndUpdate({ userId: userId },
-                {
-                    $pull: {
-                        products: {}
-                    }
-                })
+            //to remove products from cart when order is placed and to remove coupon
+            await Cart.findOneAndUpdate({ userId: userId }, { $set: { products: [], couponApplied: '' } });
             await Order.updateOne(
                 { orderId: details.order.receipt },
                 { $set: { status: "Placed" } }

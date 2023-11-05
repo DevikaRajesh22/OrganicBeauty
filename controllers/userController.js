@@ -207,7 +207,7 @@ exports.landingPage = async (req, res) => {
 exports.productsGet = async (req, res) => {
     try {
         let wishlistCount = 0;
-        const wishlist = await wishlist.findOne({ user: req.session.userId });
+        const wishlist = await Wishlist.findOne({ user: req.session.userId });
         wishlist ? wishlistCount = wishlist.products.length : 0;
         let similar;
         let wishlistString = [];

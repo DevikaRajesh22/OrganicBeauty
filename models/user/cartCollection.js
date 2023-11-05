@@ -6,18 +6,6 @@ const CartSchema = new mongoose.Schema({
     required: true,
     ref: "user",
   },
-  finalPrice:{
-    type:Number,
-    required:true,
-  },
-  subTotal:{
-    type:Number,
-    required:true,
-  },
-  shipping:{
-    type:Number,
-    default:10,
-  },
   products: [
     {
       productId: {

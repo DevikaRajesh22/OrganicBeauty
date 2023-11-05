@@ -102,7 +102,7 @@ exports.applyCoupon = async (req, res) => {
         const currentDate = new Date();
         const usedCoupon = await Coupon.find({ couponCode, usedUsers: { $in: [user] } });
         if (couponFound === null) {
-            res.redirect('/cart');
+            return res.json({empty : true })
         } else if (couponFound.lastDate < currentDate) {
             res.json({ expired: true });
         } else if (couponFound && usedCoupon.length == 0) {

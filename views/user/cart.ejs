@@ -4,317 +4,304 @@
     <!-- Navbar End -->
 
     <!-- Cart Start -->
-    <% if (product===undefined) { %>
-      <style>
-        .mt-100 {
-          margin-top: 100px;
-        }
+    <div id="reload">
+      <% if (product===undefined) { %>
+        <style>
+          .mt-100 {
+            margin-top: 100px;
+          }
 
-        .card {
-          margin-bottom: 30px;
-          border: 0;
-          -webkit-transition: all 0.3s ease;
-          transition: all 0.3s ease;
-          letter-spacing: 0.5px;
-          border-radius: 8px;
-          -webkit-box-shadow: 1px 5px 24px 0 rgba(68, 102, 242, 0.05);
-          box-shadow: 1px 5px 24px 0 rgba(68, 102, 242, 0.05);
-        }
+          .card {
+            margin-bottom: 30px;
+            border: 0;
+            -webkit-transition: all 0.3s ease;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            border-radius: 8px;
+            -webkit-box-shadow: 1px 5px 24px 0 rgba(68, 102, 242, 0.05);
+            box-shadow: 1px 5px 24px 0 rgba(68, 102, 242, 0.05);
+          }
 
-        .card .card-header {
-          background-color: #fff;
-          border-bottom: none;
-          padding: 24px;
-          border-bottom: 1px solid #f6f7fb;
-          border-top-left-radius: 8px;
-          border-top-right-radius: 8px;
-        }
+          .card .card-header {
+            background-color: #fff;
+            border-bottom: none;
+            padding: 24px;
+            border-bottom: 1px solid #f6f7fb;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+          }
 
-        .card-header:first-child {
-          border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
-        }
+          .card-header:first-child {
+            border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+          }
 
-        .card .card-body {
-          padding: 30px;
-          background-color: transparent;
-        }
+          .card .card-body {
+            padding: 30px;
+            background-color: transparent;
+          }
 
-        .btn-primary,
-        .btn-primary.disabled,
-        .btn-primary:disabled {
-          background-color: #4466f2 !important;
-          border-color: #4466f2 !important;
-        }
-      </style>
-      <div class="container-fluid mt-100" id="re-load">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="card">
-              <div class="card-header">
-              </div>
-              <div class="card-body cart">
-                <div class="col-sm-12 empty-cart-cls text-center">
-                  <img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3" />
-                  <h3><strong>Your Cart is Empty</strong></h3>
-                  <h4>Add something to make me happy :)</h4>
-                  <a href="/products" class="btn btn-success cart-btn-transform m-3" data-abc="true">continue
-                    shopping</a>
+          .btn-primary,
+          .btn-primary.disabled,
+          .btn-primary:disabled {
+            background-color: #4466f2 !important;
+            border-color: #4466f2 !important;
+          }
+        </style>
+        <div class="container-fluid mt-100" id="re-load">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header">
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <% }else{ %>
-          <div id="re-load">
-            <div class="container-fluid pt-5">
-              <div class="row px-xl-5">
-                <div class="col-lg-8 table-responsive mb-5">
-                  <table class="table table-bordered text-center mb-0">
-                    <thead class="bg-secondary text-dark">
-                      <tr>
-                        <th>Products</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                        <th>Remove</th>
-                      </tr>
-                    </thead>
-                    <tbody class="align-middle">
-                      <%cartProduct.forEach(function(product){ %>
-                        <tr>
-                          <td class="d-flex px-2 mx-2 align-middle">
-                            <img class="px-2" src="/product/<%=product.productId.image.image1%>" alt=""
-                              style="width: 50px" />
-                            <%= product.productId.productName %>
-                          </td>
-                          <td class="align-middle">₹ <%= product.productPrice%>
-                          </td>
-                          <td class="align-middle">
-                            <div class="input-group quantity mx-auto" style="width: 100px">
-                              <div class="input-group-btn">
-                                <button class="btn btn-sm btn-primary btn-minus"
-                                  onclick="changeQuantity('<%= product.productId._id%>',-1)">
-                                  <i class="fa fa-minus"></i>
-                                </button>
-                              </div>
-                              <input type="text" class="form-control form-control-sm bg-secondary text-center"
-                                value="<%=product.count%>" />
-                              <div class="input-group-btn">
-                                <button class="btn btn-sm btn-primary btn-plus"
-                                  onclick="changeQuantity('<%= product.productId._id%>',1)">
-                                  <i class="fa fa-plus"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </td>
-                          <td class="align-middle">₹ <%= product.totalPrice %>
-                          </td>
-                          <td class="align-middle">
-                            <button class="btn btn-sm btn-primary"
-                              onclick="removeProduct('<%= product.productId._id %>',-1)">
-                              <i class="fa fa-trash"></i>
-                            </button>
-                          </td>
-                        </tr>
-                        <% })%>
-                    </tbody>
-                  </table>
-                </div>
-
-                <div class="col-lg-4">
-                  <form class="mb-5" action="">
-                    <% if(couponSelected===undefined){ %>
-                      <div class="input-group">
-                        <input type="text" class="form-control p-4" placeholder="Coupon Code" id="coupon"
-                          name="couponcode">
-                        <div class="input-group-append">
-                          <button class="btn btn-primary" onclick="applyCoupon()" type="submit">Apply Coupon</button>
-                        </div>
-                      </div>
-                      <% }else{ %>
-                        <div class="d-flex border p-3 w-100 justify-content-between my-2"
-                          style="background-color:#8BB471;">
-                          <h6 class="p-2 text-white">Coupon Applied : <b>
-                              <%=couponSelected.couponCode%>
-                            </b></h6>
-                          <a href="/removeCoupon"><i class="fas fa-solid fa-trash text-white"
-                              style="color: #666b70;"></i></a>
-                        </div>
-                        <% } %>
-                          <div class="border border-1 p-2 mt-4" style="width: 31rem; height: 14rem ; overflow: auto;">
-                            <%coupon.forEach((val)=>{ %>
-                              <% if(val.showStatus){ %>
-                                <div class="border border-1 w-100 p-2 mb-1">
-                                  <h5>
-                                    <%=val.couponCode%>
-                                  </h5>
-                                  <h6>save ₹<%=val?.maximumDiscount%>
-                                  </h6>
-                                  <p>₹<%=val.maximumDiscount%> of on minimum purchase of ₹
-                                      <%=val.minimumPurchase%>
-                                  </p>
-                                  <p>expires on <%= val.lastDate.toISOString().split('T')[0] %>
-                                  </p>
-                                  </p>
-                                </div>
-                                <% } %>
-                                  <% })%>
-                          </div>
-                  </form action="/checkout" method="post">
-                  <div class="card border-secondary mb-5">
-                    <div class="card-header bg-secondary border-0">
-                      <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
-                    </div>
-                    <div class="card-body">
-                      <div class="d-flex justify-content-between mb-3 pt-1">
-                        <h6 class="font-weight-medium">Subtotal</h6>
-                        <h6 class="font-weight-medium">₹ <%= carts?.subTotal %>
-                        </h6>
-                      </div>
-                      <div class="d-flex justify-content-between mb-3 pt-1">
-                        <h6 class="font-weight-medium">Shipping</h6>
-                        <h6 class="font-weight-medium">₹ <%= carts?.shipping %>
-                        </h6>
-                      </div>
-                      <div class="d-flex justify-content-between">
-                        <h6 class="font-weight-medium">Discount <b><%=couponApplied?couponApplied.couponCode :""%></b></h6>
-                        <h6 class="font-weight-medium text-danger">- ₹ <%=couponApplied?couponApplied.maximumDiscount :
-                            0%>
-                        </h6>
-                      </div>
-                    </div>
-                    <div class="card-footer border-secondary bg-transparent">
-                      <div class="d-flex justify-content-between mt-2">
-                        <h5 class="font-weight-bold">Total</h5>
-                        <h5 class="font-weight-bold">₹ <%= carts?.finalPrice %>
-                        </h5>
-                      </div>
-                      <a href="/checkout" class="text-decoration-none"><button
-                          class="btn btn-block btn-primary my-3 py-3">
-                          Proceed To Checkout
-                        </button></a>
-                    </div>
+                <div class="card-body cart">
+                  <div class="col-sm-12 empty-cart-cls text-center">
+                    <img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3" />
+                    <h3><strong>Your Cart is Empty</strong></h3>
+                    <h4>Add something to make me happy :)</h4>
+                    <a href="/products" class="btn btn-success cart-btn-transform m-3" data-abc="true">continue
+                      shopping</a>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <% }else{ %>
+            <div id="re-load">
+              <div class="container-fluid pt-5">
+                <div class="row px-xl-5">
+                  <div class="col-lg-8 table-responsive mb-5">
+                    <table class="table table-bordered text-center mb-0">
+                      <thead class="bg-secondary text-dark">
+                        <tr>
+                          <th>Products</th>
+                          <th>Price</th>
+                          <th>Quantity</th>
+                          <th>Total</th>
+                          <th>Remove</th>
+                        </tr>
+                      </thead>
+                      <tbody class="align-middle">
+                        <%cartProduct.forEach(function(product){ %>
+                          <tr>
+                            <td class="d-flex px-2 mx-2 align-middle">
+                              <img class="px-2" src="/product/<%=product.productId.image.image1%>" alt=""
+                                style="width: 50px" />
+                              <%= product.productId.productName %>
+                            </td>
+                            <td class="align-middle">₹ <%= product.productPrice%>
+                            </td>
+                            <td class="align-middle">
+                              <div class="input-group quantity mx-auto" style="width: 100px">
+                                <div class="input-group-btn">
+                                  <button class="btn btn-sm btn-primary btn-minus"
+                                    onclick="changeQuantity('<%= product.productId._id%>',-1)">
+                                    <i class="fa fa-minus"></i>
+                                  </button>
+                                </div>
+                                <input type="text" class="form-control form-control-sm bg-secondary text-center"
+                                  value="<%=product.count%>" />
+                                <div class="input-group-btn">
+                                  <button class="btn btn-sm btn-primary btn-plus"
+                                    onclick="changeQuantity('<%= product.productId._id%>',1)">
+                                    <i class="fa fa-plus"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="align-middle">₹ <%= product.totalPrice %>
+                            </td>
+                            <td class="align-middle">
+                              <button class="btn btn-sm btn-primary"
+                                onclick="removeProduct('<%= product.productId._id %>',-1)">
+                                <i class="fa fa-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                          <% })%>
+                      </tbody>
+                    </table>
+                  </div>
 
-          <% } %>
-      </div>
+                  <div class="col-lg-4">
+                    <form class="mb-5" action="">
+                      <% if(couponSelected===undefined){ %>
+                        <div class="input-group">
+                          <input type="text" class="form-control p-4" placeholder="Coupon Code" id="coupon"
+                            name="couponcode">
+                          <div class="input-group-append">
+                            <button class="btn btn-primary" onclick="applyCoupon()" type="submit">Apply Coupon</button>
+                          </div>
+                        </div>
+                        <% }else{ %>
+                          <div class="d-flex border p-3 w-100 justify-content-between my-2"
+                            style="background-color:#8BB471;">
+                            <h6 class="p-2 text-white">Coupon Applied : <b>
+                                <%=couponSelected.couponCode%>
+                              </b></h6>
+                            <a href="/removeCoupon"><i class="fas fa-solid fa-trash text-white"
+                                style="color: #666b70;"></i></a>
+                          </div>
+                          <% } %>
+                            <div class="border border-1 p-2 mt-4" style="width: 31rem; height: 14rem ; overflow: auto;">
+                              <%coupon.forEach((val)=>{ %>
+                                <% if(val.showStatus){ %>
+                                  <div class="border border-1 w-100 p-2 mb-1">
+                                    <h5>
+                                      <%=val.couponCode%>
+                                    </h5>
+                                    <h6>save ₹<%=val?.maximumDiscount%>
+                                    </h6>
+                                    <p>₹<%=val.maximumDiscount%> of on minimum purchase of ₹
+                                        <%=val.minimumPurchase%>
+                                    </p>
+                                    <p>expires on <%= val.lastDate.toISOString().split('T')[0] %>
+                                    </p>
+                                    </p>
+                                  </div>
+                                  <% } %>
+                                    <% })%>
+                            </div>
+                            <div class="card border-secondary mb-5" id="reload">
+                              <div class="card-header bg-secondary border-0">
+                                <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
+                              </div>
+                              <div class="card-body">
+                                <div class="d-flex justify-content-between mb-3 pt-1">
+                                  <h6 class="font-weight-medium">Subtotal</h6>
+                                  <h6 class="font-weight-medium">₹ <%= subTotal %>
+                                  </h6>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3 pt-1">
+                                  <h6 class="font-weight-medium">Shipping</h6>
+                                  <h6 class="font-weight-medium">₹ 10
+                                  </h6>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                  <h6 class="font-weight-medium">Discount <b>
+                                      <%=couponApplied?couponApplied.couponCode :""%>
+                                    </b></h6>
+                                  <h6 class="font-weight-medium text-danger">- ₹
+                                    <%=couponApplied?couponApplied.maximumDiscount : 0%>
+                                  </h6>
+                                </div>
+                              </div>
+                              <div class="card-footer border-secondary bg-transparent">
+                                <div class="d-flex justify-content-between mt-2">
+                                  <h5 class="font-weight-bold">Total</h5>
+                                  <h5 class="font-weight-bold">₹ <%= total%>
+                                  </h5>
+                                </div>
+                                <a href="#" id="checkoutLink" class="text-decoration-none">
+                                  <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
+                              </a>                              
+                              </div>
+                            </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-      <!-- Cart End -->
+            <% } %>
+        </div>
+    </div>
+    <!-- Cart End -->
 
-      <!-- ajax for quantity updation -->
-      <script>
-        //for changing quantity
-        function changeQuantity(productId, count) {
-          $.ajax({
-            type: "post",
-            url: "/cartModify",
-            data: {
-              productId: productId,
-              count: count,
-            },
-            success: function (response) {
-              if (response.success) {
-                $("#re-load").load("/cart #re-load");
-              } else {
-                Swal.fire({
-                  position: "center",
-                  icon: "warning",
-                  text: response.message,
-                  timer: 1500,
-                  showConfirmButton: false,
-                });
-              }
-            },
-          });
-        }
+    <!-- ajax for quantity updation -->
+    <script>
 
-        function removeProduct(productId) {
-          Swal.fire({
-            title: 'Remove Product from Cart',
-            text: 'Are you sure you want to remove this product from your cart?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, remove it',
-            cancelButtonText: 'Cancel',
-          }).then((result) => {
-            if (result.isConfirmed) {
-              // User confirmed the removal, proceed with the AJAX request to remove the product.
-              $.ajax({
-                url: '/removeProduct',
-                method: 'post',
-                data: {
-                  productId: productId,
-                },
-                success: function (response) {
-                  if (response.success) {
-                    // Reload the cart section after successful removal
-                    $("#re-load").load('/cart #re-load');
-                  }
-                },
+document.getElementById('checkoutLink').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the default link behavior
+    // Perform the navigation to '/checkout' using JavaScript
+    window.location.href = '/checkout';
+});
+
+      //for changing quantity
+      function changeQuantity(productId, count) {
+        $.ajax({
+          type: "post",
+          url: "/cartModify",
+          data: {
+            productId: productId,
+            count: count,
+          },
+          success: function (response) {
+            if (response.success) {
+              $("#reload").load("/cart #reload");
+            } else {
+              Swal.fire({
+                position: "center",
+                icon: "warning",
+                text: response.message,
+                timer: 1500,
+                showConfirmButton: false,
               });
             }
-          });
-        }
+          },
+        });
+      }
 
-        function applyCoupon() {
-          const couponcode = document.getElementById('coupon').value;
-          $.ajax({
-            url: '/applyCoupon',
-            type: 'POST',
-            data: { coupon: couponcode },
-            success: function (response) {
-              if (response.applied) {
-                Swal.fire({
-                  icon: "success",
-                  title: "Coupon Applied",
-                  text: response.message,
-                  showConfirmButton: true,
-                  confirmButtonText: "OK",
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    redirectToCart();
-                  }
-                });
-              } else if (response.expired) {
-                Swal.fire({
-                  icon: "error",
-                  title: "Coupon Expired",
-                  text: "Sorry, the coupon has expired.",
-                  showConfirmButton: true,
-                  confirmButtonText: "OK",
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    redirectToCart();
-                  }
-                });
-              } else if (response.applied === false) {
-                Swal.fire({
-                  icon: "error",
-                  text: response.message,
-                  showConfirmButton: true, // Ensure the confirm button is visible
-                  confirmButtonText: "OK",
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    redirectToCart();
-                  }
-                });
-              }
-            },
-            error: function (error) {
-              console.log("Error in AJAX request:", error);
-              displayErrorAlert("Error applying the coupon");
+      function removeProduct(productId) {
+        Swal.fire({
+          title: 'Remove Product from Cart',
+          text: 'Are you sure you want to remove this product from your cart?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, remove it',
+          cancelButtonText: 'Cancel',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // User confirmed the removal, proceed with the AJAX request to remove the product.
+            $.ajax({
+              url: '/removeProduct',
+              method: 'post',
+              data: {
+                productId: productId,
+              },
+              success: function (response) {
+                if (response.success) {
+                  // Reload the cart section after successful removal
+                  $("#re-load").load('/cart #re-load');
+                }
+              },
+            });
+          }
+        });
+      }
+
+      function applyCoupon() {
+        const couponcode = document.getElementById('coupon').value;
+        $.ajax({
+          url: '/applyCoupon',
+          type: 'POST',
+          data: { coupon: couponcode },
+          success: function (response) {
+            if (response.applied) {
+              Swal.fire({
+                icon: "success",
+                title: "Coupon Applied",
+                text: response.message,
+                timer: 1500
+              });
+            } else if (response.expired) {
+              Swal.fire({
+                icon: "error",
+                title: "Coupon Expired",
+                text: "Sorry, the coupon has expired.",
+                timer: 1500,
+              });
+            } else if (response.applied === false) {
+              Swal.fire({
+                icon: "error",
+                text: response.message,
+                timer: 1500,
+              })
+            } else if (response.empty) {
+              coupon.style.display = "";
             }
-          });
-        }
-        function redirectToCart() {
-          window.location.href = "/cart";
-        }
+          }
+        });
+      }
+    </script>
 
-      </script>
-
-      <hr style="border: 0px solid #787878; margin: 100px 0" />
-      <%- include('../user/userFooter.ejs') %>
+    <hr style="border: 0px solid #787878; margin: 100px 0" />
+    <%- include('../user/userFooter.ejs') %>
