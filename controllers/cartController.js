@@ -14,7 +14,7 @@ exports.cartGet = async (req, res) => {
     try {
         let wishlistCount=0;
         const wishlist=await Wishlist.findOne({user:req.session.userId});
-        wishlist?wishlistCount=Wishlist.products.length:0;
+        wishlist?wishlistCount=wishlist.products.length:0;
         let couponSelected;
         let couponApplied;
         const userId = req.session.userId;
@@ -34,7 +34,7 @@ exports.cartGet = async (req, res) => {
             const subTotal = carts.products.reduce((acc, val) => acc + val.totalPrice, 0);
             let finalPrice = subTotal + 10;
             couponApplied = await Coupon.findOne({ couponCode: carts?.couponApplied });
-            if (couponApplied) {
+            if (couponApplied!==null) {
                 finalPrice = finalPrice - couponApplied.maximumDiscount;
                 couponSelected = await Coupon.findOne({ couponCode: carts?.couponApplied });
             }
@@ -46,17 +46,6 @@ exports.cartGet = async (req, res) => {
                 }
             };
             const updatedCart = await Cart.updateOne(filter, update);
-            const discountCode = carts.couponApplied;
-            const discountPrice = couponApplied.maximumDiscount;
-            const filterOrder = { user: userId };
-            const updateOrder = {
-                $set: {
-                    discountCode: discountCode,
-                    discountPrice: discountPrice,
-                }
-            }
-            const updatedOrder = await Order.updateOne(filterOrder, updateOrder);
-            console.log(updatedOrder);
         }
         let count = 0;
         if (carts?.products?.length > 0) {
