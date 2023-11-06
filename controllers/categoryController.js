@@ -5,14 +5,13 @@ const Product = require('../models/admin/productCollection');
 //category GET request
 let categoryData;
 exports.category = async (req, res) => {
-    const pageName = 'Category Management';
-    const category = await Category.find()
-        .populate({
-            path: 'category',
-            select: 'categoryName'
-        });
-    console.log(category);
     try {
+        const pageName = 'Category Management';
+        const category = await Category.find()
+            .populate({
+                path: 'category',
+                select: 'categoryName'
+            });
         res.render('admin/category', { category, categoryData, pageName });
     } catch (error) {
         console.log(error.message);
@@ -102,13 +101,13 @@ exports.editCategory = async (req, res) => {
 
 //editCategory POST request
 exports.editCategoryPost = async (req, res) => {
-    console.log('editCategoryPost');
-    const categoryId = req.body.id;
-    const updatedCategoryData = {
-        categoryName: req.body.cname,
-        categoryDescription: req.body.cdesc
-    };
     try {
+        console.log('editCategoryPost');
+        const categoryId = req.body.id;
+        const updatedCategoryData = {
+            categoryName: req.body.cname,
+            categoryDescription: req.body.cdesc
+        };
         await Category.findByIdAndUpdate(categoryId, updatedCategoryData);
         res.redirect('/admin/category');
     } catch (error) {

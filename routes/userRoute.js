@@ -14,7 +14,7 @@ userRoute.set('views', './views');
 userRoute.set('view engine', 'ejs');
 
 //routes for users
-userRoute.get('/login',userController.loginGet);
+userRoute.get('/login',userAuth.isLoggedOut, userController.loginGet);
 userRoute.post('/login', userAuth.isLoggedOut, userController.userLoginPost);
 userRoute.get('/forgotPassword',userController.forgotPassword);
 userRoute.post('/forgotPassword',userController.forgotPasswordPost);

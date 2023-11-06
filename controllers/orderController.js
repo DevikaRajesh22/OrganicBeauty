@@ -318,12 +318,9 @@ exports.cancelOrder = async (req, res) => {
 //user returnOrder() GET request
 exports.returnOrder = async (req, res) => {
     try {
-        console.log('retirn order')
         const orderId = req.query.id;
-        console.log(orderId);
         const user = req.session.userId;
         let totalAmount = await Order.findOne({ _id: orderId });
-        console.log(totalAmount);
         const updatePayment = await Order.updateOne(
             { _id: orderId },
             { $set: { status: "Returned" } }

@@ -48,8 +48,8 @@ exports.loginPost = async (req, res) => {
 
 //landing GET request
 exports.landing = async (req, res) => {
-    const pageName = 'Dashboard';
     try {
+        const pageName = 'Dashboard';
         const productCount = await Product.countDocuments();
         const userCount = await User.countDocuments();
         const categoryCount = await Category.countDocuments();

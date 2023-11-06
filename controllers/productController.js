@@ -1,17 +1,16 @@
 const User = require('../models/user/userCollection');
 const Category = require('../models/admin/categoryCollection');
 const Product = require('../models/admin/productCollection');
-const Sharp = require('sharp');
 
 //admin products() GET request
 exports.products = async (req, res) => {
-    const pageName = 'Product Management';
-    const products = await Product.find()
-        .populate({
-            path: 'category',
-            select: 'categoryName'
-        });
     try {
+        const pageName = 'Product Management';
+        const products = await Product.find()
+            .populate({
+                path: 'category',
+                select: 'categoryName'
+            });
         res.render('admin/products', { products, pageName });
     } catch (error) {
         console.log(error.message);
@@ -21,9 +20,9 @@ exports.products = async (req, res) => {
 
 //admin addProducts() GET request
 exports.addProducts = async (req, res) => {
-    const pageName = 'Product Management';
-    const categories = await Category.find();
     try {
+        const pageName = 'Product Management';
+        const categories = await Category.find();
         res.render('admin/addProducts', { categories, pageName });
     } catch (error) {
         console.log(error.message);
@@ -33,8 +32,8 @@ exports.addProducts = async (req, res) => {
 
 //admin addProductsPost() POST request
 exports.addProductsPost = async (req, res) => {
-    const products = await Product.find();
     try {
+        const products = await Product.find();
         const files = await req.files;
         const newProduct = new Product({
             productName: req.body.pname,
@@ -56,11 +55,11 @@ exports.addProductsPost = async (req, res) => {
 
 //user editProduct() GET request
 exports.editProduct = async (req, res) => {
-    const pageName = 'Product Management';
-    const pid = req.query.id;
-    const categories = await Category.find();
-    const pinfo = await Product.findById({ _id: pid });
     try {
+        const pageName = 'Product Management';
+        const pid = req.query.id;
+        const categories = await Category.find();
+        const pinfo = await Product.findById({ _id: pid });
         res.render('admin/editProduct', { pinfo, categories, pageName });
     } catch (error) {
         console.log(error.message);

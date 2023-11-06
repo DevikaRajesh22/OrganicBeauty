@@ -32,7 +32,6 @@ const securePassword = async (password) => {
 
 //loginGet for GET request
 exports.loginGet = async (req, res) => {
-
     try {
         let emailErr = req.app.locals.emailErr;
         req.app.locals.emailErr = " ";
