@@ -104,13 +104,13 @@ exports.applyCoupon = async (req, res) => {
         if (couponFound === null) {
             return res.json({empty : true })
         } else if (couponFound.lastDate < currentDate) {
-            res.json({ expired: true });
+            return res.json({ expired: true });
         } else if (couponFound && usedCoupon.length == 0) {
             if (Total < couponFound.minimumPurchase) {
-                res.json({ applied: false, message: "Minimum purchase doesnt match" })
+               return res.json({ applied: false, message: "Minimum purchase doesnt match" })
             } else {
                 await Cart.findOneAndUpdate({ userId: user }, { $set: { couponApplied: couponCode } });
-                res.json({ applied: true, message: 'Coupon applied' })
+               return res.json({ applied: true, message: 'Coupon applied' })
             }
         }
     } catch (error) {

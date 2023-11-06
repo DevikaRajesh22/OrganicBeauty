@@ -101,13 +101,17 @@
                             <h5 class="text-primary mb-3">₹ <%=item.productId.price%>
                             </h5>
                             <form action="/add?id=<%= item.productId._id %>" method="POST">
-                              <button href="/addToCart?id=<%=item.productId._id%>" class="btn btn-outline-success"
-                                type="submit" onclick="addToCart('<%= item.productId._id %>')">
-                                Add to cart
-                              </button>
-                              <button class="btn btn-danger"
-                                onclick="removeFromWishlist('<%= item.productId._id %>')"><i
-                                  class="fas fa-regular fa-trash"></i></button>
+                              <% if(item.productId.stock===0){ %>
+                                <button class="btn btn-danger" disabled>Out of stock</button>
+                                <% }else{ %>
+                                  <button href="/addToCart?id=<%=item.productId._id%>" class="btn btn-outline-success"
+                                    type="submit" onclick="addToCart('<%= item.productId._id %>')">
+                                    Add to cart
+                                  </button>
+                                  <% } %>
+                                    <button class="btn btn-danger"
+                                      onclick="removeFromWishlist('<%= item.productId._id %>')"><i
+                                        class="fas fa-regular fa-trash"></i></button>
                             </form>
                     </div>
                   </div>

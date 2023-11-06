@@ -13,20 +13,20 @@ adminRoute.set('views', './views');
 adminRoute.set('view engine', 'ejs');
 
 //admin routes
-adminRoute.get('/', adminController.loginGet);
+adminRoute.get('/',adminAuth.isLoggedOut, adminController.loginGet);
 adminRoute.post('/login', adminController.loginPost);
-adminRoute.get('/landing', adminController.landing);
+adminRoute.get('/landing',adminAuth.isLoggedIn, adminController.landing);
 adminRoute.get('/errors', adminController.errors);
 adminRoute.get('/signout',adminController.signout);
 
 //user management
-adminRoute.get('/users', adminController.users);
+adminRoute.get('/users',adminAuth.isLoggedIn, adminController.users);
 adminRoute.get('/block/:id', adminController.blockUser);
 adminRoute.get('/unblock/:id', adminController.unblockUser);
 
 //product management
-adminRoute.get('/products', productController.products);
-adminRoute.get('/addProducts', productController.addProducts);
+adminRoute.get('/products',adminAuth.isLoggedIn, productController.products);
+adminRoute.get('/addProducts',adminAuth.isLoggedIn, productController.addProducts);
 adminRoute.post('/addproducts',multer.upload.fields([{name : "image1", maxCount : 1},{name : "image2", maxCount : 1},{name : "image3", maxCount : 1},{name : "image4", maxCount : 1}]),productController.addProductsPost);
 adminRoute.get('/pedit', productController.editProduct);
 adminRoute.post('/pedit', multer.upload.fields([{name:"image1",maxCount:1},{name:"image2",maxCount:1},{name:"image3",maxCount:1},{name:"image4",maxCount:1}]), productController.editProductPost);
@@ -34,7 +34,7 @@ adminRoute.get('/hide/:id',productController.hideProduct);
 adminRoute.get('/show/:id',productController.showProduct);
 
 //category management
-adminRoute.get('/category', categoryController.category);
+adminRoute.get('/category', adminAuth.isLoggedIn, categoryController.category);
 adminRoute.get('/addCategory', categoryController.addCategory);
 adminRoute.post('/addCategoryPost', categoryController.addCategoryPost);
 adminRoute.get('/cblock', categoryController.blockCategory);
@@ -43,13 +43,13 @@ adminRoute.get('/cedit', categoryController.editCategory);
 adminRoute.post('/cedit', categoryController.editCategoryPost);
 
 //order management
-adminRoute.get('/ordersAdmin', orderController.orderGet);
+adminRoute.get('/ordersAdmin', adminAuth.isLoggedIn, orderController.orderGet);
 adminRoute.post('/updateStatus',orderController.updateStatus);
 adminRoute.get('/orderDetails', orderController.orderDetails);
 
 //coupon management
-adminRoute.get('/coupon', couponController.coupon);
-adminRoute.get('/addCoupon', couponController.addCoupon);
+adminRoute.get('/coupon', adminAuth.isLoggedIn, couponController.coupon);
+adminRoute.get('/addCoupon',adminAuth.isLoggedIn, couponController.addCoupon);
 adminRoute.post('/addCouponPost',couponController.addCouponPost);
 adminRoute.get('/editCoupon', couponController.editCoupon);
 adminRoute.post('/editCouponPost',couponController.editCouponPost);
@@ -57,6 +57,6 @@ adminRoute.get('/hideCoupon',couponController.hideCoupon);
 adminRoute.get('/showCoupon',couponController.showCoupon);
 
 //sales report
-adminRoute.get('/salesReport', adminController.salesReport);
+adminRoute.get('/salesReport', adminAuth.isLoggedIn, adminController.salesReport);
 
 module.exports = adminRoute;

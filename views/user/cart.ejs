@@ -193,7 +193,7 @@
                                 </div>
                                 <a href="#" id="checkoutLink" class="text-decoration-none">
                                   <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
-                              </a>                              
+                                </a>
                               </div>
                             </div>
                   </div>
@@ -209,11 +209,11 @@
     <!-- ajax for quantity updation -->
     <script>
 
-document.getElementById('checkoutLink').addEventListener('click', function(event) {
-    event.preventDefault(); // Prevent the default link behavior
-    // Perform the navigation to '/checkout' using JavaScript
-    window.location.href = '/checkout';
-});
+      document.getElementById('checkoutLink').addEventListener('click', function (event) {
+        event.preventDefault(); // Prevent the default link behavior
+        // Perform the navigation to '/checkout' using JavaScript
+        window.location.href = '/checkout';
+      });
 
       //for changing quantity
       function changeQuantity(productId, count) {
@@ -284,19 +284,31 @@ document.getElementById('checkoutLink').addEventListener('click', function(event
               });
             } else if (response.expired) {
               Swal.fire({
-                icon: "error",
-                title: "Coupon Expired",
-                text: "Sorry, the coupon has expired.",
-                timer: 1500,
-              });
+                toast: true,
+                icon: 'success',
+                title: 'Posted successfully',
+                animation: false,
+                position: 'top',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.addEventListener('mouseenter', Swal.stopTimer)
+                  toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+              })
             } else if (response.applied === false) {
               Swal.fire({
                 icon: "error",
                 text: response.message,
                 timer: 1500,
-              })
+              });
             } else if (response.empty) {
-              coupon.style.display = "";
+              Swal.fire({
+                icon: "error",
+                title: "Use valid code",
+                text: "Sorry, the coupon doesnt exist.",
+              });
             }
           }
         });

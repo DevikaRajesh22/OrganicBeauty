@@ -1,6 +1,6 @@
 exports.isLoggedIn = async(req,res,next) => {
     try {
-        if (req.session.userId) {
+        if (req.session.admin) {
             next();
         }else{
             res.redirect('/admin')
@@ -12,8 +12,8 @@ exports.isLoggedIn = async(req,res,next) => {
   
   exports.isLoggedOut = async(req, res, next) =>{
     try {
-        if (req.session.userId) {
-            res.redirect('/admin/landingPage');
+        if (req.session.admin) {
+            res.redirect('/admin/landing');
         } else {
             next();
         }

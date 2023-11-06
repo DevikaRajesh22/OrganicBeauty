@@ -67,10 +67,14 @@
                     </a>
                     <% } %>
                       <form action="/add?id=<%= products._id %>" method="POST">
-                        <button href="/addToCart?id=<%=products._id%>" class="btn btn-outline-success" type="submit"
-                          onclick="addToCart('<%= products._id%>')">
-                          Add to cart
-                        </button>
+                        <% if(products.stock===0){ %>
+                          <button class="btn btn-danger text-white" disabled>Out of stock</button>
+                          <% }else{ %>
+                            <button href="/addToCart?id=<%=products._id%>" class="btn btn-outline-success" type="submit"
+                              onclick="addToCart('<%= products._id%>')">
+                              Add to cart
+                            </button>
+                            <% } %>
                       </form>
               </div>
               <ul>

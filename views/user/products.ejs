@@ -114,10 +114,14 @@
                                 <i class="far fa-heart fa-lg"></i>
                               </a>
                               <% } %>
-                                <button href="/addToCart?id=<%=item._id%>" class="btn btn-outline-success" type="submit"
-                                  onclick="addToCart('<%= item._id%>')">
-                                  Add to cart
-                                </button>
+                                <% if(item.stock===0){ %>
+                                  <button class="btn btn-danger text-white" disabled>Out of stock</button>
+                                  <% }else{ %>
+                                    <button href="/addToCart?id=<%=item._id%>" class="btn btn-outline-success"
+                                      type="submit" onclick="addToCart('<%= item._id%>')">
+                                      Add to cart
+                                    </button>
+                                    <% } %>
                         </form>
                       </div>
                     </div>
@@ -188,7 +192,7 @@
                 title: "Product added to cart",
                 showConfirmButton: false,
                 timer: 1500,
-              }).then(()=>{
+              }).then(() => {
                 location.reload();
               });
             } else if (response.exist) {
