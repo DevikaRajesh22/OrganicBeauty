@@ -7,7 +7,6 @@ const Order = require('../models/user/orderCollection');
 const Wishlist = require('../models/user/wishlistCollection');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
-const { wishlist } = require('./wishlistController');
 
 //user cartGet() GET request
 exports.cartGet = async (req, res) => {

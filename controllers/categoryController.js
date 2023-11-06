@@ -34,7 +34,6 @@ exports.addCategory = async (req, res) => {
 exports.addCategoryPost = async (req, res) => {
     try {
         let { cname, description } = req.body;
-        console.log(req.body);
         const newCategory = new Category({
             categoryName: cname,
             categoryDescription: description,
@@ -51,7 +50,6 @@ exports.addCategoryPost = async (req, res) => {
 exports.blockCategory = async (req, res) => {
     try {
         const categoryId = req.query.id;
-        console.log(categoryId);
         const category = await Category.findById(categoryId);
         if (!category) {
             console.log('blockCategory: category not found');
@@ -70,7 +68,6 @@ exports.blockCategory = async (req, res) => {
 exports.unblockCategory = async (req, res) => {
     try {
         const categoryId = req.query.id;
-        console.log(categoryId);
         const category = await Category.findById(categoryId);
         if (!category) {
             console.log('unblockCategory: category not found');
@@ -90,7 +87,6 @@ exports.editCategory = async (req, res) => {
     try {
         const pageName = 'Category Management';
         const cid = req.query.id;
-        console.log(cid);
         const cinfo = await Category.findById({ _id: cid });
         res.render('admin/editCategory', { cinfo, pageName });
     } catch (error) {
@@ -102,7 +98,6 @@ exports.editCategory = async (req, res) => {
 //editCategory POST request
 exports.editCategoryPost = async (req, res) => {
     try {
-        console.log('editCategoryPost');
         const categoryId = req.body.id;
         const updatedCategoryData = {
             categoryName: req.body.cname,

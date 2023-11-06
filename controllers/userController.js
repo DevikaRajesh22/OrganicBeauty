@@ -129,7 +129,6 @@ exports.forgotPasswordChangePost = async (req, res) => {
         if (same) {
             const updateResult = await User.updateOne({ email: emailId }, { $set: { spassword: updatedPassword } });
         } else {
-            console.log('password doesnt match');
             return res.redirect('/forgotPasswordChange');
         }
         res.redirect('/login');
@@ -324,7 +323,6 @@ exports.productDetails = async (req, res) => {
 //about GET request
 exports.about = async (req, res) => {
     try {
-        console.log(req.session.name);
         const userId = req.session.userId;
         let wishlistCount = 0;
         const wishlist = await Wishlist.findOne({ user: userId });

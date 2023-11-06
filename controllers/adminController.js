@@ -55,7 +55,7 @@ exports.landing = async (req, res) => {
         const categoryCount = await Category.countDocuments();
         const orderCount = await Order.countDocuments();
         const lastTenOrders = await Order.find().sort({ orderId: -1 }).limit(10);
-        res.render('admin/landing', { pageName, productCount, userCount, categoryCount, orderCount, admin:req.session.admin, lastTenOrders });
+        res.render('admin/landing', { pageName, productCount, userCount, categoryCount, orderCount, admin: req.session.admin, lastTenOrders });
     } catch (error) {
         console.log(error.message);
     }
@@ -109,8 +109,7 @@ exports.blockUser = async (req, res) => {
         }
 
     } catch (error) {
-        // return res.status(500).json({ error: 'Internal Server Error' });
-        console.log('blockuser: internal server error');
+        console.log(error.message);
         res.redirect('/admin/errors');
     }
 };
@@ -128,7 +127,7 @@ exports.unblockUser = async (req, res) => {
             res.redirect('/admin/users');
         }
     } catch (error) {
-        console.log('unblockUser: internal server error');
+        console.log(error.message);
         res.redirect('/admin/errors');
     }
 };

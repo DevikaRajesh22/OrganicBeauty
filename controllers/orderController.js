@@ -109,35 +109,24 @@ exports.orders = async (req, res) => {
 //user placeOrder() POST request
 exports.placeOrder = async (req, res) => {
     try {
-        console.log('place order');
         const userId = req.session.userId;
-        console.log(userId);
         const addressId = req.body.selectedAddress.trim();
-        console.log(addressId);
         const cartData = await Cart.findOne({ userId: userId });
         const cart = await Cart.findOne({ userId: userId }).populate('products.productId');
         const products = cartData.products;
         const productStock = cart.products;
-        console.log(productStock);
         const total = parseInt(req.body.Total);
-        console.log(total);
         const paymentMethods = req.body.payment;
-        console.log(paymentMethods);
         const userData = await User.findOne({ _id: userId });
         const name = userData.name;
-        console.log(name);
         const date = new Date();
         const selectedAddress = await Address.findOne(
             { user: userId, 'address._id': addressId },
             { 'address.$': 1 }
         );
-        console.log(date);
-        console.log(selectedAddress);
         const address = selectedAddress.address[0];
-        console.log(address);
         const deliveryDate = new Date(date);
         deliveryDate.setDate(date.getDate() + 10);
-        console.log(deliveryDate);
         function generateOrderId() {
             const prefix = "ORD";
             const timestamp = Date.now();
@@ -145,7 +134,6 @@ exports.placeOrder = async (req, res) => {
             return uniqueId;
         }
         const orderId = generateOrderId();
-        console.log(orderId);
         const newOrder = new Order({
             deliveryDetails: address,
             user: userId,
@@ -159,7 +147,6 @@ exports.placeOrder = async (req, res) => {
         });
         const orderDetails = await newOrder.save();
         const oId = orderDetails._id;
-        console.log(oId);
         const couponFound = await Coupon.findOne({ couponName: cartData?.couponApplied });
         if (couponFound) {
             await Coupon.findOneAndUpdate({ couponName: cartData.couponApplied }, { $addToSet: { usedUsers: userId } });
@@ -223,9 +210,7 @@ exports.placeOrder = async (req, res) => {
                 res.json({ balance: true })
             }
         } else if (paymentMethods === "Online payment") {
-            console.log('online');
             let Total = await Order.findOne({ _id: oId })
-            console.log(Total);
             const orderData = {
                 amount: Total.totalAmount * 100,
                 currency: 'INR',
@@ -266,8 +251,8 @@ exports.orderDet = async (req, res) => {
         } else {
             count = 0;
         }
-        let subTotal = cart.products.reduce((acc, val) => acc + val.totalPrice, 0);
-        let finalPrice = cart.products.reduce((acc, val) => acc + val.totalPrice, 0) + 10;
+        let subTotal = orders.totalAmount-10;
+        let finalPrice = orders.totalAmount;
         let couponApplied = await Coupon.findOne({ couponCode: cart?.couponApplied });
         if (couponApplied) {
             finalPrice = finalPrice - couponApplied.maximumDiscount;

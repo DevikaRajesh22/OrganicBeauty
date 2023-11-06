@@ -76,10 +76,8 @@ exports.addToWishlist = async (req, res) => {
 //user removeFromWishlist() POST request
 exports.removeFromWishlist = async (req, res) => {
     try {
-        console.log('remove from wishlist');
         const userId = req.session.userId;
         const productId = req.body.productId;
-        console.log(productId);
         const remove = await Wishlist.findOneAndUpdate({ user: userId },
             {
                 $pull: {
@@ -88,7 +86,6 @@ exports.removeFromWishlist = async (req, res) => {
                     }
                 }
             });
-        console.log('removed')
         if (remove) {
             res.json({ remove: true });
         }

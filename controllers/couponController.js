@@ -54,7 +54,6 @@ exports.editCoupon = async (req, res) => {
 exports.editCouponPost = async (req, res) => {
     try {
         const couponId = req.body.id;
-        console.log(couponId);
         const updatedCouponData = {
             couponCode: req.body.ccode,
             minimumPurchase: req.body.minPur,
@@ -62,7 +61,6 @@ exports.editCouponPost = async (req, res) => {
             lastDate: req.body.valid
         };
         const test = await Coupon.findByIdAndUpdate(couponId, updatedCouponData);
-        console.log(test);
         res.redirect('/admin/coupon');
     } catch (error) {
         console.log(error.message);
