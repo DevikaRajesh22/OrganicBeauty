@@ -25,8 +25,10 @@
                     <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                       <i class="fa fa-chart-line fa-3x text-success"></i>
                       <div class="ms-3">
-                        <p class="mb-2">Total Products</p>
-                        <h6 class="mb-0"></h6>
+                        <p class="mb-2"><b>Total Products</b></p>
+                        <h6 class="mb-0">
+                          <%=productCount%>
+                        </h6>
                       </div>
                     </div>
                   </div>
@@ -34,8 +36,10 @@
                     <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                       <i class="fa fa-chart-bar fa-3x text-success"></i>
                       <div class="ms-3">
-                        <p class="mb-2">Total Users</p>
-                        <h6 class="mb-0"></h6>
+                        <p class="mb-2"><b>Total Users</b></p>
+                        <h6 class="mb-0">
+                          <%= userCount %>
+                        </h6>
                       </div>
                     </div>
                   </div>
@@ -43,8 +47,10 @@
                     <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                       <i class="fa fa-chart-area fa-3x text-success"></i>
                       <div class="ms-3">
-                        <p class="mb-2">Total Sale</p>
-                        <h6 class="mb-0">ejs</h6>
+                        <p class="mb-2"><b>Total Category</b></p>
+                        <h6 class="mb-0">
+                          <%= categoryCount %>
+                        </h6>
                       </div>
                     </div>
                   </div>
@@ -52,8 +58,10 @@
                     <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                       <i class="fa fa-chart-pie fa-3x text-success"></i>
                       <div class="ms-3">
-                        <p class="mb-2">Total Revenue</p>
-                        <h6 class="mb-0"></h6>
+                        <p class="mb-2"><b>Total Orders</b></p>
+                        <h6 class="mb-0">
+                          <%= orderCount %>
+                        </h6>
                       </div>
                     </div>
                   </div>
@@ -88,55 +96,29 @@
               <div class="container-fluid pt-4 px-4">
                 <div class="bg-light text-center rounded p-4">
                   <div class="d-flex align-items-center justify-content-between mb-4">
-                    <h6 class="mb-0">Recent Sales</h6>
+                    <h6 class="mb-0">Most Recent Sales</h6>
                   </div>
                   <div class="table-responsive">
                     <table class="table text-start align-middle table-bordered table-hover mb-0">
                       <thead>
                         <tr class="text-dark">
                           <th scope="col">Date</th>
-                          <th scope="col">Invoice</th>
+                          <th scope="col">Order Id</th>
                           <th scope="col">Customer</th>
                           <th scope="col">Amount</th>
                           <th scope="col">Status</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>01 Jan 2045</td>
-                          <td>INV-0123</td>
-                          <td>Jhon Doe</td>
-                          <td>$123</td>
-                          <td>Paid</td>
-                        </tr>
-                        <tr>
-                          <td>01 Jan 2045</td>
-                          <td>INV-0123</td>
-                          <td>Jhon Doe</td>
-                          <td>$123</td>
-                          <td>Paid</td>
-                        </tr>
-                        <tr>
-                          <td>01 Jan 2045</td>
-                          <td>INV-0123</td>
-                          <td>Jhon Doe</td>
-                          <td>$123</td>
-                          <td>Paid</td>
-                        </tr>
-                        <tr>
-                          <td>01 Jan 2045</td>
-                          <td>INV-0123</td>
-                          <td>Jhon Doe</td>
-                          <td>$123</td>
-                          <td>Paid</td>
-                        </tr>
-                        <tr>
-                          <td>01 Jan 2045</td>
-                          <td>INV-0123</td>
-                          <td>Jhon Doe</td>
-                          <td>$123</td>
-                          <td>Paid</td>
-                        </tr>
+                        <% lastTenOrders.forEach(function(order){ %>
+                          <tr>
+                            <td><%= new Date(order.date).toLocaleString('en-US', { year: 'numeric' , month: '2-digit' , day: '2-digit' }) %></td>
+                            <td><%= order.orderId %></td>
+                            <td><%= order.userName %></td>
+                            <td>₹ <%= order.totalAmount %></td>
+                            <td><%= order.paymentMethod %></td>
+                          </tr>
+                          <% }) %>
                       </tbody>
                     </table>
                   </div>
@@ -144,7 +126,6 @@
               </div>
               <!-- Recent Sales End -->
               <!-- code ends -->
-
             </div>
             <!-- content-wrapper ends -->
             <%- include('../layouts/admin/adminFooter.ejs') %>

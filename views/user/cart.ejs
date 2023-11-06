@@ -284,19 +284,10 @@
               });
             } else if (response.expired) {
               Swal.fire({
-                toast: true,
-                icon: 'success',
-                title: 'Posted successfully',
-                animation: false,
-                position: 'top',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                  toast.addEventListener('mouseenter', Swal.stopTimer)
-                  toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-              })
+                icon: "error",
+                title: "Coupon Expired",
+                text: "Sorry, the coupon expired.",
+              });
             } else if (response.applied === false) {
               Swal.fire({
                 icon: "error",
