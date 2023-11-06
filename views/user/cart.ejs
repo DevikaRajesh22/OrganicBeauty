@@ -1,6 +1,6 @@
-<%- include('../user/userHeader.ejs') %>
+<%- include('../layouts/user/userHeader.ejs') %>
   <!-- Navbar Start -->
-  <%- include('../user/userNavbar.ejs') %>
+  <%- include('../layouts/user/userNavbar.ejs') %>
     <!-- Navbar End -->
 
     <!-- Cart Start -->
@@ -142,7 +142,7 @@
                                 style="color: #666b70;"></i></a>
                           </div>
                           <% } %>
-                            <div class="border border-1 p-2 mt-4" style="width: 31rem; height: 14rem ; overflow: auto;">
+                            <div class="border border-1 p-2 mt-4" style="width: 31rem; height: 11rem ; overflow: auto;">
                               <%coupon.forEach((val)=>{ %>
                                 <% if(val.showStatus){ %>
                                   <div class="border border-1 w-100 p-2 mb-1">
@@ -160,7 +160,7 @@
                                   </div>
                                   <% } %>
                                     <% })%>
-                            </div>
+                            </div><br>
                             <div class="card border-secondary mb-5" id="reload">
                               <div class="card-header bg-secondary border-0">
                                 <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
@@ -304,4 +304,4 @@ document.getElementById('checkoutLink').addEventListener('click', function(event
     </script>
 
     <hr style="border: 0px solid #787878; margin: 100px 0" />
-    <%- include('../user/userFooter.ejs') %>
+    <%- include('../layouts/user/userFooter.ejs') %>
