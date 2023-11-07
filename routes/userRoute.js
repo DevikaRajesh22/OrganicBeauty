@@ -51,7 +51,7 @@ userRoute.get('/returnOrder',  userAuth.isLoggedIn, orderController.returnOrder)
 
 //routes for profile management
 userRoute.get('/account',  userAuth.isLoggedIn, profileController.account);
-userRoute.post('/accountPost',profileController.changePasswordPost); //change password post request route
+userRoute.post('/accountPost',profileController.changePasswordPost);
 userRoute.get('/changePassword',  userAuth.isLoggedIn, profileController.changePassword);
 userRoute.get('/address',  userAuth.isLoggedIn, profileController.address);
 userRoute.get('/addAddress',  userAuth.isLoggedIn, profileController.addAddress);

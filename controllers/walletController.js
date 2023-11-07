@@ -25,5 +25,6 @@ exports.wallet = async (req, res) => {
         res.render('user/wallet', { user: req.session.name, pageTitle, count,userData, wishlistCount, historyDetails });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };

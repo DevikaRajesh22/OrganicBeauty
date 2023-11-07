@@ -136,6 +136,7 @@ exports.applyCoupon = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -151,6 +152,7 @@ exports.removeCoupon = async (req, res) => {
         res.redirect('/cart');
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 

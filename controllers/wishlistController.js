@@ -21,6 +21,7 @@ exports.wishlist = async (req, res) => {
         res.render('user/wishlist', { user: req.session.name, pageTitle, count, wishlist, wishlistCount });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -70,6 +71,7 @@ exports.addToWishlist = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -91,5 +93,6 @@ exports.removeFromWishlist = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };

@@ -59,6 +59,7 @@ exports.cartGet = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -114,6 +115,7 @@ exports.addToCartPost = async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -154,6 +156,7 @@ exports.updateCartQuantity = async (req, res) => {
         res.json({ success: true, message: 'Cart item updated successfully' });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -178,6 +181,7 @@ exports.removeProduct = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -214,6 +218,7 @@ exports.checkout = async (req, res) => {
         res.render('user/checkout', { pageTitle, user: req.session.name, carts, subTotal, finalPrice, couponApplied, addresses, address, count, products, wishlistCount });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -241,6 +246,7 @@ exports.editAddress = async (req, res) => {
         res.render('user/editAddress', { user: req.session.name, address, pageTitle, count, wishlistCount });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -268,6 +274,7 @@ exports.editAddressPost = async (req, res) => {
         res.redirect('/checkout');
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -289,6 +296,7 @@ exports.success = async (req, res) => {
         res.render('user/success', { pageTitle, user: req.session.name, count, wishlistCount });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -328,5 +336,6 @@ exports.verifyPayment = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };

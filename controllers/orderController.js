@@ -110,6 +110,7 @@ exports.orders = async (req, res) => {
         res.render('user/orders', { user: req.session.name, pageTitle, orders, products: products, count, wishlistCount })
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -235,6 +236,7 @@ exports.placeOrder = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -269,6 +271,7 @@ exports.orderDet = async (req, res) => {
         res.render('user/orderDet', { user: req.session.name, pageTitle, orders, subTotal, address, finalPrice, couponApplied, count, wishlistCount });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -306,6 +309,7 @@ exports.cancelOrder = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -343,5 +347,6 @@ exports.returnOrder = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };

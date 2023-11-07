@@ -29,6 +29,7 @@ exports.account = async (req, res) => {
         res.render('user/account', { pageTitle, user: req.session.name, users, pageTitle, count, wishlistCount});
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -55,6 +56,7 @@ exports.changePasswordPost = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -76,6 +78,7 @@ exports.changePassword = async (req, res) => {
         res.render('user/changePassword', { pageTitle, user: req.session.name, count, wishlistCount });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -105,6 +108,7 @@ exports.address = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -126,6 +130,7 @@ exports.addAddress = async (req, res) => {
         res.render('user/addAddress', { pageTitle, user: req.session.name, count, wishlistCount});
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -166,6 +171,7 @@ exports.addAddressPost = async (req, res) => {
         res.redirect('/address');
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -187,6 +193,7 @@ exports.deleteAddress = async (req, res) => {
         res.redirect('/address');
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -214,6 +221,7 @@ exports.editAdd=async(req,res)=>{
         res.render('user/editAdd', { user: req.session.name, address, pageTitle, count, wishlistCount });
     }catch(error){
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -241,5 +249,6 @@ exports.editAddPost=async(req,res)=>{
         res.redirect('/address');
     }catch(error){
         console.log(error.message);
+        res.render('user/error');
     }
 };

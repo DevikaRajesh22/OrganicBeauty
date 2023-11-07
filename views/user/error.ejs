@@ -1,75 +1,145 @@
-<%- include('../layouts/user/userHeader.ejs') %>
-    <!-- Spinner Start -->
-    <div id="spinner"
-        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-        <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Loading...</span>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error</title>
+</head>
+
+<body>
+  <style>
+    .clearfix:before,
+    .clearfix:after {
+      display: table;
+
+      content: ' ';
+    }
+
+    .clearfix:after {
+      clear: both;
+    }
+
+    body {
+      background: #f0f0f0 !important;
+    }
+
+    .page-404 .outer {
+      position: absolute;
+      top: 0;
+
+      display: table;
+
+      width: 100%;
+      height: 100%;
+    }
+
+    .page-404 .outer .middle {
+      display: table-cell;
+
+      vertical-align: middle;
+    }
+
+    .page-404 .outer .middle .inner {
+      width: 300px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .page-404 .outer .middle .inner .inner-circle {
+      height: 300px;
+
+      border-radius: 50%;
+      background-color: #ffffff;
+    }
+
+    .page-404 .outer .middle .inner .inner-circle:hover i {
+      color: #39bbdb !important;
+      background-color: #f5f5f5;
+      box-shadow: 0 0 0 15px #39bbdb;
+    }
+
+    .page-404 .outer .middle .inner .inner-circle:hover span {
+      color: #39bbdb;
+    }
+
+    .page-404 .outer .middle .inner .inner-circle i {
+      font-size: 5em;
+      line-height: 1em;
+
+      float: right;
+
+      width: 1.6em;
+      height: 1.6em;
+      margin-top: -.7em;
+      margin-right: -.5em;
+      padding: 20px;
+
+      -webkit-transition: all .4s;
+      transition: all .4s;
+      text-align: center;
+
+      color: #f5f5f5 !important;
+      border-radius: 50%;
+      background-color: #39bbdb;
+      box-shadow: 0 0 0 15px #f0f0f0;
+    }
+
+    .page-404 .outer .middle .inner .inner-circle span {
+      font-size: 11em;
+      font-weight: 700;
+      line-height: 1.2em;
+
+      display: block;
+
+      -webkit-transition: all .4s;
+      transition: all .4s;
+      text-align: center;
+
+      color: #e0e0e0;
+    }
+
+    .page-404 .outer .middle .inner .inner-status {
+      font-size: 20px;
+
+      display: block;
+
+      margin-top: 20px;
+      margin-bottom: 5px;
+
+      text-align: center;
+
+      color: #39bbdb;
+    }
+
+    .page-404 .outer .middle .inner .inner-detail {
+      line-height: 1.4em;
+
+      display: block;
+
+      margin-bottom: 10px;
+
+      text-align: center;
+
+      color: #999999;
+    }
+  </style>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+  <div class="page-404">
+    <div class="outer">
+      <div class="middle">
+        <div class="inner">
+          <!--BEGIN CONTENT-->
+          <div class="inner-circle"><i class="fa fa-cogs"></i><span>500</span></div>
+          <span class="inner-status">Opps! Internal Server Error!</span>
+          <span class="inner-detail">Unfortunately we're having trouble loading the page you are looking for. Please
+            come back in a while.</span>
+            <a href="/">Go back home</a>
+          <!--END CONTENT-->
         </div>
+      </div>
     </div>
-    <!-- Spinner End -->
+  </div>
+</body>
 
-
-    <!-- Navbar Start -->
-    <%- include('../layouts/user/userNavbar.ejs') %>
-        <!-- Navbar End -->
-
-
-        <!-- Hero Start -->
-        <div class="container-fluid bg-primary hero-header mb-5">
-            <div class="container text-center">
-                <h1 class="display-4 text-white mb-3 animated slideInDown">404 Error</h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb justify-content-center mb-0 animated slideInDown">
-                        <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
-                        <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
-                        <li class="breadcrumb-item text-white active" aria-current="page">404 Error</li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
-        <!-- Hero End -->
-
-
-        <!-- 404 Start -->
-        <div class="container-fluid py-5 wow fadeIn" data-wow-delay="0.1s">
-            <div class="container text-center">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6">
-                        <i class="bi bi-exclamation-triangle display-1 text-primary"></i>
-                        <h1 class="display-1">404</h1>
-                        <h1 class="mb-4">Page Not Found</h1>
-                        <p class="mb-4">We’re sorry, the page you have looked for does not exist in our website! Maybe
-                            go to our home page or try to use a search?</p>
-                        <a class="btn btn-primary py-2 px-4" href="/landingPage">Go Back To Home</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- 404 End -->
-
-
-        <!-- Newsletter Start -->
-        <div class="container-fluid newsletter bg-primary py-5 my-5">
-            <div class="container py-5">
-                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px;">
-                    <h1 class="text-white mb-3"><span class="fw-light text-dark">Let's Subscribe</span> The Newsletter
-                    </h1>
-                    <p class="text-white mb-4">Subscribe now to get 30% discount on any of our products</p>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-md-7 wow fadeIn" data-wow-delay="0.5s">
-                        <div class="position-relative w-100 mt-3 mb-2">
-                            <input class="form-control w-100 py-4 ps-4 pe-5" type="text" placeholder="Enter Your Email"
-                                style="height: 48px;">
-                            <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2"><i
-                                    class="fa fa-paper-plane text-white fs-4"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Newsletter End -->
-
-
-        <!-- Footer Start -->
-        <%- include('../layouts/user/userFooter.ejs') %>
+</html>

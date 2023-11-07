@@ -87,6 +87,7 @@ exports.forgotPassword = async (req, res) => {
         res.render('user/forgotPassword', { pageTitle });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -105,6 +106,7 @@ exports.forgotPasswordPost = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -114,6 +116,7 @@ exports.forgotPasswordChange = async (req, res) => {
         res.render('user/forgotPasswordChange');
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -134,6 +137,7 @@ exports.forgotPasswordChangePost = async (req, res) => {
         res.redirect('/login');
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -174,7 +178,7 @@ exports.registerPost = async (req, res) => {
         res.render('user/otp');
     } catch (error) {
         console.log(error.message);
-        // res.render('user/error');
+        res.render('user/error');
     }
 };
 
@@ -235,6 +239,7 @@ exports.productsGet = async (req, res) => {
         res.render('user/products', { pageTitle, count, items, user: req.session.name, searchTerm, categories, similar, wishlistString, wishlistCount });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -273,6 +278,7 @@ exports.otpPost = async (req, res) => {
 
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -286,8 +292,8 @@ exports.logout = async (req, res) => {
             res.redirect('/login');
         });
     } catch (error) {
-        res.render('user/error');
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -317,6 +323,7 @@ exports.productDetails = async (req, res) => {
         res.render('user/productDetails', { pageTitle, products, count, user: req.session.name, categories, wishlistString, wishlistCount });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
@@ -338,6 +345,7 @@ exports.about = async (req, res) => {
         res.render('user/about', { pageTitle, user: req.session.name, count, wishlistCount });
     } catch (error) {
         console.log(error.message);
+        res.render('user/error');
     }
 };
 
