@@ -40,24 +40,43 @@
         </div>
         <div class="row px-xl-5">
           <!-- Shop Sidebar Start -->
-          <div class="col-lg-3 col-md-12">
             <!-- Price Start -->
-            <div class="border-bottom mb-4 pb-4">
-              <h5 class="font-weight-semi-bold mb-4">Filter by Category</h5>
-              <form id="categoryForm">
-                <% categories.forEach(function(category, index){ %>
-                  <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                    <input type="checkbox" class="custom-control-input" id="categoryFilter<%= index %>"
-                      name="categoryFilter" value="<%= category._id %>">
-                    <label class="custom-control-label" for="categoryFilter<%= index %>">
-                      <%= category.categoryName %>
-                    </label>
-                  </div>
-                  <% }); %>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="border-bottom mb-4 pb-4">
+                  <h5 class="font-weight-semi-bold mb-4">Filter by Category</h5>
+                  <form id="categoryForm">
+                    <% categories.forEach(function(category, index){ %>
+                      <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="categoryFilter<%= index %>"
+                          name="categoryFilter" value="<%= category._id %>">
+                        <label class="custom-control-label" for="categoryFilter<%= index %>">
+                          <%= category.categoryName %>
+                        </label>
+                      </div>
+                    <% }); %>
                     <button class="btn btn-outline-success" type="submit">Filter</button>
-              </form>
-            </div>
-          </div>
+                  </form>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="border-bottom mb-4 pb-4">
+                  <h5 class="font-weight-semi-bold mb-4">Filter by Price</h5>
+                  <form id="categoryForm">
+                    <% categories.forEach(function(category, index){ %>
+                      <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="categoryFilter<%= index %>"
+                          name="categoryFilter" value="<%= category._id %>">
+                        <label class="custom-control-label" for="categoryFilter<%= index %>">
+                          <%= category.categoryName %>
+                        </label>
+                      </div>
+                    <% }); %>
+                    <button class="btn btn-outline-success" type="submit">Filter</button>
+                  </form>
+                </div>
+              </div>
+            </div>            
         </div>
         <% if(items.length===0){ %>
           <h6 class="mt-5 d-flex ">no item found!!!!</h6>

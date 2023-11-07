@@ -111,7 +111,8 @@
                             <%= address.city %>, <%= address.street %>, <%= address.zipcode %><br>
                                   <h6>Contact: <%=number?number:'Number' %></h6>
                                   </p>
-                                  <a href="/adelete/<%= address._id %>" class="btn btn-danger my-3">Delete</a>
+                                  <a href="/adelete/<%= address._id %>" class="btn btn-danger my-3"><i class="fas fa-trash-alt"></i></a>
+                                  <a href="/aedit/<%= address._id %>" class="btn btn-warning my-3"><i class="fas fa-edit"></i></a>
                     </div>
                   </div>
                   <% }); %>

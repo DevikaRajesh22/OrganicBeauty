@@ -189,3 +189,57 @@ exports.deleteAddress = async (req, res) => {
         console.log(error.message);
     }
 };
+
+//user editAdd() GET request
+exports.editAdd=async(req,res)=>{
+    try{
+        let wishlistCount = 0;
+        const wishlist = await Wishlist.findOne({ user: req.session.userId });
+        wishlist ? wishlistCount = wishlist.products.length : 0;
+        const pageTitle = 'Address';
+        const userId = req.session.userId;
+        const addressId=req.params.id;
+        const addressData = await Address.findOne(
+            { user: userId, "address._id": addressId },
+            { "address.$": 1 }
+        );
+        const address = addressData.address[0];
+        const carts = await Cart?.findOne({ userId: userId });
+        let count = 0;
+        if (carts?.products?.length > 0) {
+            count = count + carts.products.length;
+        } else {
+            count = 0;
+        }
+        res.render('user/editAdd', { user: req.session.name, address, pageTitle, count, wishlistCount });
+    }catch(error){
+        console.log(error.message);
+    }
+};
+
+//user editAddPost() POST request
+exports.editAddPost=async(req,res)=>{
+    try{
+        const userId=req.session.userId;
+        const addressId=req.body.id;
+        const { country, state, apartment, city, street, zipcode, type } = req.body;
+        const updatedAddress = await Address.updateOne(
+            { user: userId, 'address._id': addressId },
+            {
+                $set: {
+                    "address.$.country": country,
+                    "address.$.state": state,
+                    "address.$.apartment": apartment,
+                    "address.$.city": city,
+                    "address.$.street": street,
+                    "address.$.zipcode": zipcode,
+                    "address.$.type": type,
+
+                },
+            },
+        );
+        res.redirect('/address');
+    }catch(error){
+        console.log(error.message);
+    }
+};

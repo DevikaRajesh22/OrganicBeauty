@@ -57,6 +57,8 @@ userRoute.get('/address',  userAuth.isLoggedIn, profileController.address);
 userRoute.get('/addAddress',  userAuth.isLoggedIn, profileController.addAddress);
 userRoute.post('/addAddress',profileController.addAddressPost);
 userRoute.get('/adelete/:id',profileController.deleteAddress);
+userRoute.get('/aedit/:id',profileController.editAdd);
+userRoute.post('/editAddPost',profileController.editAddPost);
 
 //route for coupons
 userRoute.post('/applyCoupon',couponController.applyCoupon);
