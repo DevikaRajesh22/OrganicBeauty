@@ -234,24 +234,20 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <form action="/admin/addCategoryPost" method="post">
-                                                <div class="container">
-
-                                                    <div class="form-group">
-                                                        <label for="name">Category Name:</label>
-                                                        <input type="text" class="form-control" id="cname" name="cname"
-                                                            required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="description">Description:</label>
-                                                        <textarea class="form-control" id="message" name="description"
-                                                            rows="4" required></textarea>
-                                                    </div>
-                                                    <button type="submit" class="btn" style="background-color: #8BB471;">Save</button>
-                                                    </a>
-
+                                            <div class="container">
+                                                <div class="form-group">
+                                                    <label for="name">Category Name:</label>
+                                                    <input type="text" class="form-control" id="cname" name="cname"
+                                                        required>
                                                 </div>
-                                            </form>
+                                                <div class="form-group">
+                                                    <label for="description">Description:</label>
+                                                    <textarea class="form-control" id="message" name="description"
+                                                        rows="4" required></textarea>
+                                                </div>
+                                                <button class="btn" style="background-color: #8BB471;"
+                                                    onclick="addCategory()">Save</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -263,4 +259,31 @@
                     <!-- page-body-wrapper ends -->
             </div>
             <!-- container-scroller -->
+            <script>
+                function addCategory() {
+                    const categoryName = document.getElementById('cname').value;
+                    const categoryDescription = document.getElementById('message').value;
+                    $.ajax({
+                        url: '/admin/addCategoryPost',
+                        type: 'POST',
+                        data: {
+                            categoryName: categoryName,
+                            categoryDescription: categoryDescription,
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                window.location.href='/admin/category';
+                            } else if (response.duplicate) {
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    text: "Category already exists !!",
+                                    timer: 1500,
+                                    showConfirmButton: false,
+                                });
+                            }
+                        }
+                    });
+                }
+            </script>
             <%- include('../layouts/admin/adminFooter.ejs') %>

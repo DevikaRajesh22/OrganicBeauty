@@ -33,13 +33,19 @@ exports.addCategory = async (req, res) => {
 //addCategoryPost POST request
 exports.addCategoryPost = async (req, res) => {
     try {
-        let { cname, description } = req.body;
-        const newCategory = new Category({
-            categoryName: cname,
-            categoryDescription: description,
-        });
-        const categoryData = await newCategory.save();
-        res.redirect('/admin/category');
+        const categoryName = req.body.categoryName;
+        const categoryDescription = req.body.categoryDescription;
+        const categoryFound = await Category.findOne({ categoryName: { $regex: new RegExp(categoryName, 'i') } });
+        if (categoryFound) {
+            res.json({ duplicate: true });
+        } else {
+            const newCategory = new Category({
+                categoryName: categoryName,
+                categoryDescription: categoryDescription,
+            });
+            await newCategory.save();
+            res.json({success:true});
+        }
     } catch (error) {
         console.log(error.message);
         res.redirect('/admin/errors');
