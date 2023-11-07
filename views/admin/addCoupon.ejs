@@ -235,32 +235,32 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <form action="/admin/addCouponPost" method="post">
-                                                <div class="container">
+                                            <div class="container">
 
-                                                    <div class="form-group">
-                                                        <label for="ccode">Coupon Code:</label>
-                                                        <input type="text" class="form-control" id="ccode" name="ccode"
-                                                            required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="minPur">Minimum Purchase:</label>
-                                                        <input type="text" class="form-control" id="minPur" name="minPur"
-                                                            required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="maxDis">Maximum Discount:</label>
-                                                        <input type="text" class="form-control" id="maxDis" name="maxDis"
-                                                            required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="valid">Valid till:</label>
-                                                        <input type="date" class="form-control" id="datepicker" name="valid" required>
-                                                    </div>
-                                                    <button type="submit" class="btn" style="background-color: #8BB471;">Save</button>
-                                                    </a>
+                                                <div class="form-group">
+                                                    <label for="ccode">Coupon Code:</label>
+                                                    <input type="text" class="form-control" id="ccode" name="ccode"
+                                                        required>
                                                 </div>
-                                            </form>
+                                                <div class="form-group">
+                                                    <label for="minPur">Minimum Purchase:</label>
+                                                    <input type="text" class="form-control" id="minPur" name="minPur"
+                                                        required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="maxDis">Maximum Discount:</label>
+                                                    <input type="text" class="form-control" id="maxDis" name="maxDis"
+                                                        required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="valid">Valid till:</label>
+                                                    <input type="date" class="form-control" id="datepicker" name="valid"
+                                                        required>
+                                                </div>
+                                                <button class="btn" style="background-color: #8BB471;"
+                                                    onclick="addCoupon()">Save</button>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -272,9 +272,56 @@
                     <!-- page-body-wrapper ends -->
             </div>
             <script>
-                $(function() {
-                  $("#datepicker").datepicker();
+                $(function () {
+                    $("#datepicker").datepicker();
                 });
-              </script>              
+
+                function addCoupon() {
+                    const couponCode = document.getElementById('ccode').value;
+                    const minimumPurchase = document.getElementById('minPur').value;
+                    const maximumDiscount = document.getElementById('maxDis').value;
+                    const lastDate = document.getElementById('datepicker').value;
+                    $.ajax({
+                        url: '/admin/addCouponPost',
+                        type: 'POST',
+                        data: {
+                            couponCode: couponCode,
+                            minimumPurchase: minimumPurchase,
+                            maximumDiscount: maximumDiscount,
+                            lastDate: lastDate,
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                window.location.href='/admin/coupon';
+                            } else if (response.dateValidation) {
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    text: "Date invalid !!",
+                                    timer: 1500,
+                                    showConfirmButton: false,
+                                });
+                            } else if (response.priceError) {
+                                console.log('proice');
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    text: "Discount can't be greater than purchase price !!",
+                                    timer: 1500,
+                                    showConfirmButton: false,
+                                });
+                            } else if (response.notUnique) {
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    text: "Coupon already exists !!",
+                                    timer: 1500,
+                                    showConfirmButton: false,
+                                });
+                            }
+                        }
+                    });
+                }
+            </script>
             <!-- container-scroller -->
             <%- include('../layouts/admin/adminFooter.ejs') %>

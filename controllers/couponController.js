@@ -25,14 +25,32 @@ exports.addCoupon = async (req, res) => {
 //admin addCouponPost() POST request
 exports.addCouponPost = async (req, res) => {
     try {
-        const coupon = new Coupon({
-            couponCode: req.body.ccode,
-            minimumPurchase: req.body.minPur,
-            maximumDiscount: req.body.maxDis,
-            lastDate: req.body.valid
-        });
-        await coupon.save();
-        res.redirect('/admin/coupon');
+        const couponCode = req.body.couponCode;
+        const minimumPurchase = req.body.minimumPurchase;
+        const maximumDiscount = req.body.maximumDiscount;
+        const lastDate = req.body.lastDate;
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Adding 1 to month because it starts from 0
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        const couponFound=await Coupon.findOne({couponCode:couponCode});
+        if (lastDate < formattedDate) {
+            res.json({ dateValidation: true });
+        } else if (maximumDiscount >= minimumPurchase) {
+            res.json({ priceError: true });
+        }else if(couponFound){
+            res.json({notUnique:true});
+        }else if(couponFound===null){
+            const coupon = new Coupon({
+                couponCode: couponCode,
+                minimumPurchase: minimumPurchase,
+                maximumDiscount: maximumDiscount,
+                lastDate: lastDate,
+            });
+            await coupon.save();
+            res.json({success:true});
+        }
     } catch (error) {
         console.log(error.message);
     }
@@ -100,15 +118,15 @@ exports.applyCoupon = async (req, res) => {
         const currentDate = new Date();
         const usedCoupon = await Coupon.find({ couponCode, usedUsers: { $in: [user] } });
         if (couponFound === null) {
-            return res.json({empty : true })
+            return res.json({ empty: true })
         } else if (couponFound.lastDate < currentDate) {
             return res.json({ expired: true });
         } else if (couponFound && usedCoupon.length == 0) {
             if (Total < couponFound.minimumPurchase) {
-               return res.json({ applied: false, message: "Minimum purchase doesnt match" })
+                return res.json({ applied: false, message: "Minimum purchase doesnt match" })
             } else {
                 await Cart.findOneAndUpdate({ userId: user }, { $set: { couponApplied: couponCode } });
-               return res.json({ applied: true, message: 'Coupon applied' })
+                return res.json({ applied: true, message: 'Coupon applied' })
             }
         }
     } catch (error) {
@@ -117,16 +135,16 @@ exports.applyCoupon = async (req, res) => {
 };
 
 //user removeCoupon() GET request
-exports.removeCoupon=async(req,res)=>{
-    try{
-        const userId=req.session.userId;
-        await Cart.updateOne({userId},{
-            $set :{
-                couponApplied : ""
+exports.removeCoupon = async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        await Cart.updateOne({ userId }, {
+            $set: {
+                couponApplied: ""
             }
         });
         res.redirect('/cart');
-    }catch(error){
+    } catch (error) {
         console.log(error.message);
     }
 };
