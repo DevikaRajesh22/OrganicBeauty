@@ -19,6 +19,9 @@ exports.wallet = async (req, res) => {
         }
         const userData=await User.findOne({_id:userId});
         const historyDetails=userData.walletHistory;
+        historyDetails.sort((a,b)=>{
+            return b.date - a.date;
+        });
         res.render('user/wallet', { user: req.session.name, pageTitle, count,userData, wishlistCount, historyDetails });
     } catch (error) {
         console.log(error.message);
