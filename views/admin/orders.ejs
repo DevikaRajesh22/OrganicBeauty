@@ -24,6 +24,7 @@
                     <th scope="col">Order ID</th>
                     <th scope="col">Customer Name</th>
                     <th scope="col">Date</th>
+                    <th scope="col">Price</th>
                     <th scope="col">Status</th>
                     <th scope="col">Action</th>
                   </tr>
@@ -42,6 +43,7 @@
                         <%= new Date(order.date).toLocaleString('en-US', { year: 'numeric' , month: '2-digit' ,
                           day: '2-digit' }) %>
                       </td>
+                      <td>₹ <%= order.totalAmount %></td>
                       <td>
                         <% if(order.status==="Pending" ){ %>
                           <button class="btn btn-success" onclick="return updateStatus('<%=order._id %>')"
@@ -73,7 +75,12 @@
                                       type="button">
                                       <%= order.status %>
                                     </button>
-                                    <% } %>
+                                    <% }else if(order.status==="Returned"){ %>
+                                      <button class="btn btn-success"
+                                      type="button">
+                                      <%= order.status %>
+                                    </button>
+                                   <% } %>
                       </td>
 
                       <td>
