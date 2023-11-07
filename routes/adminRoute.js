@@ -16,7 +16,6 @@ adminRoute.set('view engine', 'ejs');
 adminRoute.get('/',adminAuth.isLoggedOut, adminController.loginGet);
 adminRoute.post('/login', adminController.loginPost);
 adminRoute.get('/landing',adminAuth.isLoggedIn, adminController.landing);
-adminRoute.get('/errors', adminController.errors);
 adminRoute.get('/signout',adminController.signout);
 
 //user management

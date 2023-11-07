@@ -15,8 +15,8 @@ exports.loginGet = async (req, res) => {
         req.app.locals.adminPasswordErr = " ";
         res.render('admin/adminLogin', { adminEmailErr, adminPasswordErr });
     } catch (error) {
-        res.redirect('/admin/errors');
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 
@@ -43,6 +43,7 @@ exports.loginPost = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 
@@ -58,13 +59,8 @@ exports.landing = async (req, res) => {
         res.render('admin/landing', { pageName, productCount, userCount, categoryCount, orderCount, admin: req.session.admin, lastTenOrders });
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
-};
-
-//error GET request
-exports.errors = async (req, res) => {
-    const pageName = 'Error';
-    res.render('admin/errors', { pageName });
 };
 
 //signout GET request
@@ -77,8 +73,8 @@ exports.signout = async (req, res) => {
             res.redirect('/admin/');
         });
     } catch (error) {
-        res.redirect('/admin/errors');
         console.log(error.message);
+        res.render('admin/errors');
     }
 }
 
@@ -90,7 +86,7 @@ exports.users = async (req, res) => {
         res.render('admin/users', { users, pageName });
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };
 
@@ -110,7 +106,7 @@ exports.blockUser = async (req, res) => {
 
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };
 
@@ -128,7 +124,7 @@ exports.unblockUser = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };
 
@@ -139,5 +135,6 @@ exports.salesReport = async (req, res) => {
         res.render('admin/salesReport', { pageName });
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };

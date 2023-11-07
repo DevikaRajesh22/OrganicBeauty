@@ -15,7 +15,7 @@ exports.category = async (req, res) => {
         res.render('admin/category', { category, categoryData, pageName });
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };
 
@@ -26,7 +26,7 @@ exports.addCategory = async (req, res) => {
         res.render('admin/addCategory', { pageName });
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };
 
@@ -48,7 +48,7 @@ exports.addCategoryPost = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };
 
@@ -66,7 +66,7 @@ exports.blockCategory = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };
 
@@ -84,7 +84,7 @@ exports.unblockCategory = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };
 
@@ -97,7 +97,7 @@ exports.editCategory = async (req, res) => {
         res.render('admin/editCategory', { cinfo, pageName });
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };
 
@@ -113,6 +113,6 @@ exports.editCategoryPost = async (req, res) => {
         res.redirect('/admin/category');
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };

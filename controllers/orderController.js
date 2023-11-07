@@ -17,6 +17,7 @@ exports.orderGet = async (req, res) => {
         res.render("admin/orders", { pageName, orders });
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 
@@ -50,6 +51,7 @@ exports.updateStatus = async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 
@@ -71,6 +73,7 @@ exports.orderDetails = async (req, res) => {
         res.render("admin/orderDetails", { pageName, orders, subTotal, finalPrice, address });
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 

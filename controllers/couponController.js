@@ -9,6 +9,7 @@ exports.coupon = async (req, res) => {
         res.render('admin/coupon', { pageName, coupons });
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 
@@ -19,6 +20,7 @@ exports.addCoupon = async (req, res) => {
         res.render('admin/addCoupon', { pageName });
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 
@@ -53,6 +55,7 @@ exports.addCouponPost = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 
@@ -64,7 +67,8 @@ exports.editCoupon = async (req, res) => {
         const coupon = await Coupon.findById({ _id: couponId });
         res.render('admin/editCoupon', { pageName, coupon });
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
+        res.render('admin/errors');
     }
 };
 
@@ -82,6 +86,7 @@ exports.editCouponPost = async (req, res) => {
         res.redirect('/admin/coupon');
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 
@@ -93,6 +98,7 @@ exports.hideCoupon = async (req, res) => {
         res.redirect('/admin/coupon');
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 
@@ -104,6 +110,7 @@ exports.showCoupon = async (req, res) => {
         res.redirect('/admin/coupon');
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 

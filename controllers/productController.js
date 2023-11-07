@@ -14,7 +14,7 @@ exports.products = async (req, res) => {
         res.render('admin/products', { products, pageName });
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };
 
@@ -26,7 +26,7 @@ exports.addProducts = async (req, res) => {
         res.render('admin/addProducts', { categories, pageName });
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };
 
@@ -50,6 +50,7 @@ exports.addProductsPost = async (req, res) => {
         res.redirect('/admin/products');
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 
@@ -63,7 +64,7 @@ exports.editProduct = async (req, res) => {
         res.render('admin/editProduct', { pinfo, categories, pageName });
     } catch (error) {
         console.log(error.message);
-        res.redirect('/admin/errors');
+        res.render('admin/errors');
     }
 };
 
@@ -99,7 +100,7 @@ exports.editProductPost = async (req, res) => {
                 }
             }
         );
-        res.redirect('/admin/products');
+        res.render('admin/errors');
     } catch (error) {
         console.log(error.message);
     }
@@ -114,6 +115,7 @@ exports.hideProduct = async (req, res) => {
         res.redirect('/admin/products');
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
 
@@ -125,5 +127,6 @@ exports.showProduct = async (req, res) => {
         res.redirect('/admin/products');
     } catch (error) {
         console.log(error.message);
+        res.render('admin/errors');
     }
 };
