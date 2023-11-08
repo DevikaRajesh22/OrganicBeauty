@@ -81,7 +81,62 @@ exports.landing = async (req, res) => {
             if (cashPayment) cashPaymentCount = cashPayment.count || 0;
             if (walletPayment) walletPaymentCount = walletPayment.count || 0;
         }
-        res.render('admin/landing', { pageName, productCount, userCount, categoryCount, orderCount, admin: req.session.admin, lastTenOrders, onlinePaymentCount, cashPaymentCount, walletPaymentCount });
+        //monthChart
+        const allMonths = Array.from({ length: 12 }, (_, i) => i + 1);
+        const monthly = await Order.aggregate([
+            {
+              $match: {
+                "status": "Delivered"
+              }
+            },
+            {
+              $addFields: {
+                date: { $toDate: "$date" }
+              }
+            },
+            {
+              $group: {
+                _id: {
+                  year: { $year: "$date" },
+                  month: { $month: "$date" }
+                },
+                count: { $sum: 1 }
+              }
+            },
+            {
+              $sort: {
+                "_id.year": 1,
+                "_id.month": 1
+              }
+            },
+            {
+              $group: {
+                _id: "$_id.year",
+                months: {
+                  $push: {
+                    month: "$_id.month",
+                    count: "$count"
+                  }
+                }
+              }
+            },
+            {
+              $project: {
+                _id: 1,
+                months: {
+                  $setUnion: ["$months", allMonths.map(month => ({ month, count: 0 }))]
+                }
+              }
+            }
+          ]);
+          let monthlySalesArr = [];
+          if (monthly.length > 0) {
+            let monthlySalesArray = monthly[0];
+            if (monthlySalesArray && monthlySalesArray.months) {
+              monthlySalesArray.months.map(monthInfo => monthlySalesArr.push(monthInfo.count));
+            }
+          }
+        res.render('admin/landing', { pageName, productCount, userCount, categoryCount, orderCount, admin: req.session.admin, lastTenOrders, onlinePaymentCount, cashPaymentCount, walletPaymentCount,monthlySalesArr });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

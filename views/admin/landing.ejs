@@ -158,6 +158,18 @@
                 </div>
               </div>
               <!-- Recent Sales End -->
+              <input id="jan" type="hidden" name="jan" value="<%=monthlySalesArr[0]%>">
+              <input id="feb" type="hidden" name="feb" value="<%=monthlySalesArr[1]%>">
+              <input id="mar" type="hidden" name="mar" value="<%=monthlySalesArr[2]%>">
+              <input id="apr" type="hidden" name="apr" value="<%=monthlySalesArr[3]%>">
+              <input id="may" type="hidden" name="may" value="<%=monthlySalesArr[4]%>">
+              <input id="jun" type="hidden" name="jun" value="<%=monthlySalesArr[5]%>">
+              <input id="jul" type="hidden" name="jul" value="<%=monthlySalesArr[6]%>">
+              <input id="aug" type="hidden" name="aug" value="<%=monthlySalesArr[7]%>">
+              <input id="sep" type="hidden" name="sep" value="<%=monthlySalesArr[8]%>">
+              <input id="oct" type="hidden" name="oct" value="<%=monthlySalesArr[9]%>">
+              <input id="nov" type="hidden" name="nov" value="<%=monthlySalesArr[11]%>">
+              <input id="dec" type="hidden" name="dec" value="<%=monthlySalesArr[12]%>">
               <!-- code ends -->
             </div>
             <!-- content-wrapper ends -->
@@ -173,6 +185,20 @@
                 var onlinePercent = (online / total) * 100;
                 var cashPercent = (cash / total) * 100;
                 var walletPercent = (wallet / total) * 100;
+
+                //for monthChart
+                var jan = document.getElementById("jan").value;
+                var feb = document.getElementById("feb").value;
+                var mar = document.getElementById("mar").value;
+                var apr = document.getElementById("apr").value;
+                var may = document.getElementById("may").value;
+                var jun = document.getElementById("jun").value;
+                var jul = document.getElementById("jul").value;
+                var aug = document.getElementById("aug").value;
+                var sep = document.getElementById("sep").value;
+                var oct = document.getElementById("oct").value;
+                var nov = document.getElementById("nov").value;
+                var dec = document.getElementById("dec").value;
 
 
                 var options = {
@@ -253,13 +279,13 @@
                     size: 1
                   },
                   dataLabels: {
-                    enabled: false
+                    enabled: true
                   },
                   colors: ["#769C5C"],
                   series: [
                     {
-                      name: "Series A",
-                      data: [1.4, 2, 2.5, 1.5, 2.5, 2.8, 3.8, 4.6, 5.8, 4.6, 1.2, 7.8]
+                      name: "Sales",
+                      data: [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
                     },
                   ],
                   stroke: {
@@ -275,22 +301,28 @@
                   },
                   yaxis: [
                     {
+                      min: 0,
+                      max: 25,
+                      tickAmount: 5,
                       axisTicks: {
                         show: true
                       },
                       axisBorder: {
                         show: true,
-                        color: "#FF1654"
+                        color: "#808080"
                       },
                       labels: {
                         style: {
-                          colors: "#FF1654"
+                          colors: "#808080"
+                        },
+                        formatter: function (value) {
+                          return value; // To customize label formatting if needed
                         }
                       },
                       title: {
-                        text: "Series A",
+                        text: "Sales",
                         style: {
-                          color: "#FF1654"
+                          color: "#808080"
                         }
                       }
                     }
@@ -307,6 +339,7 @@
                     offsetX: 40
                   },
                 };
+
 
                 var chart = new ApexCharts(document.querySelector("#chart"), options);
                 var paymentChart = new ApexCharts(document.querySelector("#paymentChart"), paymentOption);
