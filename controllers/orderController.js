@@ -7,6 +7,7 @@ const Wishlist = require('../models/user/wishlistCollection');
 const Coupon = require('../models/admin/couponCollection');
 const mongoose = require('mongoose');
 const Razorpay = require('razorpay');
+const { log } = require('console');
 const ObjectId = mongoose.Types.ObjectId;
 
 //admin orderGet() GET request
@@ -98,7 +99,11 @@ exports.orders = async (req, res) => {
         if (!users) {
             return res.redirect('/login');
         }
-        const orders = await Order.find({ user: userId });
+        let pageNum=req.query.id;
+        let perPage=10;
+        let productCount=await Order.find({user:userId}).countDocuments();
+        let page=Math.ceil(productCount/perPage);
+        const orders = await Order.find({ user: userId }).skip((pageNum - 1)*perPage).limit(perPage).sort({date:-1});
         const products = orders.products;
         const carts = await Cart?.findOne({ userId: userId });
         let count = 0;
@@ -107,7 +112,7 @@ exports.orders = async (req, res) => {
         } else {
             count = 0;
         }
-        res.render('user/orders', { user: req.session.name, pageTitle, orders, products: products, count, wishlistCount })
+        res.render('user/orders', { user: req.session.name, pageTitle, orders, products: products, count, wishlistCount, page })
     } catch (error) {
         console.log(error.message);
         res.render('user/error');

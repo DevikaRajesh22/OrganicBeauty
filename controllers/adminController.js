@@ -56,7 +56,32 @@ exports.landing = async (req, res) => {
         const categoryCount = await Category.countDocuments();
         const orderCount = await Order.countDocuments();
         const lastTenOrders = await Order.find().sort({ orderId: -1 }).limit(10);
-        res.render('admin/landing', { pageName, productCount, userCount, categoryCount, orderCount, admin: req.session.admin, lastTenOrders });
+        //paymentChart
+        let Payment = await Order.aggregate([
+            {
+                $match: {
+                    "status": "Delivered"
+                }
+            },
+            {
+                $group: {
+                    _id: "$paymentMethod",
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+        let onlinePaymentCount = 0;
+        let cashPaymentCount = 0;
+        let walletPaymentCount = 0;
+        if (Payment.length > 0) {
+            const onlinePayment = Payment.find(payment => payment._id === "Online payment");
+            const cashPayment = Payment.find(payment => payment._id === "Cash on delivery");
+            const walletPayment = Payment.find(payment => payment._id === "Wallet");
+            if (onlinePayment) onlinePaymentCount = onlinePayment.count || 0;
+            if (cashPayment) cashPaymentCount = cashPayment.count || 0;
+            if (walletPayment) walletPaymentCount = walletPayment.count || 0;
+        }
+        res.render('admin/landing', { pageName, productCount, userCount, categoryCount, orderCount, admin: req.session.admin, lastTenOrders, onlinePaymentCount, cashPaymentCount, walletPaymentCount });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

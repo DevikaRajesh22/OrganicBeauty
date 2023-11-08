@@ -76,6 +76,13 @@
           <% }) %>
       </tbody>
     </table>
+    <nav aria-label="Page navigation example ">
+      <ul class="pagination d-flex justify-content-center">
+        <% for(i=1;i<=page;i++){ %>
+          <li class="page-item"><a class="page-link" href="/orders?id=<%= i %>"><%= i %></a></li>
+      <%  } %>
+      </ul>
+    </nav>
     <!-- Orders End -->
 
     <!-- Newsletter Start -->

@@ -208,6 +208,8 @@ exports.landingPage = async (req, res) => {
 //productsGet GET request
 exports.productsGet = async (req, res) => {
     try {
+        console.log('products get');
+        const pageTitle = 'Products';
         let wishlistCount = 0;
         const wishlist = await Wishlist.findOne({ user: req.session.userId });
         wishlist ? wishlistCount = wishlist.products.length : 0;
@@ -224,12 +226,12 @@ exports.productsGet = async (req, res) => {
         } else {
             count = 0;
         }
-        const pageTitle = 'Products';
+        let sort = req.query.id;
         const searchTerm = req.query.searchTerm ? req.query.searchTerm : "";
         const items = await Product.find({
             isList: true,
-            productName: { $regex: searchTerm, $options: "i" }
-        });
+            productName: { $regex: searchTerm, $options: "i" },
+        }).sort({ price: sort });
         const categories = await Category.find({ isBlocked: false });
         const pdata = await Product.find().populate('category');
         const categoryId = req.query.categoryFilter;
@@ -364,7 +366,7 @@ exports.contact = async (req, res) => {
         } else {
             count = 0;
         }
-        res.render('user/contact', { pageTitle, user:req.session.name, count, wishlistCount });
+        res.render('user/contact', { pageTitle, user: req.session.name, count, wishlistCount });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
