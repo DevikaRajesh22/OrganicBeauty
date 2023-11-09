@@ -188,64 +188,31 @@ exports.landing = async (req, res) => {
         const desiredLength = 5;
         const paddedArray = result.concat(Array(desiredLength - result.length).fill(0));
         weeklySalesArr = paddedArray;
-        //categoryChart : categoryName
-        let categoryName=[];
-        const categories = await Category.find();
-        categories.forEach(category => {
-            categoryName.push(category.categoryName);
-        });
-        let categoryLength=categoryName.length;
-        //categoryChart : sales
- 
-        const categoryWiseSales = await Order.aggregate([
+        //categoryChart
+        const productWiseAggregate = Product.aggregate([
             {
-              $match: {
-                status: "Delivered" // Match only the delivered orders
-              }
+                $lookup: {
+                    from: 'categories',
+                    localField: 'category',
+                    foreignField: '_id',
+                    as: 'categoryDetails'
+                }
             },
             {
-              $unwind: "$products" // Deconstruct the products array
-            },
-            {
-              $lookup: {
-                from: "Product", // Assuming the products collection name
-                localField: "products.productId",
-                foreignField: "_id",
-                as: "productDetails"
-              }
-            },
-            {
-              $unwind: "$productDetails" // Deconstruct the product details array
-            },
-            {
-              $lookup: {
-                from: "Category", // Assuming the categories collection name
-                localField: "productDetails.category",
-                foreignField: "_id",
-                as: "categoryDetails"
-              }
-            },
-            {
-              $unwind: "$categoryDetails" // Deconstruct the category details array
-            },
-            {
-              $group: {
-                _id: "$categoryDetails.categoryName", // Group by category name
-                totalOrders: { $sum: 1 } // Calculate the count of orders for each category
-              }
+                $group: {
+                    _id: '$categoryDetails.categoryName',
+                    count: { $sum: 1 }
+                }
             }
-          ]);
-          
-          console.log(categoryWiseSales);
-          
-        
-        console.log(categoryWiseSales);
-        
-          console.log(categoryWiseSales);
-          
+        ]);
+        const productWise = await productWiseAggregate.exec();
+        const categoryName = productWise.map(item => item._id[0]);
+        let categoryLength = categoryName.length;
+        const categoryCounts = productWise.map(item => item.count); 
 
 
-        res.render('admin/landing', { pageName, productCount, userCount, categoryCount, orderCount, admin: req.session.admin, lastTenOrders, onlinePaymentCount, cashPaymentCount, walletPaymentCount, monthlySalesArr, weeklySalesArr, currentYear, monthName,categoryName, categoryLength });
+
+        res.render('admin/landing', { pageName, productCount, userCount, categoryCount, orderCount, admin: req.session.admin, lastTenOrders, onlinePaymentCount, cashPaymentCount, walletPaymentCount, monthlySalesArr, weeklySalesArr, currentYear, monthName, categoryName, categoryLength, categoryCounts });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -271,11 +238,11 @@ exports.signout = async (req, res) => {
 exports.users = async (req, res) => {
     try {
         const pageName = 'User management';
-        let pageNum=req.query.pageNum;
-        let perPage=8;
-        let userCount=await User.find().countDocuments();
-        let page=Math.ceil(userCount/perPage);
-        const users = await User.find().skip((pageNum - 1)*perPage).limit(perPage);
+        let pageNum = req.query.pageNum;
+        let perPage = 8;
+        let userCount = await User.find().countDocuments();
+        let page = Math.ceil(userCount / perPage);
+        const users = await User.find().skip((pageNum - 1) * perPage).limit(perPage);
         res.render('admin/users', { users, pageName, page });
     } catch (error) {
         console.log(error.message);

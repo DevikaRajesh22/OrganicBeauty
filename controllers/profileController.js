@@ -7,10 +7,10 @@ const bcrypt = require('bcrypt');
 //user account() GET request
 exports.account = async (req, res) => {
     try {
+        const pageTitle = 'Account';
         let wishlistCount=0;
         const wishlist=await Wishlist.findOne({user:req.session.userId});
         wishlist?wishlistCount=wishlist.products.length:0;
-        const pageTitle = 'Account';
         const userId = req.session.userId;
         const carts = await Cart?.findOne({ userId: userId });
         let count = 0;

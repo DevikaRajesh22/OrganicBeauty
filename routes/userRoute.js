@@ -5,6 +5,7 @@ const profileController = require('../controllers/profileController');
 const couponController = require('../controllers/couponController');
 const walletController = require('../controllers/walletController');
 const wishlistController = require('../controllers/wishlistController');
+const offerController = require('../controllers/offerController');
 const userAuth = require('../middleware/userAuth');
 const express = require('express');
 const userRoute = express();
@@ -71,5 +72,9 @@ userRoute.get('/wallet', userAuth.isLoggedIn, walletController.wallet);
 userRoute.get('/wishlist', userAuth.isLoggedIn, wishlistController.wishlist);
 userRoute.post('/addToWishlist', userAuth.isLoggedIn, wishlistController.addToWishlist);
 userRoute.post('/removeFromWishlist', userAuth.isLoggedIn, wishlistController.removeFromWishlist);
+
+//route for offers
+userRoute.get('/referral', userAuth.isLoggedIn, offerController.referral);
+
 
 module.exports = userRoute;

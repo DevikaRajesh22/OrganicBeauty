@@ -75,12 +75,15 @@
                   <div class="col-sm-12 col-xl-6">
                     <div class="bg-light text-center rounded p-4">
                       <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">Category wise sales</h6>
+                        <h6 class="mb-0">Category - Product distribution</h6>
                       </div>
                       <div id="chart">
                         <% categoryName.forEach(function(name,index){ %>
                           <input id="cat<%=index%>" type="hidden" name="cat<%=index%>" value="<%= name %>">
                           <% }); %>
+                          <% categoryCounts.forEach(function(name,index){ %>
+                            <input id="catCount<%= index %>" type="hidden" name="catCount<%= index %>" value="<%= name %>">
+                       <%   }); %>
                             <input id="categoryLength" type="hidden" name="categoryLength"
                               value="<%= categoryLength %>">
                       </div>
@@ -227,10 +230,14 @@
                   let inputValue = document.getElementById('cat' + i).value;
                   categoryValues.push(inputValue);
                 }
-                const categorySales = [12, 18, 13];
+                const categoryProduct = [];
+                for (let i = 0; i < categoryLength; i++) {
+                  let inputValues = document.getElementById('catCount' + i).value;
+                  categoryProduct.push(inputValues);
+                }
                 let data = [];
                 categoryValues.forEach((name, index) => {
-                  data.push({ x: name, y: categorySales[index] });
+                  data.push({ x: name, y: categoryProduct[index] });
                 });
 
 
@@ -246,7 +253,7 @@
                   series: [{
                     data: data
                   }],
-                  colors: ['#769C5C', '#769C5C', '#769C5C'] // Define colors for each bar
+                  colors: ['#769C5C', '#769C5C', '#769C5C'] 
                 };
 
                 var paymentOption = {
