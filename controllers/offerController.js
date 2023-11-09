@@ -20,7 +20,9 @@ exports.referral = async (req, res) => {
         if (userId === undefined) {
             return res.redirect('/login');
         }
-        res.render('user/referral', { pageTitle, user: req.session.name, pageTitle, count, wishlistCount })
+        const userData=await User.findOne({_id:req.session.userId});
+        const referral=userData.referralCode;
+        res.render('user/referral', { pageTitle, user: req.session.name, pageTitle, count, wishlistCount, referral })
     } catch (error) {
         console.log(error.message);
         res.render('user/error');

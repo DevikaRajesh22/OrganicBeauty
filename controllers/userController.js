@@ -142,8 +142,10 @@ exports.forgotPasswordChangePost = async (req, res) => {
 };
 
 //registerGet for GET request
+let referralCodeApplied;
 exports.registerGet = async (req, res) => {
     try {
+        referralCodeApplied = req.query.referralCode;
         res.render('user/register');
     } catch (error) {
         console.log(error.message);
@@ -159,14 +161,34 @@ exports.registerPost = async (req, res) => {
         randomNumber = Math.floor(Math.random() * 9000) + 1000;
         console.log('registerPost' + randomNumber);
         const spassword = await securePassword(req.body.spassword);
+        function generateReferralCode() {
+            const timestamp = Date.now().toString(36);
+            const randomChars = Math.random().toString(36).substr(2, 5);
+            return timestamp + randomChars;
+        }
+        const code = generateReferralCode();
         const newUser = new User({
             name: req.body.name,
             email: req.body.email,
             number: req.body.number,
-            spassword: spassword
+            spassword: spassword,
+            referralCode: code,
         });
-        console.log(req.body);
-        const userData = await newUser.save();
+        await newUser.save();
+        if (referralCodeApplied) {
+            const referUser = await User.findOne({ referralCode: referralCodeApplied });
+            if (referUser) {
+                referUser.wallet += 200;
+                referUser.walletHistory.push({ status: 'Referral link', date: new Date(), amount: 200 });
+                await referUser.save();
+            }
+            const user = await User.findOne({ referralCode: code });
+            if (user) {
+                user.wallet += 200;
+                user.walletHistory.push({ status: 'Referral link', date: new Date(), amount: 200 });
+                await user.save();
+            }
+        }
         req.app.locals.specialContext = 'Sign up successful! Please login';
         const mailOptions = {
             from: "devikaraj699@gmail.com",
@@ -227,19 +249,19 @@ exports.productsGet = async (req, res) => {
         }
         let sort = req.query.id;
         const searchTerm = req.query.searchTerm ? req.query.searchTerm : "";
-        let pageNum=req.query.pageNum;
-        let perPage=8;
-        let productCount=await Product.find().countDocuments();
-        let page=Math.ceil(productCount/perPage);
+        let pageNum = req.query.pageNum;
+        let perPage = 8;
+        let productCount = await Product.find().countDocuments();
+        let page = Math.ceil(productCount / perPage);
         const items = await Product.find({
             isList: true,
             productName: { $regex: searchTerm, $options: "i" },
-        }).skip((pageNum - 1)*perPage).limit(perPage).sort({ price: sort });
+        }).skip((pageNum - 1) * perPage).limit(perPage).sort({ price: sort });
         const categories = await Category.find({ isBlocked: false });
         const pdata = await Product.find().populate('category');
         const categoryId = req.query.categoryFilter;
         if (categoryId !== undefined) {
-            similar = await Product.find({ category: categoryId }).skip((pageNum - 1)*perPage).limit(perPage);
+            similar = await Product.find({ category: categoryId }).skip((pageNum - 1) * perPage).limit(perPage);
         }
 
         res.render('user/products', { pageTitle, count, items, user: req.session.name, searchTerm, categories, similar, wishlistString, wishlistCount, page });

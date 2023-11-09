@@ -6,15 +6,15 @@ const Product = require('../models/admin/productCollection');
 exports.products = async (req, res) => {
     try {
         const pageName = 'Product Management';
-        let pageNum=req.query.pageNum;
-        let perPage=8;
-        let productCount=await Product.find().countDocuments();
-        let page=Math.ceil(productCount/perPage);
+        let pageNum = req.query.pageNum;
+        let perPage = 8;
+        let productCount = await Product.find().countDocuments();
+        let page = Math.ceil(productCount / perPage);
         const products = await Product.find()
             .populate({
                 path: 'category',
                 select: 'categoryName'
-            }).skip((pageNum - 1)*perPage).limit(perPage);
+            }).skip((pageNum - 1) * perPage).limit(perPage);
         res.render('admin/products', { products, pageName, page });
     } catch (error) {
         console.log(error.message);
@@ -37,21 +37,24 @@ exports.addProducts = async (req, res) => {
 //admin addProductsPost() POST request
 exports.addProductsPost = async (req, res) => {
     try {
-        const products = await Product.find();
-        const files = await req.files;
-        const newProduct = new Product({
-            productName: req.body.pname,
-            category: req.body.category,
-            price: req.body.price,
-            productDetails: req.body.pdetails,
-            "image.image1": files.image1[0].filename,
-            "image.image2": files.image2[0].filename,
-            "image.image3": files.image3[0].filename,
-            "image.image4": files.image4[0].filename,
-            stock: req.body.stock
-        });
-        const productData = await newProduct.save();
-        res.redirect('/admin/products');
+        if (req.body.stock < 0) {
+            return res.json({ stock: true });
+        }else {
+            const files = await req.files;
+            const newProduct = new Product({
+                productName: req.body.pname,
+                category: req.body.category,
+                price: req.body.price,
+                productDetails: productDetails,
+                "image.image1": files.image1[0].filename,
+                "image.image2": files.image2[0].filename,
+                "image.image3": files.image3[0].filename,
+                "image.image4": files.image4[0].filename,
+                stock: req.body.stock
+            });
+            await newProduct.save();
+            return res.json({ success: true });
+        }
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

@@ -39,7 +39,11 @@ const UsersSchema = new mongoose.Schema({
     status :{
       type : String
     }
-  }]
+  }],
+  referralCode: {
+    type: String,
+    unique: true
+  },
 });
 
 

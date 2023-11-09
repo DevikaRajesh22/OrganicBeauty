@@ -44,7 +44,7 @@
                                 <tr class="table-row">
                                     <td class="table-data"><%= new Date(history.date).toLocaleString('en-US', { year: 'numeric' , month: '2-digit' , day: '2-digit' })%></td>
                                     <td class="table-data"><%= history.status%></td>
-                                    <% if(history.status==='Credit'){ %>
+                                    <% if(history.status==='Credit' || history.status==='Referral link'){ %>
                                         <td class="table-data text-success">+ ₹ <%= history.amount %></td>
                                    <% }else if(history.status==='Debit'){ %>
                                     <td class="table-data text-danger">- ₹ <%= history.amount %></td>

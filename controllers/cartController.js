@@ -213,7 +213,7 @@ exports.checkout = async (req, res) => {
         }
 
         const addresses = await Address.findOne({ user: userId });
-        const address = addresses.address;
+        const address = addresses?.address;
         const products = carts.products;
         res.render('user/checkout', { pageTitle, user: req.session.name, carts, subTotal, finalPrice, couponApplied, addresses, address, count, products, wishlistCount });
     } catch (error) {

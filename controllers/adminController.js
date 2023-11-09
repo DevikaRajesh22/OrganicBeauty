@@ -292,7 +292,28 @@ exports.unblockUser = async (req, res) => {
 exports.salesReport = async (req, res) => {
     try {
         const pageName = 'Sales Report';
-        res.render('admin/salesReport', { pageName });
+        const orderData = await Order.aggregate([
+            { $unwind: "$products" },
+            { $match: { status: "Delivered" } },
+            { $sort: { date: -1 } },
+            {
+              $lookup: {
+                from: "products",
+                let: { productId: { $toObjectId: "$products.productId" } },
+                pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$productId"] } } }],
+                as: "products.productDetails",
+              },
+            },
+            {
+              $addFields: {
+                "products.productDetails": {
+                  $arrayElemAt: ["$products.productDetails", 0],
+                },
+              },
+            },
+          ]);
+          console.log(orderData);
+        res.render('admin/salesReport', { pageName, orderData});
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
