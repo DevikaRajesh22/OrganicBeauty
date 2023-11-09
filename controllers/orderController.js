@@ -270,12 +270,14 @@ exports.orderDet = async (req, res) => {
             count = 0;
         }
         let finalPrice = orders.totalAmount;
+        console.log(finalPrice);
         let subTotal=orders.totalAmount-10;
-        let couponApplied = await Coupon.findOne({ couponCode: cart?.couponApplied });
+        console.log(subTotal);
+        let couponApplied = await Coupon.findOne({ couponCode: cart?.coupon });
         console.log(couponApplied);
         if (couponApplied) {
-            finalPrice = finalPrice - couponApplied.maximumDiscount;
-            subTotal =+ couponApplied.maximumDiscount;
+            console.log(couponApplied.maximumDiscount);
+            subTotal += couponApplied.maximumDiscount;
         }
         res.render('user/orderDet', { user: req.session.name, pageTitle, orders, subTotal, address, finalPrice, couponApplied, count, wishlistCount });
     } catch (error) {

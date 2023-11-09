@@ -21,15 +21,18 @@ const CartSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
-      totalPrice:{
+      totalPrice: {
         type: Number,
         required: true,
       }
     },
   ],
-  couponApplied:{
-    type:String
-}
-},{strictPopulate : false});
+  couponApplied: {
+    type: String
+  },
+  coupon: {
+    type: String
+  },
+}, { strictPopulate: false });
 
 module.exports = mongoose.model("Cart", CartSchema);

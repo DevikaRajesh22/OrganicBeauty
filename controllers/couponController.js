@@ -5,11 +5,11 @@ const Cart = require('../models/user/cartCollection');
 exports.coupon = async (req, res) => {
     try {
         const pageName = 'Coupons';
-        let pageNum=req.query.pageNum;
-        let perPage=8;
-        let couponCount=await Coupon.find().countDocuments();
-        let page=Math.ceil(couponCount/perPage);
-        const coupons = await Coupon.find().skip((pageNum - 1)*perPage).limit(perPage);
+        let pageNum = req.query.pageNum;
+        let perPage = 8;
+        let couponCount = await Coupon.find().countDocuments();
+        let page = Math.ceil(couponCount / perPage);
+        const coupons = await Coupon.find().skip((pageNum - 1) * perPage).limit(perPage);
         res.render('admin/coupon', { pageName, coupons, page });
     } catch (error) {
         console.log(error.message);
@@ -129,14 +129,22 @@ exports.applyCoupon = async (req, res) => {
         const currentDate = new Date();
         const usedCoupon = await Coupon.find({ couponCode, usedUsers: { $in: [user] } });
         if (couponFound === null) {
-            res.json({ empty: true })
+            return res.json({ empty: true })
         } else if (couponFound.lastDate < currentDate) {
-            res.json({ expired: true });
+            return res.json({ expired: true });
         } else if (couponFound && usedCoupon.length == 0 && Total < couponFound.minimumPurchase) {
-            res.json({ appliedFalse: true });
+            return res.json({ appliedFalse: true });
         } else if (couponFound && usedCoupon.length == 0) {
-            await Cart.findOneAndUpdate({ userId: user }, { $set: { couponApplied: couponCode } });
-            res.json({ appliedTrue: true })
+            await Cart.findOneAndUpdate(
+                { userId: user },
+                {
+                    $set: {
+                        couponApplied: couponCode,
+                        coupon: couponCode
+                    }
+                }
+            );
+           return  res.json({ appliedTrue: true })
         }
     } catch (error) {
         console.log(error.message);
