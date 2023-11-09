@@ -73,7 +73,7 @@ exports.addToCartPost = async (req, res) => {
         const cart = await Cart.findOne({ userId: userId });
         const price = product.price;
         if (userId === undefined) {
-            res.json({ login: true });
+            return res.json({ login: true });
         } else {
             if (!cart && product.stock > 0) {
                 const cart = new Cart({
@@ -106,16 +106,16 @@ exports.addToCartPost = async (req, res) => {
                         { $push: { products: newProduct } },
                         { new: true }
                     );
-                    res.json({ success: true })
+                    return res.json({ success: true })
                 } else {
-                    res.json({ outOfStock: true })
+                    return res.json({ outOfStock: true })
                 }
             }
         }
-        res.json({ success: true });
+        return res.json({ success: true });
     } catch (error) {
         console.log(error.message);
-        res.render('user/error');
+        // res.render('user/error');
     }
 };
 

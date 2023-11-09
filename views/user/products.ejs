@@ -40,37 +40,38 @@
         </div>
         <div class="row px-xl-5">
           <!-- Shop Sidebar Start -->
-            <!-- Price Start -->
-            <div class="row">
-              <div class="col-md-6">
-                <div class="border-bottom mb-4 pb-4">
-                  <h5 class="font-weight-semi-bold mb-4">Filter by Category</h5>
-                  <form id="categoryForm">
-                    <% categories.forEach(function(category, index){ %>
-                      <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="categoryFilter<%= index %>"
-                          name="categoryFilter" value="<%= category._id %>">
-                        <label class="custom-control-label" for="categoryFilter<%= index %>">
-                          <%= category.categoryName %>
-                        </label>
-                      </div>
+          <!-- Price Start -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="border-bottom mb-4 pb-4">
+                <h5 class="font-weight-semi-bold mb-4">Filter by Category</h5>
+                <form id="categoryForm">
+                  <% categories.forEach(function(category, index){ %>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                      <input type="checkbox" class="custom-control-input" id="categoryFilter<%= index %>"
+                        name="categoryFilter" value="<%= category._id %>">
+                      <label class="custom-control-label" for="categoryFilter<%= index %>">
+                        <%= category.categoryName %>
+                      </label>
+                    </div>
                     <% }); %>
-                    <button class="btn btn-outline-success" type="submit">Filter</button>
-                  </form><br><br>
-                  <form>
-                    <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                     Price Filter
+                      <button class="btn btn-outline-success" type="submit">Filter</button>
+                </form><br><br>
+                <form>
+                  <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                      aria-expanded="false">
+                      Price Filter
                     </button>
                     <ul class="dropdown-menu">
                       <li><a class="dropdown-item" href="/products?id=1">Low to high</a></li>
                       <li><a class="dropdown-item" href="/products?id=-1">High to low</a></li>
                     </ul>
-                  </div> 
-                  </form>   
-                </div>
+                  </div>
+                </form>
               </div>
-            </div>       
+            </div>
+          </div>
         </div>
         <% if(items.length===0){ %>
           <h6 class="mt-5 d-flex ">no item found!!!!</h6>
@@ -144,6 +145,18 @@
                   <% } %>
       </div>
     </div>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination d-flex justify-content-center">
+        <% for (let i=1; i <=page; i++) { %>
+          <li class="page-item">
+            <a class="page-link" href="/products?pageNum=<%= i %>">
+              <%= i %>
+            </a>
+          </li>
+          <% } %>
+      </ul>
+    </nav>
+
     <!-- Product End -->
 
     <!-- Newsletter Start -->

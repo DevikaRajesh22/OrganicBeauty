@@ -208,7 +208,6 @@ exports.landingPage = async (req, res) => {
 //productsGet GET request
 exports.productsGet = async (req, res) => {
     try {
-        console.log('products get');
         const pageTitle = 'Products';
         let wishlistCount = 0;
         const wishlist = await Wishlist.findOne({ user: req.session.userId });
@@ -228,17 +227,22 @@ exports.productsGet = async (req, res) => {
         }
         let sort = req.query.id;
         const searchTerm = req.query.searchTerm ? req.query.searchTerm : "";
+        let pageNum=req.query.pageNum;
+        let perPage=8;
+        let productCount=await Product.find().countDocuments();
+        let page=Math.ceil(productCount/perPage);
         const items = await Product.find({
             isList: true,
             productName: { $regex: searchTerm, $options: "i" },
-        }).sort({ price: sort });
+        }).skip((pageNum - 1)*perPage).limit(perPage).sort({ price: sort });
         const categories = await Category.find({ isBlocked: false });
         const pdata = await Product.find().populate('category');
         const categoryId = req.query.categoryFilter;
         if (categoryId !== undefined) {
-            similar = await Product.find({ category: categoryId });
+            similar = await Product.find({ category: categoryId }).skip((pageNum - 1)*perPage).limit(perPage);
         }
-        res.render('user/products', { pageTitle, count, items, user: req.session.name, searchTerm, categories, similar, wishlistString, wishlistCount });
+
+        res.render('user/products', { pageTitle, count, items, user: req.session.name, searchTerm, categories, similar, wishlistString, wishlistCount, page });
     } catch (error) {
         console.log(error.message);
         res.render('user/error');

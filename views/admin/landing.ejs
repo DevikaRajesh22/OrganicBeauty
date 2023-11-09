@@ -77,7 +77,13 @@
                       <div class="d-flex align-items-center justify-content-between mb-4">
                         <h6 class="mb-0">Category wise sales</h6>
                       </div>
-                      <div id="chart"></div>
+                      <div id="chart">
+                        <% categoryName.forEach(function(name,index){ %>
+                          <input id="cat<%=index%>" type="hidden" name="cat<%=index%>" value="<%= name %>">
+                          <% }); %>
+                            <input id="categoryLength" type="hidden" name="categoryLength"
+                              value="<%= categoryLength %>">
+                      </div>
                     </div>
                   </div>
                   <div class="col-sm-12 col-xl-6">
@@ -98,17 +104,36 @@
                   <div class="col-sm-12 col-xl-6">
                     <div class="bg-light text-center rounded p-4">
                       <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">Weekly Sales</h6>
+                        <h6 class="mb-0">Weekly Sales (<%= monthName %>)</h6>
                       </div>
-                      <div id="weekChart"></div>
+                      <div id="weekChart">
+                        <input id="week1" type="hidden" name="week1" value="<%= weeklySalesArr[0] %>">
+                        <input id="week2" type="hidden" name="week2" value="<%= weeklySalesArr[1] %>">
+                        <input id="week3" type="hidden" name="week3" value="<%= weeklySalesArr[2] %>">
+                        <input id="week4" type="hidden" name="week4" value="<%= weeklySalesArr[3] %>">
+                        <input id="week5" type="hidden" name="week5" value="<%= weeklySalesArr[4] %>">
+                      </div>
                     </div>
                   </div>
                   <div class="col-sm-12 col-xl-6">
                     <div class="bg-light text-center rounded p-4">
                       <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">Monthly sales</h6>
+                        <h6 class="mb-0">Monthly sales (<%= currentYear %>)</h6>
                       </div>
-                      <div id="monthChart"></div>
+                      <div id="monthChart">
+                        <input id="jan" type="hidden" name="jan" value="<%=monthlySalesArr[0]%>">
+                        <input id="feb" type="hidden" name="feb" value="<%=monthlySalesArr[1]%>">
+                        <input id="mar" type="hidden" name="mar" value="<%=monthlySalesArr[2]%>">
+                        <input id="apr" type="hidden" name="apr" value="<%=monthlySalesArr[3]%>">
+                        <input id="may" type="hidden" name="may" value="<%=monthlySalesArr[4]%>">
+                        <input id="jun" type="hidden" name="jun" value="<%=monthlySalesArr[5]%>">
+                        <input id="jul" type="hidden" name="jul" value="<%=monthlySalesArr[6]%>">
+                        <input id="aug" type="hidden" name="aug" value="<%=monthlySalesArr[7]%>">
+                        <input id="sep" type="hidden" name="sep" value="<%=monthlySalesArr[8]%>">
+                        <input id="oct" type="hidden" name="oct" value="<%=monthlySalesArr[9]%>">
+                        <input id="nov" type="hidden" name="nov" value="<%=monthlySalesArr[11]%>">
+                        <input id="dec" type="hidden" name="dec" value="<%=monthlySalesArr[12]%>">
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -158,18 +183,6 @@
                 </div>
               </div>
               <!-- Recent Sales End -->
-              <input id="jan" type="hidden" name="jan" value="<%=monthlySalesArr[0]%>">
-              <input id="feb" type="hidden" name="feb" value="<%=monthlySalesArr[1]%>">
-              <input id="mar" type="hidden" name="mar" value="<%=monthlySalesArr[2]%>">
-              <input id="apr" type="hidden" name="apr" value="<%=monthlySalesArr[3]%>">
-              <input id="may" type="hidden" name="may" value="<%=monthlySalesArr[4]%>">
-              <input id="jun" type="hidden" name="jun" value="<%=monthlySalesArr[5]%>">
-              <input id="jul" type="hidden" name="jul" value="<%=monthlySalesArr[6]%>">
-              <input id="aug" type="hidden" name="aug" value="<%=monthlySalesArr[7]%>">
-              <input id="sep" type="hidden" name="sep" value="<%=monthlySalesArr[8]%>">
-              <input id="oct" type="hidden" name="oct" value="<%=monthlySalesArr[9]%>">
-              <input id="nov" type="hidden" name="nov" value="<%=monthlySalesArr[11]%>">
-              <input id="dec" type="hidden" name="dec" value="<%=monthlySalesArr[12]%>">
               <!-- code ends -->
             </div>
             <!-- content-wrapper ends -->
@@ -200,6 +213,26 @@
                 var nov = document.getElementById("nov").value;
                 var dec = document.getElementById("dec").value;
 
+                //for weekChart
+                var week1 = document.getElementById('week1').value;
+                var week2 = document.getElementById('week2').value;
+                var week3 = document.getElementById('week3').value;
+                var week4 = document.getElementById('week4').value;
+                var week5 = document.getElementById('week5').value;
+
+                //for chart
+                var categoryLength = document.getElementById('categoryLength').value;
+                var categoryValues = [];
+                for (let i = 0; i < categoryLength; i++) {
+                  let inputValue = document.getElementById('cat' + i).value;
+                  categoryValues.push(inputValue);
+                }
+                const categorySales = [12, 18, 13];
+                let data = [];
+                categoryValues.forEach((name, index) => {
+                  data.push({ x: name, y: categorySales[index] });
+                });
+
 
                 var options = {
                   chart: {
@@ -211,16 +244,7 @@
                     }
                   },
                   series: [{
-                    data: [{
-                      x: 'Organic Skin',
-                      y: 10
-                    }, {
-                      x: 'Organic Hair',
-                      y: 18
-                    }, {
-                      x: 'Organic Oil',
-                      y: 13
-                    }]
+                    data: data
                   }],
                   colors: ['#769C5C', '#769C5C', '#769C5C'] // Define colors for each bar
                 };
@@ -240,12 +264,12 @@
                     type: "area"
                   },
                   dataLabels: {
-                    enabled: false
+                    enabled: true
                   },
                   series: [
                     {
                       name: "Series 1",
-                      data: [45, 52, 38, 45, 2]
+                      data: [week1, week2, week3, week4, week5]
                     }
                   ],
                   fill: {
@@ -263,7 +287,7 @@
                       "Week 2",
                       "Week 3",
                       "Week 4",
-                      "Week 5"
+                      "Week 5",
                     ]
                   },
                   colors: ['#769C5C']
@@ -274,6 +298,9 @@
                     height: 350,
                     type: "line",
                     stacked: false
+                  },
+                  stroke: {
+                    curve: 'smooth',
                   },
                   markers: {
                     size: 1
@@ -302,8 +329,8 @@
                   yaxis: [
                     {
                       min: 0,
-                      max: 25,
-                      tickAmount: 5,
+                      max: 50,
+                      tickAmount: 10,
                       axisTicks: {
                         show: true
                       },
