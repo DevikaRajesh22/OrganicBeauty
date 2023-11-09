@@ -63,7 +63,6 @@ exports.updateStatus = async (req, res) => {
 //admin orderDetails() GET request
 exports.orderDetails = async (req, res) => {
     try {
-        console.log('order details');
         const orderId = req.query.orderId;
         const pageName = "Order";
         const orders = await Order.findOne({ _id: orderId }).populate(
@@ -71,11 +70,14 @@ exports.orderDetails = async (req, res) => {
         );
         const userId = orders.user;
         const cart = await Cart.findOne({ userId: userId });
-        let subTotal = orders.totalAmount-10 ; //add discount amount too
         let finalPrice = orders.totalAmount;
+        let subTotal = orders.totalAmount-10;
+        const couponApplied=await Coupon.findOne({couponCode:cart?.coupon});
+        if (couponApplied) {
+            subTotal += couponApplied.maximumDiscount;
+        }
         const address=orders.deliveryDetails;
-        console.log(address);
-        res.render("admin/orderDetails", { pageName, orders, subTotal, finalPrice, address });
+        res.render("admin/orderDetails", { pageName, orders, subTotal, finalPrice, address, couponApplied });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -270,13 +272,9 @@ exports.orderDet = async (req, res) => {
             count = 0;
         }
         let finalPrice = orders.totalAmount;
-        console.log(finalPrice);
         let subTotal=orders.totalAmount-10;
-        console.log(subTotal);
         let couponApplied = await Coupon.findOne({ couponCode: cart?.coupon });
-        console.log(couponApplied);
         if (couponApplied) {
-            console.log(couponApplied.maximumDiscount);
             subTotal += couponApplied.maximumDiscount;
         }
         res.render('user/orderDet', { user: req.session.name, pageTitle, orders, subTotal, address, finalPrice, couponApplied, count, wishlistCount });

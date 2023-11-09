@@ -108,8 +108,8 @@
                           <td class="text-end">₹ 10</td>
                         </tr>
                         <tr>
-                          <td colspan="2">Discount </td>
-                          <td class="text-danger text-end">₹ 0</td>
+                          <td colspan="2">Discount <b><%=couponApplied?couponApplied.couponCode :""%></b></td>
+                          <td class="text-danger text-end">- ₹ <%=couponApplied?couponApplied.maximumDiscount : 0%></td>
                         </tr>
                         <tr class="fw-bold">
                           <td colspan="2"><b>TOTAL</b></td>
