@@ -5,8 +5,12 @@ const Cart = require('../models/user/cartCollection');
 exports.coupon = async (req, res) => {
     try {
         const pageName = 'Coupons';
-        const coupons = await Coupon.find();
-        res.render('admin/coupon', { pageName, coupons });
+        let pageNum=req.query.pageNum;
+        let perPage=8;
+        let couponCount=await Coupon.find().countDocuments();
+        let page=Math.ceil(couponCount/perPage);
+        const coupons = await Coupon.find().skip((pageNum - 1)*perPage).limit(perPage);
+        res.render('admin/coupon', { pageName, coupons, page });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

@@ -271,8 +271,12 @@ exports.signout = async (req, res) => {
 exports.users = async (req, res) => {
     try {
         const pageName = 'User management';
-        const users = await User.find();
-        res.render('admin/users', { users, pageName });
+        let pageNum=req.query.pageNum;
+        let perPage=8;
+        let userCount=await User.find().countDocuments();
+        let page=Math.ceil(userCount/perPage);
+        const users = await User.find().skip((pageNum - 1)*perPage).limit(perPage);
+        res.render('admin/users', { users, pageName, page });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

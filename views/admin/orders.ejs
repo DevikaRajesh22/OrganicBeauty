@@ -92,7 +92,18 @@
                     </tr>
                     <% }) %>
                 </tbody>
-              </table>
+              </table><br>
+              <nav aria-label="Page navigation example">
+                <ul class="pagination d-flex justify-content-center">
+                  <% for (let i=1; i <=page; i++) { %>
+                    <li class="page-item">
+                      <a class="page-link" href="/admin/ordersAdmin?pageNum=<%= i %>">
+                        <%= i %>
+                      </a>
+                    </li>
+                    <% } %>
+                </ul>
+              </nav>
               <!-- code ends -->
             </div>
             <!-- main-panel ends -->

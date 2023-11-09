@@ -14,8 +14,12 @@ const ObjectId = mongoose.Types.ObjectId;
 exports.orderGet = async (req, res) => {
     try {
         const pageName = "Order";
-        const orders = await Order.find();
-        res.render("admin/orders", { pageName, orders });
+        let pageNum=req.query.pageNum;
+        let perPage=10;
+        let orderCount=await Order.find().countDocuments();
+        let page=Math.ceil(orderCount/perPage);
+        const orders = await Order.find().skip((pageNum - 1)*perPage).limit(perPage).sort({date:-1});
+        res.render("admin/orders", { pageName, orders, page });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

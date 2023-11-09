@@ -161,6 +161,17 @@
                                     </div>
                                 </div>
                             </div>
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination d-flex justify-content-center">
+                                  <% for (let i=1; i <=page; i++) { %>
+                                    <li class="page-item">
+                                      <a class="page-link" href="/admin/coupon?pageNum=<%= i %>">
+                                        <button class="btn"> <%= i %></button> 
+                                      </a>
+                                    </li>
+                                    <% } %>
+                                </ul>
+                              </nav>
                             <!-- code ends -->
                         </div>
                         <!-- main-panel ends -->

@@ -7,12 +7,16 @@ let categoryData;
 exports.category = async (req, res) => {
     try {
         const pageName = 'Category Management';
+        let pageNum=req.query.pageNum;
+        let perPage=8;
+        let categoryCount=await Category.find().countDocuments();
+        let page=Math.ceil(categoryCount/perPage);
         const category = await Category.find()
             .populate({
                 path: 'category',
                 select: 'categoryName'
-            });
-        res.render('admin/category', { category, categoryData, pageName });
+            }).skip((pageNum - 1)*perPage).limit(perPage);
+        res.render('admin/category', { category, categoryData, pageName, page });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

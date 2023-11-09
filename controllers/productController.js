@@ -6,12 +6,16 @@ const Product = require('../models/admin/productCollection');
 exports.products = async (req, res) => {
     try {
         const pageName = 'Product Management';
+        let pageNum=req.query.pageNum;
+        let perPage=8;
+        let productCount=await Product.find().countDocuments();
+        let page=Math.ceil(productCount/perPage);
         const products = await Product.find()
             .populate({
                 path: 'category',
                 select: 'categoryName'
-            });
-        res.render('admin/products', { products, pageName });
+            }).skip((pageNum - 1)*perPage).limit(perPage);
+        res.render('admin/products', { products, pageName, page });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
