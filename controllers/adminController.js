@@ -208,7 +208,7 @@ exports.landing = async (req, res) => {
         const productWise = await productWiseAggregate.exec();
         const categoryName = productWise.map(item => item._id[0]);
         let categoryLength = categoryName.length;
-        const categoryCounts = productWise.map(item => item.count); 
+        const categoryCounts = productWise.map(item => item.count);
 
 
 
@@ -297,25 +297,67 @@ exports.salesReport = async (req, res) => {
             { $match: { status: "Delivered" } },
             { $sort: { date: -1 } },
             {
-              $lookup: {
-                from: "products",
-                let: { productId: { $toObjectId: "$products.productId" } },
-                pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$productId"] } } }],
-                as: "products.productDetails",
-              },
+                $lookup: {
+                    from: "products",
+                    let: { productId: { $toObjectId: "$products.productId" } },
+                    pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$productId"] } } }],
+                    as: "products.productDetails",
+                },
             },
             {
-              $addFields: {
-                "products.productDetails": {
-                  $arrayElemAt: ["$products.productDetails", 0],
+                $addFields: {
+                    "products.productDetails": {
+                        $arrayElemAt: ["$products.productDetails", 0],
+                    },
                 },
-              },
             },
-          ]);
-          console.log(orderData);
-        res.render('admin/salesReport', { pageName, orderData});
+        ]);
+        res.render('admin/salesReport', { pageName, orderData });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
     }
 };
+
+//user sort() GET request
+exports.sort = async (req, res) => {
+    try {
+        const pageName = 'Sales Report';
+        const duration = parseInt(req.query.id);
+        const currentDate = new Date();
+        const startDate = new Date(currentDate - duration * 24 * 60 * 60 * 1000);
+        const orderData = await Order.aggregate([
+            {
+                $unwind: "$products",
+            },
+            {
+                $match: {
+                    status: "Delivered",
+                    date: { $gte: startDate, $lt: currentDate },
+                },
+            },
+            {
+                $sort: { date: -1 },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    let: { productId: { $toObjectId: "$products.productId" } },
+                    pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$productId"] } } }],
+                    as: "products.productDetails",
+                },
+            },
+            {
+                $addFields: {
+                    "products.productDetails": {
+                        $arrayElemAt: ["$products.productDetails", 0],
+                    },
+                },
+            },
+        ]);
+        res.render('admin/salesReport', { pageName, orderData });
+    } catch (error) {
+        console.log(error.message);
+        res.render('admin/errors');
+    }
+}
