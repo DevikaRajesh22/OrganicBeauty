@@ -1,0 +1,340 @@
+<%- include('../layouts/admin/adminHeader.ejs') %>
+
+    <div class="container-scroller">
+        <!-- partial:partials/_navbar.html -->
+        <%- include('../layouts/admin/adminNavbar.ejs') %>
+            <!-- partial -->
+            <div class="container-fluid page-body-wrapper">
+                <!-- partial:partials/_sidebar.html -->
+                <%- include('../layouts/admin/adminSidebar.ejs') %>
+                    <!-- partial -->
+                    <div class="main-panel">
+                        <div class="content-wrapper">
+                            <!-- Page Title Header Starts-->
+                            <div class="row page-title-header">
+                                <div class="col-12">
+                                    <div class="page-header">
+                                        <h4 class="page-title">Category Offer Management</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- code -->
+                            <div class="col-lg-9 my-lg-0 my-1">
+                                <style>
+                                    body {
+                                        color: #566787;
+                                        background: #f5f5f5;
+                                        font-family: "Varela Round", sans-serif;
+                                        font-size: 13px;
+                                    }
+
+                                    .table-responsive {
+                                        margin: 30px 0;
+                                        overflow-x: initial;
+                                    }
+
+                                    .table-wrapper {
+                                        min-width: 1000px;
+                                        background: #fff;
+                                        padding: 20px 25px;
+                                        border-radius: 3px;
+                                        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+                                    }
+
+                                    .table-title {
+                                        padding-bottom: 15px;
+                                        background: #1c45ef;
+                                        color: #fff;
+                                        padding: 16px 30px;
+                                        margin: -20px -25px 10px;
+                                        border-radius: 3px 3px 0 0;
+                                    }
+
+                                    .table-title h2 {
+                                        margin: 5px 0 0;
+                                        font-size: 24px;
+                                    }
+
+                                    .table-title .btn {
+                                        color: #566787;
+                                        float: right;
+                                        font-size: 13px;
+                                        background: #fff;
+                                        border: none;
+                                        min-width: 50px;
+                                        border-radius: 2px;
+                                        border: none;
+                                        outline: none !important;
+                                        margin-left: 10px;
+                                    }
+
+                                    .table-title .btn:hover,
+                                    .table-title .btn:focus {
+                                        color: #566787;
+                                        background: #f2f2f2;
+                                    }
+
+                                    .table-title .btn i {
+                                        float: left;
+                                        font-size: 21px;
+                                        margin-right: 5px;
+                                    }
+
+                                    .table-title .btn span {
+                                        float: left;
+                                        margin-top: 2px;
+                                    }
+
+                                    table.table tr th,
+                                    table.table tr td {
+                                        border-color: #e9e9e9;
+                                        padding: 12px 15px;
+                                        vertical-align: middle;
+                                    }
+
+                                    table.table tr th:first-child {
+                                        width: 60px;
+                                    }
+
+                                    table.table tr th:last-child {
+                                        width: 100px;
+                                    }
+
+                                    table.table-striped tbody tr:nth-of-type(odd) {
+                                        background-color: #fcfcfc;
+                                    }
+
+                                    table.table-striped.table-hover tbody tr:hover {
+                                        background: #f5f5f5;
+                                    }
+
+                                    table.table th i {
+                                        font-size: 13px;
+                                        margin: 0 5px;
+                                        cursor: pointer;
+                                    }
+
+                                    table.table td:last-child i {
+                                        opacity: 0.9;
+                                        font-size: 22px;
+                                        margin: 0 5px;
+                                    }
+
+                                    table.table td a {
+                                        font-weight: bold;
+                                        color: #566787;
+                                        display: inline-block;
+                                        text-decoration: none;
+                                    }
+
+                                    table.table td a:hover {
+                                        color: #2196f3;
+                                    }
+
+                                    table.table td a.settings {
+                                        color: #2196f3;
+                                    }
+
+                                    table.table td a.delete {
+                                        color: #f44336;
+                                    }
+
+                                    table.table td i {
+                                        font-size: 19px;
+                                    }
+
+                                    table.table .avatar {
+                                        border-radius: 50%;
+                                        vertical-align: middle;
+                                        margin-right: 10px;
+                                    }
+
+                                    .status {
+                                        font-size: 30px;
+                                        margin: 2px 2px 0 0;
+                                        display: inline-block;
+                                        vertical-align: middle;
+                                        line-height: 10px;
+                                    }
+
+                                    .text-success {
+                                        color: #10c469;
+                                    }
+
+                                    .text-info {
+                                        color: #62c9e8;
+                                    }
+
+                                    .text-warning {
+                                        color: #ffc107;
+                                    }
+
+                                    .text-danger {
+                                        color: #ff5b5b;
+                                    }
+
+                                    .pagination {
+                                        float: right;
+                                        margin: 0 0 5px;
+                                    }
+
+                                    .pagination li a {
+                                        border: none;
+                                        font-size: 13px;
+                                        min-width: 30px;
+                                        min-height: 30px;
+                                        color: #999;
+                                        margin: 0 2px;
+                                        line-height: 30px;
+                                        border-radius: 2px !important;
+                                        text-align: center;
+                                        padding: 0 6px;
+                                    }
+
+                                    .pagination li a:hover {
+                                        color: #666;
+                                    }
+
+                                    .pagination li.active a,
+                                    .pagination li.active a.page-link {
+                                        background: #03a9f4;
+                                    }
+
+                                    .pagination li.active a:hover {
+                                        background: #0397d6;
+                                    }
+
+                                    .pagination li.disabled i {
+                                        color: #ccc;
+                                    }
+
+                                    .pagination li i {
+                                        font-size: 16px;
+                                        padding-top: 6px;
+                                    }
+
+                                    .hint-text {
+                                        float: left;
+                                        margin-top: 10px;
+                                        font-size: 13px;
+                                    }
+                                </style>
+                                <script>
+                                    $(document).ready(function () {
+                                        $('[data-toggle="tooltip"]').tooltip();
+                                    });
+                                </script>
+
+                                <div class="container-xl">
+                                    <div class="table-responsive">
+                                        <div class="table-wrapper">
+                                            <div class="table-title" style="background-color: #8BB471;">
+                                                <div class="row">
+                                                    <div class="col-sm-5 d-flex mx-5">
+                                                        <h4 class="text-white">Add new offer</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="container">
+
+                                                <div class="form-group">
+                                                    <label for="offerName">Offer Name:</label>
+                                                    <input type="text" class="form-control" id="offerName"
+                                                        name="offerName" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="disAmount">Discount Amount:</label>
+                                                    <input type="text" class="form-control" id="disAmount"
+                                                        name="discountAmount" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="actDate">Activation Date:</label>
+                                                    <input type="date" class="form-control" id="datepickerone"
+                                                        name="actDate" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="expDate">Expiry Date:</label>
+                                                    <input type="date" class="form-control" id="datepicker"
+                                                        name="expDate" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="category">Select category:</label>
+                                                    <select id="category" name="category">
+                                                        <% categories.filter(category=>
+                                                            !category.isBlocked).forEach(function(category) { %>
+                                                            <option value="<%= category._id %>">
+                                                                <%= category.categoryName %>
+                                                            </option>
+                                                            <% }); %>
+                                                    </select>
+                                                    <br>
+                                                </div>
+                                                <button class="btn" style="background-color: #8BB471;"
+                                                    onclick="addCategoryOffer()">Save</button>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- code ends -->
+                        </div>
+                        <!-- main-panel ends -->
+                    </div>
+                    <!-- page-body-wrapper ends -->
+            </div>
+            <script>
+                $(function () {
+                    $("#datepicker #datepickerone").datepicker();
+                });
+
+                function addCategoryOffer() {
+                    const offerName = document.getElementById('offerName').value;
+                    const discountAmount = document.getElementById('disAmount').value;
+                    const activationDate = document.getElementById('datepickerone').value;
+                    const expiryDate = document.getElementById('datepicker').value;
+                    const category = document.getElementById('category').value;
+                    $.ajax({
+                        url: '/admin/addCategoryOfferPost',
+                        type: 'POST',
+                        data: {
+                            offerName: offerName,
+                            discountAmount: discountAmount,
+                            activationDate: activationDate,
+                            expiryDate: expiryDate,
+                            category: category
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                window.location.href = '/admin/categoryOffer';
+                            } else if (response.dateValidation) {
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    text: "Date invalid !!",
+                                    timer: 1500,
+                                    showConfirmButton: false,
+                                });
+                            }else if(response.duplicate){
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    text: "Category already has offer !!",
+                                    timer: 1500,
+                                    showConfirmButton: false,
+                                });
+                            }else if(response.priceValidation){
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    text: "Discount invalid !!",
+                                    timer: 1500,
+                                    showConfirmButton: false,
+                                });
+                            }
+                        }
+                    });
+                }
+            </script>
+            <!-- container-scroller -->
+            <%- include('../layouts/admin/adminFooter.ejs') %>

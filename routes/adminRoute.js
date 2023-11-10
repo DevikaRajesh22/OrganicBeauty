@@ -61,8 +61,12 @@ adminRoute.get('/salesReport', adminAuth.isLoggedIn, adminController.salesReport
 adminRoute.get('/sort', adminAuth.isLoggedIn, adminController.sort);
 adminRoute.get('/download', adminAuth.isLoggedIn, adminController.downloadReport);
 
-//offer management
+//category offer management
 adminRoute.get('/categoryOffer', adminAuth.isLoggedIn, offerController.categoryOffer);
+adminRoute.get('/addCategoryOffer', adminAuth.isLoggedIn, offerController.addCategoryOffer);
+adminRoute.post('/addCategoryOfferPost', adminAuth.isLoggedIn, offerController.addCategoryOfferPost);
+
+//product offer management
 adminRoute.get('/productOffer', adminAuth.isLoggedIn, offerController.productOffer);
 
 module.exports = adminRoute;

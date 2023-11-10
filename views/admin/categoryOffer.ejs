@@ -12,30 +12,163 @@
                             <!-- Page Title Header Starts-->
                             <div class="page-header">
                                 <h4 class="page-title">Category wise offer management</h4>
+                                <button type="button" class="btn btn-outline-success" style="margin-left: 20px;"><a
+                                        href="/admin/addCategoryOffer" style="text-decoration: none;">Add New</a></button>
                             </div>
                             <!-- code -->
-                            <table class="table mx-auto" style="width: 600px;">
-                                <thead class="black white-text">
-                                    <tr>
-                                        <th scope="col">Category Name</th>
-                                        <th scope="col">Discount</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            hui
-                                        </td>
-                                        <td>
-                                            hi
-                                        </td>
-                                        <td>
-                                            hu
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>                            
+                            <style>
+                                body {
+                                    color: #1a202c;
+                                    text-align: left;
+                                    background-color: #e2e8f0;
+                                }
+
+                                .main-body {
+                                    padding: 15px;
+                                }
+
+                                .card {
+                                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+                                }
+
+                                .card {
+                                    position: relative;
+                                    display: flex;
+                                    flex-direction: column;
+                                    min-width: 0;
+                                    word-wrap: break-word;
+                                    background-color: #fff;
+                                    background-clip: border-box;
+                                    border: 0 solid rgba(0, 0, 0, .125);
+                                    border-radius: .25rem;
+                                }
+
+                                .card-body {
+                                    flex: 1 1 auto;
+                                    min-height: 1px;
+                                    padding: 1rem;
+                                }
+
+                                .gutters-sm {
+                                    margin-right: -8px;
+                                    margin-left: -8px;
+                                }
+
+                                .gutters-sm>.col,
+                                .gutters-sm>[class*=col-] {
+                                    padding-right: 8px;
+                                    padding-left: 8px;
+                                }
+
+                                .mb-3,
+                                .my-3 {
+                                    margin-bottom: 1rem !important;
+                                }
+
+                                .bg-gray-300 {
+                                    background-color: #e2e8f0;
+                                }
+
+                                .h-100 {
+                                    height: 100% !important;
+                                }
+
+                                .shadow-none {
+                                    box-shadow: none !important;
+                                }
+
+                                .bg-white {
+                                    background-color: #fff !important;
+                                }
+
+                                .btn-light {
+                                    color: #1a202c;
+                                    background-color: #fff;
+                                    border-color: #cbd5e0;
+                                }
+
+                                .ml-2,
+                                .mx-2 {
+                                    margin-left: .5rem !important;
+                                }
+
+                                .card-footer:last-child {
+                                    border-radius: 0 0 .25rem .25rem;
+                                }
+
+                                .card-footer,
+                                .card-header {
+                                    display: flex;
+                                    align-items: center;
+                                }
+
+                                .card-footer {
+                                    padding: .5rem 1rem;
+                                    background-color: #fff;
+                                    border-top: 0 solid rgba(0, 0, 0, .125);
+                                }
+                            </style>
+                            <div class="container">
+                                <div class="main-body">
+                                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 gutters-sm">
+                                        <% offerData.forEach(function(offer){ %>
+                                            <div class="col mb-3">
+                                                <div class="card">
+                                                    <img src="/admin/images/card.png" alt="Cover" class="card-img-top">
+                                                    <div class="card-body text-center">
+                                                        <h5 class="card-title">Offer name: <%= offer.offerName %>
+                                                        </h5>
+                                                        <p class="text-black mb-1">Discount Amount: ₹ <%=
+                                                                offer.discountAmount %>
+                                                        </p>
+                                                        <p class="text-black mb-1">Category: <%= offer.category.categoryName %>
+                                                        </p>
+                                                        <% const date=new Date(offer.expiryDate); const
+                                                            day=String(date.getDate()).padStart(2, '0' ); const
+                                                            month=String(date.getMonth() + 1).padStart(2, '0' ); const
+                                                            year=date.getFullYear(); const
+                                                            formattedDate=`${day}-${month}-${year}`; %>
+                                                            <p class="text-muted font-size-sm">Valid Till:
+                                                                <%=formattedDate %>
+                                                            </p>
+                                                    </div>
+                                                    <div class="card-footer">
+                                                        <button class="btn btn-light btn-sm bg-white has-icon btn-block"
+                                                            type="button"><i class="material-icons"><a
+                                                                    href="/admin/editCategoryOffer?id=<%= offer._id%>"
+                                                                    style="text-decoration: none;">Edit</a></i></button>
+                                                        <% if(!offer.isBlocked){ %>
+                                                            <a href="/admin/hidecategoryOffer?id=<%= offer._id %>"><button
+                                                                    class="btn btn-light btn-sm bg-white has-icon ml-2"
+                                                                    type="button"><i class="fas fa-eye">
+                                                                    </i></button></a>
+                                                            <% }else{ %>
+                                                                <a href="/admin/showCategoryOffer?id=<%= offer._id %>"><button
+                                                                        class="btn btn-light btn-sm bg-white has-icon ml-2"
+                                                                        type="button"><i class="fas fa-eye-slash">
+                                                                        </i></button></a>
+                                                                <% } %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% }) %>
+                                    </div>
+                                </div>
+                            </div>
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination d-flex justify-content-center">
+                                    <% for (let i=1; i <=page; i++) { %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="/admin/categoryOffer?pageNum=<%= i %>">
+                                                <button class="btn">
+                                                    <%= i %>
+                                                </button>
+                                            </a>
+                                        </li>
+                                        <% } %>
+                                </ul>
+                            </nav>
+                            <!-- code ends -->
                             <!-- code ends -->
                         </div>
                         <!-- main-panel ends -->

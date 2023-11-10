@@ -1,6 +1,8 @@
 const Wishlist = require('../models/user/wishlistCollection');
 const Cart = require('../models/user/cartCollection');
 const User = require('../models/user/userCollection');
+const Offer = require('../models/admin/offerCollection');
+const Category = require('../models/admin/categoryCollection');
 
 //user referral() GET request
 exports.referral = async (req, res) => {
@@ -32,9 +34,56 @@ exports.referral = async (req, res) => {
 //admin categoryOffer() GET request
 exports.categoryOffer = async (req, res) => {
     try {
-        console.log('categoryOffer GET');
         const pageName = 'Category Offers';
-        res.render('admin/categoryOffer', { pageName, admin: req.session.admin });
+        const offerData = await Offer.find().populate('category');
+        let pageNum = req.query.pageNum;
+        let perPage = 8;
+        const offerCount = await Offer.countDocuments();
+        let page = Math.ceil(offerCount / perPage);
+        res.render('admin/categoryOffer', { pageName, admin: req.session.admin, offerData, page });
+    } catch (error) {
+        console.log(error.message);
+        res.render('admin/errors');
+    }
+};
+
+//admin addCategoryOffer() GET request
+exports.addCategoryOffer = async (req, res) => {
+    try {
+        const pageName = "Add offer";
+        const categories = await Category.find();
+        res.render('admin/addCategoryOffer', { pageName, categories, admin: req.session.admin });
+    } catch (error) {
+        console.log(error.message);
+        res.render('admin/errors');
+    }
+};
+
+//admin addCategoryOfferPost() POST request
+exports.addCategoryOfferPost = async (req, res) => {
+    try {
+        console.log('addCategoryPost');
+        const { offerName, discountAmount, activationDate, expiryDate, category } = req.body;
+        let currentDate = new Date();
+        currentDate = currentDate.toISOString().split('T')[0];
+        const categoryFound = await Offer.findOne({ category: category });
+        if (activationDate < currentDate || expiryDate <= currentDate) {
+            res.json({ dateValidation: true });
+        } else if (categoryFound) {
+            res.json({ duplicate: true });
+        }else if(discountAmount<=0){
+            res.json({priceValidation:true});
+        } else {
+            const newCategoryOffer = new Offer({
+                offerName: offerName,
+                discountAmount: discountAmount,
+                activationDate: activationDate,
+                expiryDate: expiryDate,
+                category: category
+            });
+            await newCategoryOffer.save();
+            return res.json({ success: true });
+        }
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -44,7 +93,6 @@ exports.categoryOffer = async (req, res) => {
 //admin productOffer() GET request
 exports.productOffer = async (req, res) => {
     try {
-        console.log('productOffer GET');
         const pageName = 'Product Offers';
         res.render('admin/productOffer', { pageName, admin: req.session.admin });
     } catch (error) {
