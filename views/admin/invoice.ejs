@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sales Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .company-info {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .sales-summary {
+            margin: 20px 0;
+        }
+
+        .sales-details {
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #555;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sales Report</h1>
+        </div>
+        <div class="content">
+            <div class="company-info">
+                <% const today=new Date(); const options={ weekday: 'long' , year: 'numeric' , month: 'long' ,
+                    day: 'numeric' }; const formattedDate=today.toLocaleDateString('en-US', options); %>
+                    <p>Report Date: <%=formattedDate%>
+                    </p>
+                    <p>Organic Beauty</p>
+                    <p>organicbeauty@gmail.com</p>
+            </div>
+            <div class="sales-summary">
+                <h2>Sales Summary:</h2>
+                <p>Total Sales: <%=totalSales%>
+                </p>
+                <p>Total Orders: <%=totalOrders%>
+                </p>
+            </div>
+            <div class="sales-details">
+                <h2>Sales Details:</h2>
+                <table>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Date</th>
+                        <th>Customer Name</th>
+                        <th>Total Amount</th>
+                    </tr>
+                    <tr>
+                        <%orders.forEach((val,ind)=>{%>
+                    <tr>
+                        <td>
+                            <%=val.orderId%>
+                        </td>
+                        <td>
+                            <%=val.products.productDetails.productName%>
+                        </td>
+                        <td>
+                            <%=val.products.count%>
+                        </td>
+                        <% const date=new Date(val.date); %>
+                            <% const day=date.getDate(); %>
+                                <% const month=date.toLocaleString('default', { month: 'long' }); %>
+                                    <% const year=date.getFullYear(); %>
+                                        <td>
+                                            <%= day %>
+                                                <%= month %>
+                                                    <%= year %>
+                                        </td>
+                                        <td>
+                                            <%=val.userName%>
+                                        </td>
+                                        <td>
+                                            <%=val.totalAmount%>
+                                        </td>
+                    </tr>
+                    <%})%>
+                        </tr>
+                        <!-- Add more rows for additional sales data -->
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

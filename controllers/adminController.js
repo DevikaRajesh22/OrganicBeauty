@@ -3,8 +3,11 @@ const User = require('../models/user/userCollection');
 const Product = require('../models/admin/productCollection');
 const Order = require('../models/user/orderCollection');
 const Category = require('../models/admin/categoryCollection');
-const multer = require('multer');
-const Sharp = require('sharp');
+const puppeteer = require('puppeteer');
+const ejs = require('ejs');
+const path = require('path');
+const fs = require('fs');
+const ExcelJS = require('exceljs');
 
 //loginGet for GET request
 exports.loginGet = async (req, res) => {
@@ -360,4 +363,103 @@ exports.sort = async (req, res) => {
         console.log(error.message);
         res.render('admin/errors');
     }
-}
+};
+
+//user downloadReport() GET request
+exports.downloadReport = async (req, res) => {
+    try {
+        console.log('download');
+        const { format, duration } = req.query;
+        console.log(format);
+        console.log(duration);
+        const currentDate = new Date();
+        const startDate = new Date(currentDate - 1 * 24 * 60 * 60 * 1000);
+        const orders = await Order.aggregate([
+            {
+                $unwind: "$products",
+            },
+            {
+                $match: {
+                    status: "Delivered",
+
+                },
+            },
+            {
+                $sort: { deliveryDate: -1 },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    let: { productId: { $toObjectId: "$products.productId" } },
+                    pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$productId"] } } }],
+                    as: "products.productDetails",
+                },
+            },
+            {
+                $addFields: {
+                    "products.productDetails": {
+                        $arrayElemAt: ["$products.productDetails", 0],
+                    },
+                },
+            },
+        ]);
+        const totalSales = await Order.find({ status: "Delivered" }).count();
+        const totalOrders = await Order.find().count();
+        console.log(totalSales);
+        console.log(totalOrders);
+        const date = new Date();
+        data = {
+            orders,
+            date,
+            totalSales,
+            totalOrders
+        }
+        if (format === 'pdf') {
+            const filepathName = path.resolve(__dirname, "../views/admin/invoice.ejs");
+            const html = fs.readFileSync(filepathName).toString();
+            const ejsData = ejs.render(html, data);
+            const browser = await puppeteer.launch({ headless: "new" });
+            const page = await browser.newPage();
+            await page.setContent(ejsData, { waitUntil: "networkidle0" });
+            const pdfBytes = await page.pdf({ format: "letter" });
+            await browser.close();
+            res.setHeader("Content-Type", "application/pdf");
+            res.setHeader(
+                "Content-Disposition",
+                "attachment; filename= Sales Report.pdf"
+            );
+            res.send(pdfBytes);
+        }else if(format==='excel'){
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Sales Report');
+            worksheet.columns = [
+                { header: 'Order ID', key: 'orderId', width: 8 },
+                { header: 'Product Name', key: 'productName', width: 50 },
+                { header: 'Qty', key: 'qty', width: 5 },
+                { header: 'Date', key: 'date', width: 12 },
+                { header: 'Customer', key: 'customer', width: 15 },
+                { header: 'Total Amount', key: 'totalAmount', width: 12 },
+              ];
+              orders.forEach((data) => {
+                worksheet.addRow({
+                  orderId: data.orderId,
+                  productName: data.products.productDetails.productName,
+                  qty: data.products.count,
+                  date: data.date.toLocaleDateString('en-US', { year:
+                    'numeric', month: 'short', day: '2-digit' }).replace(/\//g,
+                    '-'),
+                  customer: data.userName,
+                  totalAmount: data.products.totalPrice,
+                });
+              });
+              res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+              res.setHeader('Content-Disposition', `attachment; filename=sales_report.csv`);
+              const excelBuffer = await workbook.csv.writeBuffer();
+              res.end(excelBuffer);
+        }
+
+    } catch (error) {
+        console.log(error.message);
+        res.render('admin/errors');
+    }
+};

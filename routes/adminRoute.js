@@ -58,5 +58,6 @@ adminRoute.get('/showCoupon', adminAuth.isLoggedIn, couponController.showCoupon)
 //sales report
 adminRoute.get('/salesReport', adminAuth.isLoggedIn, adminController.salesReport);
 adminRoute.get('/sort', adminAuth.isLoggedIn, adminController.sort);
+adminRoute.get('/download', adminAuth.isLoggedIn, adminController.downloadReport);
 
 module.exports = adminRoute;
