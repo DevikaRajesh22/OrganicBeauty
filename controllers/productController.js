@@ -15,7 +15,7 @@ exports.products = async (req, res) => {
                 path: 'category',
                 select: 'categoryName'
             }).skip((pageNum - 1) * perPage).limit(perPage);
-        res.render('admin/products', { products, pageName, page });
+        res.render('admin/products', { products, pageName, page, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -27,7 +27,7 @@ exports.addProducts = async (req, res) => {
     try {
         const pageName = 'Product Management';
         const categories = await Category.find();
-        res.render('admin/addProducts', { categories, pageName });
+        res.render('admin/addProducts', { categories, pageName, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -68,7 +68,7 @@ exports.editProduct = async (req, res) => {
         const pid = req.query.id;
         const categories = await Category.find();
         const pinfo = await Product.findById({ _id: pid });
-        res.render('admin/editProduct', { pinfo, categories, pageName });
+        res.render('admin/editProduct', { pinfo, categories, pageName, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

@@ -10,7 +10,7 @@ exports.coupon = async (req, res) => {
         let couponCount = await Coupon.find().countDocuments();
         let page = Math.ceil(couponCount / perPage);
         const coupons = await Coupon.find().skip((pageNum - 1) * perPage).limit(perPage);
-        res.render('admin/coupon', { pageName, coupons, page });
+        res.render('admin/coupon', { pageName, coupons, page, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -21,7 +21,7 @@ exports.coupon = async (req, res) => {
 exports.addCoupon = async (req, res) => {
     try {
         const pageName = 'Coupons';
-        res.render('admin/addCoupon', { pageName });
+        res.render('admin/addCoupon', { pageName, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -69,7 +69,7 @@ exports.editCoupon = async (req, res) => {
         const pageName = 'Coupon';
         const couponId = req.query.id;
         const coupon = await Coupon.findById({ _id: couponId });
-        res.render('admin/editCoupon', { pageName, coupon });
+        res.render('admin/editCoupon', { pageName, coupon, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

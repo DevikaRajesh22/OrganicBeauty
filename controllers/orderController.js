@@ -19,7 +19,7 @@ exports.orderGet = async (req, res) => {
         let orderCount=await Order.find().countDocuments();
         let page=Math.ceil(orderCount/perPage);
         const orders = await Order.find().skip((pageNum - 1)*perPage).limit(perPage).sort({date:-1});
-        res.render("admin/orders", { pageName, orders, page });
+        res.render("admin/orders", { pageName, orders, page, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -77,7 +77,7 @@ exports.orderDetails = async (req, res) => {
             subTotal += couponApplied.maximumDiscount;
         }
         const address=orders.deliveryDetails;
-        res.render("admin/orderDetails", { pageName, orders, subTotal, finalPrice, address, couponApplied });
+        res.render("admin/orderDetails", { pageName, orders, subTotal, finalPrice, address, couponApplied, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -86,8 +86,8 @@ exports.orderDetails = async (req, res) => {
 
 //for razorpay
 const razorpay = new Razorpay({
-    key_id: process.env.RAZ_KEY,
-    key_secret: process.env.RAZ_SECRET,
+    key_id: process.env.RAZORPAY_KEYID,
+    key_secret: process.env.RAZORPAY_SECRET,
 });
 
 //user orders() GET request

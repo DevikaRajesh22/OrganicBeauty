@@ -20,11 +20,35 @@ exports.referral = async (req, res) => {
         if (userId === undefined) {
             return res.redirect('/login');
         }
-        const userData=await User.findOne({_id:req.session.userId});
-        const referral=userData.referralCode;
+        const userData = await User.findOne({ _id: req.session.userId });
+        const referral = userData.referralCode;
         res.render('user/referral', { pageTitle, user: req.session.name, pageTitle, count, wishlistCount, referral })
     } catch (error) {
         console.log(error.message);
         res.render('user/error');
+    }
+};
+
+//admin categoryOffer() GET request
+exports.categoryOffer = async (req, res) => {
+    try {
+        console.log('categoryOffer GET');
+        const pageName = 'Category Offers';
+        res.render('admin/categoryOffer', { pageName, admin: req.session.admin });
+    } catch (error) {
+        console.log(error.message);
+        res.render('admin/errors');
+    }
+};
+
+//admin productOffer() GET request
+exports.productOffer = async (req, res) => {
+    try {
+        console.log('productOffer GET');
+        const pageName = 'Product Offers';
+        res.render('admin/productOffer', { pageName, admin: req.session.admin });
+    } catch (error) {
+        console.log(error.message);
+        res.render('admin/errors');
     }
 };

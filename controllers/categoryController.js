@@ -16,7 +16,7 @@ exports.category = async (req, res) => {
                 path: 'category',
                 select: 'categoryName'
             }).skip((pageNum - 1)*perPage).limit(perPage);
-        res.render('admin/category', { category, categoryData, pageName, page });
+        res.render('admin/category', { category, categoryData, pageName, page, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -27,7 +27,7 @@ exports.category = async (req, res) => {
 exports.addCategory = async (req, res) => {
     try {
         const pageName = 'Category Management';
-        res.render('admin/addCategory', { pageName });
+        res.render('admin/addCategory', { pageName, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -98,7 +98,7 @@ exports.editCategory = async (req, res) => {
         const pageName = 'Category Management';
         const cid = req.query.id;
         const cinfo = await Category.findById({ _id: cid });
-        res.render('admin/editCategory', { cinfo, pageName });
+        res.render('admin/editCategory', { cinfo, pageName, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

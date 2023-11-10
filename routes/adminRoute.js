@@ -3,6 +3,7 @@ const productController = require('../controllers/productController');
 const categoryController = require('../controllers/categoryController');
 const orderController = require('../controllers/orderController');
 const couponController = require('../controllers/couponController');
+const offerController = require('../controllers/offerController');
 const adminAuth = require('../middleware/adminAuth');
 const express = require('express');
 const adminRoute = express();
@@ -59,5 +60,9 @@ adminRoute.get('/showCoupon', adminAuth.isLoggedIn, couponController.showCoupon)
 adminRoute.get('/salesReport', adminAuth.isLoggedIn, adminController.salesReport);
 adminRoute.get('/sort', adminAuth.isLoggedIn, adminController.sort);
 adminRoute.get('/download', adminAuth.isLoggedIn, adminController.downloadReport);
+
+//offer management
+adminRoute.get('/categoryOffer', adminAuth.isLoggedIn, offerController.categoryOffer);
+adminRoute.get('/productOffer', adminAuth.isLoggedIn, offerController.productOffer);
 
 module.exports = adminRoute;

@@ -246,7 +246,7 @@ exports.users = async (req, res) => {
         let userCount = await User.find().countDocuments();
         let page = Math.ceil(userCount / perPage);
         const users = await User.find().skip((pageNum - 1) * perPage).limit(perPage);
-        res.render('admin/users', { users, pageName, page });
+        res.render('admin/users', { users, pageName, page, admin: req.session.admin});
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -315,7 +315,7 @@ exports.salesReport = async (req, res) => {
                 },
             },
         ]);
-        res.render('admin/salesReport', { pageName, orderData });
+        res.render('admin/salesReport', { pageName, orderData, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
