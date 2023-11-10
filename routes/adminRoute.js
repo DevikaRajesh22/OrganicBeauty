@@ -65,6 +65,10 @@ adminRoute.get('/download', adminAuth.isLoggedIn, adminController.downloadReport
 adminRoute.get('/categoryOffer', adminAuth.isLoggedIn, offerController.categoryOffer);
 adminRoute.get('/addCategoryOffer', adminAuth.isLoggedIn, offerController.addCategoryOffer);
 adminRoute.post('/addCategoryOfferPost', adminAuth.isLoggedIn, offerController.addCategoryOfferPost);
+adminRoute.get('/editCategoryOffer', adminAuth.isLoggedIn, offerController.editCategoryOffer);
+adminRoute.post('/editcategoryOfferPost', adminAuth.isLoggedIn, offerController.editCategoryOfferPost);
+adminRoute.get('/hideCategoryOffer',adminAuth.isLoggedIn,offerController.hideCategoryOffer);
+adminRoute.get('/showCategoryOffer',adminAuth.isLoggedIn,offerController.showCategoryOffer);
 
 //product offer management
 adminRoute.get('/productOffer', adminAuth.isLoggedIn, offerController.productOffer);

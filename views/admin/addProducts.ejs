@@ -253,13 +253,13 @@
                           </div>
                           <div class="form-group">
                             <label for="name">Stock:</label>
-                            <input type="text" class="form-control" id="category" name="stock" required>
+                            <input type="text" class="form-control" id="stock" name="stock" required>
                           </div>
                           <div class="form-group">
                             <label for="price">Price:</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
-                                <span class="input-group-text">$</span>
+                                <span class="input-group-text">₹</span>
                               </div>
                               <input type="text" class="form-control" id="price" name="price" placeholder="0.00"
                                 required>
@@ -271,8 +271,8 @@
                           </div>
                           <div class="form-group">
                             <label for="pimage">Product Images:</label><br />
-                            <input type="file" name="image1" /><br />
-                            <input type="file" name="image2" />
+                            <input type="file" name="image1"  /><br />
+                            <input type="file" name="image2"  />
                             <br />
                             <input type="file" name="image3" />
                             <br />
@@ -280,7 +280,7 @@
                             <br />
                             <br /><br />
                           </div>
-                          <button class="btn btn-outline-success" onclick="addProduct()">Save</button>
+                          <button class="btn btn-outline-success" type="submit">Save</button>
                         </form>
                       </div>
                     </div>
@@ -294,25 +294,4 @@
           <!-- page-body-wrapper ends -->
       </div>
       <!-- container-scroller -->
-      <script>
-        function addProduct() {
-          $.ajax({
-            url: '/admin/products',
-            type: 'POST',
-            success: function (response) {
-              if (response.success) {
-                window.location.href = '/admin/products';
-              }else if(response.stock){
-                Swal.fire({
-                  position: "center",
-                  icon: "error",
-                  text: "Stock cant be less than 0 !!",
-                  timer: 1500,
-                  showConfirmButton: false,
-                });
-              }
-            }
-          });
-        }
-      </script>
       <%- include('../layouts/admin/adminFooter.ejs') %>

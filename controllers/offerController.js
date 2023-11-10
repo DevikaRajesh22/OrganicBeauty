@@ -62,7 +62,6 @@ exports.addCategoryOffer = async (req, res) => {
 //admin addCategoryOfferPost() POST request
 exports.addCategoryOfferPost = async (req, res) => {
     try {
-        console.log('addCategoryPost');
         const { offerName, discountAmount, activationDate, expiryDate, category } = req.body;
         let currentDate = new Date();
         currentDate = currentDate.toISOString().split('T')[0];
@@ -71,8 +70,8 @@ exports.addCategoryOfferPost = async (req, res) => {
             res.json({ dateValidation: true });
         } else if (categoryFound) {
             res.json({ duplicate: true });
-        }else if(discountAmount<=0){
-            res.json({priceValidation:true});
+        } else if (discountAmount <= 0) {
+            res.json({ priceValidation: true });
         } else {
             const newCategoryOffer = new Offer({
                 offerName: offerName,
@@ -84,6 +83,64 @@ exports.addCategoryOfferPost = async (req, res) => {
             await newCategoryOffer.save();
             return res.json({ success: true });
         }
+    } catch (error) {
+        console.log(error.message);
+        res.render('admin/errors');
+    }
+};
+
+//admin editCategoryOffer() GET request
+exports.editCategoryOffer = async (req, res) => {
+    try {
+        const pageName = "Edit offer";
+        const id = req.query.id;
+        const offerData = await Offer.findById({ _id: id });
+        const categories = await Category.find();
+        res.render('admin/editCategoryOffer', { pageName, offerData, categories, admin: req.session.admin });
+    } catch (error) {
+        console.log(error.message);
+        res.render('admin/errors');
+    }
+};
+
+//admin editCategoryOfferPost() POST request
+exports.editCategoryOfferPost = async (req, res) => {
+    try {
+        console.log('edit category offer post');
+        const offerId = req.body.id;
+        console.log(offerId);
+        const updatedOfferData = {
+            offerName: req.body.offerName,
+            discountAmount: req.body.disAmount,
+            activationDate: req.body.actDate,
+            expiryDate: req.body.expDate,
+        };
+        await Offer.findByIdAndUpdate(offerId, updatedOfferData);
+        res.redirect('/admin/categoryOffer');
+    } catch (error) {
+        console.log(error.message);
+        res.render('admin/errors');
+    }
+};
+
+//admin hideCategoryOffer() get request
+exports.hideCategoryOffer = async (req, res) => {
+    try {
+        const offerId = req.query.id;
+        const test = await Offer.updateOne({ _id: offerId }, { $set: { isBlocked: true } });
+        res.redirect('/admin/categoryOffer');
+    } catch (error) {
+        console.log(error.message);
+        res.render('admin/errors');
+    }
+};
+
+//admin showCategoryOffer() get request
+exports.showCategoryOffer = async (req, res) => {
+    try {
+        const offerId = req.query.id;
+        const test = await Offer.updateOne({ _id: offerId }, { $set: { isBlocked: false } });
+        res.redirect('/admin/categoryOffer');
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

@@ -37,24 +37,20 @@ exports.addProducts = async (req, res) => {
 //admin addProductsPost() POST request
 exports.addProductsPost = async (req, res) => {
     try {
-        if (req.body.stock < 0) {
-            return res.json({ stock: true });
-        }else {
-            const files = await req.files;
-            const newProduct = new Product({
-                productName: req.body.pname,
-                category: req.body.category,
-                price: req.body.price,
-                productDetails: productDetails,
-                "image.image1": files.image1[0].filename,
-                "image.image2": files.image2[0].filename,
-                "image.image3": files.image3[0].filename,
-                "image.image4": files.image4[0].filename,
-                stock: req.body.stock
-            });
-            await newProduct.save();
-            return res.json({ success: true });
-        }
+        const files = await req.files;
+        const newProduct = new Product({
+            productName: req.body.pname,
+            category: req.body.category,
+            price: req.body.price,
+            productDetails: req.body.pdetails,
+            "image.image1": files.image1[0].filename,
+            "image.image2": files.image2[0].filename,
+            "image.image3": files.image3[0].filename,
+            "image.image4": files.image4[0].filename,
+            stock: req.body.stock
+        });
+        await newProduct.save();
+        res.redirect('/admin/products')
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

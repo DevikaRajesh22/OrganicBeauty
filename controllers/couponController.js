@@ -86,7 +86,7 @@ exports.editCouponPost = async (req, res) => {
             maximumPurchase: req.body.maxDis,
             lastDate: req.body.valid
         };
-        const test = await Coupon.findByIdAndUpdate(couponId, updatedCouponData);
+        await Coupon.findByIdAndUpdate(couponId, updatedCouponData);
         res.redirect('/admin/coupon');
     } catch (error) {
         console.log(error.message);
