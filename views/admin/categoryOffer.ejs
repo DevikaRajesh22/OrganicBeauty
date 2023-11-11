@@ -121,7 +121,7 @@
                                                         <p class="text-black mb-1">Discount Amount: ₹ <%=
                                                                 offer.discountAmount %>
                                                         </p>
-                                                        <p class="text-black mb-1">Category: <%= offer.category.categoryName %>
+                                                        <p class="text-black mb-1">Category: <%= offer?.category %>
                                                         </p>
                                                         <% const date=new Date(offer.expiryDate); const
                                                             day=String(date.getDate()).padStart(2, '0' ); const

@@ -13,6 +13,10 @@ const CategorySchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    offer: {
+        type: String,
+        ref: 'Offer'
+    },
 }, { strictPopulate: false });
 
 module.exports = mongoose.model('Category', CategorySchema);

@@ -6,7 +6,7 @@ const ProductSchema = new mongoose.Schema({
         required: true
     },
     category: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Category'
     },
     price: {
@@ -43,6 +43,9 @@ const ProductSchema = new mongoose.Schema({
     isList:{
         type:Boolean,
         default:true,
+    },
+    discountAppied:{
+        type:Number,
     }
 });
 

@@ -315,7 +315,7 @@ exports.salesReport = async (req, res) => {
                 },
             },
         ]);
-        res.render('admin/salesReport', { pageName, orderData, admin: req.session.admin });
+        res.render('admin/salesReport', { pageName, orderData, admin:req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');

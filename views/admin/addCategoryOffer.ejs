@@ -262,7 +262,7 @@
                                                     <select id="category" name="category">
                                                         <% categories.filter(category=>
                                                             !category.isBlocked).forEach(function(category) { %>
-                                                            <option value="<%= category._id %>">
+                                                            <option value="<%= category.categoryName%>">
                                                                 <%= category.categoryName %>
                                                             </option>
                                                             <% }); %>

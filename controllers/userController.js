@@ -3,6 +3,7 @@ const Cart = require('../models/user/cartCollection');
 const Category = require('../models/admin/categoryCollection');
 const Product = require('../models/admin/productCollection');
 const Wishlist = require('../models/user/wishlistCollection');
+const Offer = require('../models/admin/offerCollection');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
@@ -214,16 +215,20 @@ exports.landingPage = async (req, res) => {
         const carts = await Cart?.findOne({ userId: userId });
         const pageTitle = 'Home';
         let count = 0;
-        const products = await Product.find();
         if (carts) {
             count = count + carts.products.length;
         } else {
             count = 0;
         }
-        res.render('user/landingPage', { products, pageTitle, count, user: req.session.name, wishlistCount });
+        const productData = await Product.find().populate({
+            path: 'category',
+            populate: {
+              path: 'offer',
+            },
+          });
+        res.render('user/landingPage', { productData,  pageTitle, count, user: req.session.name, wishlistCount });
     } catch (error) {
         console.log(error.message);
-        res.render('user/error');
     }
 };
 

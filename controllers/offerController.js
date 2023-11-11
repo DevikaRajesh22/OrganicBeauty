@@ -3,6 +3,7 @@ const Cart = require('../models/user/cartCollection');
 const User = require('../models/user/userCollection');
 const Offer = require('../models/admin/offerCollection');
 const Category = require('../models/admin/categoryCollection');
+const Product = require('../models/admin/productCollection');
 
 //user referral() GET request
 exports.referral = async (req, res) => {
@@ -35,7 +36,7 @@ exports.referral = async (req, res) => {
 exports.categoryOffer = async (req, res) => {
     try {
         const pageName = 'Category Offers';
-        const offerData = await Offer.find().populate('category');
+        const offerData = await Offer.find();
         let pageNum = req.query.pageNum;
         let perPage = 8;
         const offerCount = await Offer.countDocuments();
@@ -78,9 +79,22 @@ exports.addCategoryOfferPost = async (req, res) => {
                 discountAmount: discountAmount,
                 activationDate: activationDate,
                 expiryDate: expiryDate,
-                category: category
             });
-            await newCategoryOffer.save();
+            const offer = newCategoryOffer.save();
+            let offerId = (await offer)._id;
+            //adding category name to offer
+            await Offer.findOneAndUpdate({ _id: offerId }, {
+                $set: {
+                    category: category
+                }
+            });
+            //setting offer to category
+            let addOffer = await Category.findOneAndUpdate({ categoryName: category }, {
+                $set: {
+                    offer: offerId
+                }
+            });
+
             return res.json({ success: true });
         }
     } catch (error) {
@@ -95,8 +109,7 @@ exports.editCategoryOffer = async (req, res) => {
         const pageName = "Edit offer";
         const id = req.query.id;
         const offerData = await Offer.findById({ _id: id });
-        const categories = await Category.find();
-        res.render('admin/editCategoryOffer', { pageName, offerData, categories, admin: req.session.admin });
+        res.render('admin/editCategoryOffer', { pageName, offerData, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -127,7 +140,7 @@ exports.editCategoryOfferPost = async (req, res) => {
 exports.hideCategoryOffer = async (req, res) => {
     try {
         const offerId = req.query.id;
-        const test = await Offer.updateOne({ _id: offerId }, { $set: { isBlocked: true } });
+        await Offer.updateOne({ _id: offerId }, { $set: { isBlocked: true } });
         res.redirect('/admin/categoryOffer');
     } catch (error) {
         console.log(error.message);
@@ -139,7 +152,7 @@ exports.hideCategoryOffer = async (req, res) => {
 exports.showCategoryOffer = async (req, res) => {
     try {
         const offerId = req.query.id;
-        const test = await Offer.updateOne({ _id: offerId }, { $set: { isBlocked: false } });
+        await Offer.updateOne({ _id: offerId }, { $set: { isBlocked: false } });
         res.redirect('/admin/categoryOffer');
     } catch (error) {
         console.log(error.message);
