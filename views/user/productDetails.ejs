@@ -54,42 +54,54 @@
               </h3>
               <p>Category: <%= categories.categoryName %>
               </p>
-              <div class="product__details__price">₹<%=products.price%>
-              </div>
-              <div style="display: flex; align-items: center;">
-                <%if(wishlistString.includes(products._id.toString())){ %>
-                  <a onclick="wishlist('<%= products._id%>')" class="mx-3 text-decoration-none" style="color: red;">
-                    <i class="fas fa-heart fa-lg"></i>
-                  </a>
-                  <% }else{ %>
-                    <a onclick="wishlist('<%= products._id%>')" class="mx-3 text-decoration-none">
-                      <i class="far fa-heart fa-lg"></i>
-                    </a>
-                    <% } %>
-                      <form action="/add?id=<%= products._id %>" method="POST">
-                        <% if(products.stock===0){ %>
-                          <button class="btn btn-danger text-white" disabled>Out of stock</button>
-                          <% }else{ %>
-                            <button href="/addToCart?id=<%=products._id%>" class="btn btn-outline-success" type="submit"
-                              onclick="addToCart('<%= products._id%>')">
-                              Add to cart
-                            </button>
-                            <% } %>
-                      </form>
-              </div>
-              <ul>
-                <li><b>Availability</b>
-                  <%if(products._id.stock> 0){ %>
-                    <span class="in-stock">In stock</span>
-                    <%}else{%>
-                      <span class="out-of-stock" style="color: red;"><b>Out of stock</b></span>
-                      <%}%>
-                </li>
-                <li>
-                  <b>Shipping</b>
-                  <span>01 day shipping. <samp>Free pickup today</samp></span>
-                </li>
-              </ul>
+              <% if(products.category.offer && products.category.offer.activationDate <=new Date() &&
+                products.category.offer.expiryDate>= new Date() &&
+                products.category.categoryName===products.category.offer.category ){ %>
+                <h5 class="text-danger mb-3"><strike>₹ <%= products.price%></strike><span class="text-primary"> ₹ <%=
+                      products.price - products.category.offer.discountAmount %></span>
+                </h5>
+                <h6 class="text-danger">
+                  <%= products.category.offer.offerName %>
+                </h6>
+                <% }else{ %>
+                  <h5 class="text-primary mb-3">₹ <%= products.price%>
+                  </h5>
+                  <% } %>
+                    <div style="display: flex; align-items: center;">
+                      <%if(wishlistString.includes(products._id.toString())){ %>
+                        <a onclick="wishlist('<%= products._id%>')" class="mx-3 text-decoration-none"
+                          style="color: red;">
+                          <i class="fas fa-heart fa-lg"></i>
+                        </a>
+                        <% }else{ %>
+                          <a onclick="wishlist('<%= products._id%>')" class="mx-3 text-decoration-none">
+                            <i class="far fa-heart fa-lg"></i>
+                          </a>
+                          <% } %>
+                            <form action="/add?id=<%= products._id %>" method="POST">
+                              <% if(products.stock===0){ %>
+                                <button class="btn btn-danger text-white" disabled>Out of stock</button>
+                                <% }else{ %>
+                                  <button href="/addToCart?id=<%=products._id%>" class="btn btn-outline-success"
+                                    type="submit" onclick="addToCart('<%= products._id%>')">
+                                    Add to cart
+                                  </button>
+                                  <% } %>
+                            </form>
+                    </div>
+                    <ul>
+                      <li><b>Availability</b>
+                        <%if(products._id.stock> 0){ %>
+                          <span class="in-stock">In stock</span>
+                          <%}else{%>
+                            <span class="out-of-stock" style="color: red;"><b>Out of stock</b></span>
+                            <%}%>
+                      </li>
+                      <li>
+                        <b>Shipping</b>
+                        <span>01 day shipping. <samp>Free pickup today</samp></span>
+                      </li>
+                    </ul>
             </div>
           </div>
           <div class="col-lg-12">

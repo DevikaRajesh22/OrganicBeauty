@@ -365,7 +365,12 @@ exports.productDetails = async (req, res) => {
         } else {
             count = 0;
         }
-        const products = await Product.findOne({ _id: productId });
+        const products = await Product.findOne({ _id: productId }).populate({
+            path: 'category',
+            populate: {
+                path: 'offer',
+            },
+        });
         const categoryId = products.category;
         const categories = await Category.findOne({ _id: categoryId });
         const pageTitle = 'Product';
