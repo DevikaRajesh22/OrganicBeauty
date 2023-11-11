@@ -78,65 +78,91 @@
           <% }else{ %>
             <% if(similar){ %>
               <div class="row g-4">
-                <% similar.forEach(function(item){ %>
+                <% similar.forEach(function(item,index){ %>
                   <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.1s">
                     <div class="product-item text-center border h-100 p-4">
                       <img class="img-fluid mb-4" src="/product/<%=item.image.image1%>" alt="" />
                       <a href="/productDetails?id=<%=item._id%>" class="h6 d-inline-block mb-2">
                         <%=item.productName%>
                       </a>
-                      <h5 class="text-primary mb-3">₹ <%=item.price%>
-                      </h5>
-                      <form action="/add?id=<%= item._id %>" method="POST">
-                        <%if(wishlistString.includes(item._id.toString())){ %>
-                          <a onclick="wishlist('<%= item._id%>')" class="mx-3 text-decoration-none" style="color: red;">
-                            <i class="fas fa-heart fa-lg"></i>
-                          </a>
-                          <% }else{ %>
-                            <a onclick="wishlist('<%= item._id%>')" class="mx-3 text-decoration-none">
-                              <i class="far fa-heart fa-lg"></i>
-                            </a>
-                            <% } %>
-                              <button href="/addToCart?id=<%=item._id%>" class="btn btn-outline-success" type="submit"
-                                onclick="addToCart()">
-                                Add to cart
-                              </button>
-                      </form>
+
+                      <% if(item.category.offer && item.category.offer.activationDate <=new Date() &&
+                        item.category.offer.expiryDate>= new Date() &&
+                        item.category.categoryName===similar[index].category.offer.category ){ %>
+                        <h5 class="text-danger mb-3"><strike>₹ <%= item.price%></strike><span class="text-primary"> ₹
+                            <%= item.price - item.category.offer.discountAmount %>
+                          </span>
+                        </h5>
+                        <h6 class="text-danger">
+                          <%= item.category.offer.offerName %>
+                        </h6>
+                        <% }else{ %>
+                          <h5 class="text-primary mb-3">₹ <%= item.price%>
+                          </h5>
+                          <% } %>
+                            <form action="/add?id=<%= item._id %>" method="POST">
+                              <%if(wishlistString.includes(item._id.toString())){ %>
+                                <a onclick="wishlist('<%= item._id%>')" class="mx-3 text-decoration-none"
+                                  style="color: red;">
+                                  <i class="fas fa-heart fa-lg"></i>
+                                </a>
+                                <% }else{ %>
+                                  <a onclick="wishlist('<%= item._id%>')" class="mx-3 text-decoration-none">
+                                    <i class="far fa-heart fa-lg"></i>
+                                  </a>
+                                  <% } %>
+                                    <button href="/addToCart?id=<%=item._id%>" class="btn btn-outline-success"
+                                      type="submit" onclick="addToCart()">
+                                      Add to cart
+                                    </button>
+                            </form>
                     </div>
                   </div>
                   <% }); %>
               </div>
               <% }else{ %>
                 <div class="row g-4">
-                  <% items.forEach(function(item){ %>
+                  <% items.forEach(function(item,index){ %>
                     <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.1s">
                       <div class="product-item text-center border h-100 p-4">
                         <img class="img-fluid mb-4" src="/product/<%=item.image.image1%>" alt="" />
                         <a href="/productDetails?id=<%=item._id%>" class="h6 d-inline-block mb-2">
                           <%=item.productName%>
                         </a>
-                        <h5 class="text-primary mb-3">₹ <%=item.price%>
-                        </h5>
-                        <form action="/add?id=<%= item._id %>" method="POST">
-                          <%if(wishlistString.includes(item._id.toString())){ %>
-                            <a onclick="wishlist('<%= item._id%>')" class="mx-3 text-decoration-none"
-                              style="color: red;">
-                              <i class="fas fa-heart fa-lg"></i>
-                            </a>
-                            <% }else{ %>
-                              <a onclick="wishlist('<%= item._id%>')" class="mx-3 text-decoration-none">
-                                <i class="far fa-heart fa-lg"></i>
-                              </a>
-                              <% } %>
-                                <% if(item.stock===0){ %>
-                                  <button class="btn btn-danger text-white" disabled>Out of stock</button>
+                        <% if(item.category.offer && item.category.offer.activationDate <=new Date() &&
+                          item.category.offer.expiryDate>= new Date() &&
+                          item.category.categoryName===items[index].category.offer.category ){ %>
+                          <h5 class="text-danger mb-3"><strike>₹ <%= item.price%></strike><span class="text-primary"> ₹
+                              <%= item.price - item.category.offer.discountAmount %>
+                            </span>
+                          </h5>
+                          <h6 class="text-danger">
+                            <%= item.category.offer.offerName %>
+                          </h6>
+                          <% }else{ %>
+                            <h5 class="text-primary mb-3">₹ <%= item.price%>
+                            </h5>
+                            <% } %>
+                              <form action="/add?id=<%= item._id %>" method="POST">
+                                <%if(wishlistString.includes(item._id.toString())){ %>
+                                  <a onclick="wishlist('<%= item._id%>')" class="mx-3 text-decoration-none"
+                                    style="color: red;">
+                                    <i class="fas fa-heart fa-lg"></i>
+                                  </a>
                                   <% }else{ %>
-                                    <button href="/addToCart?id=<%=item._id%>" class="btn btn-outline-success"
-                                      type="submit" onclick="addToCart('<%= item._id%>')">
-                                      Add to cart
-                                    </button>
+                                    <a onclick="wishlist('<%= item._id%>')" class="mx-3 text-decoration-none">
+                                      <i class="far fa-heart fa-lg"></i>
+                                    </a>
                                     <% } %>
-                        </form>
+                                      <% if(item.stock===0){ %>
+                                        <button class="btn btn-danger text-white" disabled>Out of stock</button>
+                                        <% }else{ %>
+                                          <button href="/addToCart?id=<%=item._id%>" class="btn btn-outline-success"
+                                            type="submit" onclick="addToCart('<%= item._id%>')">
+                                            Add to cart
+                                          </button>
+                                          <% } %>
+                              </form>
                       </div>
                     </div>
                     <% }); %>

@@ -288,10 +288,16 @@
                                     <a href="/productDetails?id=<%=product._id%>" class="h6 d-inline-block mb-2">
                                         <%= product.productName %>
                                     </a>
-                                    <% if(product.category.offer && product.category.offer.activationDate <= new Date() && product.category.offer.expiryDate >= new Date() && product.category.categoryName===productData[0].category.offer.category ){ %>
-                                        <h5 class="text-danger mb-3"><strike>₹ <%= product.price%></strike><span class="text-primary"> ₹ <%= product.price - product.category.offer.discountAmount %></span>
+                                    <% if(product.category.offer && product.category.offer.activationDate <=new Date()
+                                        && product.category.offer.expiryDate>= new Date() &&
+                                        product.category.categoryName===productData[index].category.offer.category ){ %>
+                                        <h5 class="text-danger mb-3"><strike>₹ <%= product.price%></strike><span
+                                                class="text-primary"> ₹ <%= product.price -
+                                                    product.category.offer.discountAmount %></span>
                                         </h5>
-                                        <h6><b><%= product.category.offer.offerName %></b></h6>
+                                        <h6 class="text-danger">
+                                            <%= product.category.offer.offerName %>
+                                        </h6>
                                         <% }else{ %>
                                             <h5 class="text-primary mb-3">₹ <%= product.price%>
                                             </h5>

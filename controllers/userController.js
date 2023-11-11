@@ -223,10 +223,10 @@ exports.landingPage = async (req, res) => {
         const productData = await Product.find().populate({
             path: 'category',
             populate: {
-              path: 'offer',
+                path: 'offer',
             },
-          });
-        res.render('user/landingPage', { productData,  pageTitle, count, user: req.session.name, wishlistCount });
+        });
+        res.render('user/landingPage', { productData, pageTitle, count, user: req.session.name, wishlistCount });
     } catch (error) {
         console.log(error.message);
     }
@@ -261,12 +261,28 @@ exports.productsGet = async (req, res) => {
         const items = await Product.find({
             isList: true,
             productName: { $regex: searchTerm, $options: "i" },
-        }).skip((pageNum - 1) * perPage).limit(perPage).sort({ price: sort });
+        })
+            .skip((pageNum - 1) * perPage)
+            .limit(perPage)
+            .sort({ price: sort })
+            .populate({
+                path: 'category',
+                populate: {
+                    path: 'offer',
+                },
+            });
         const categories = await Category.find({ isBlocked: false });
-        const pdata = await Product.find().populate('category');
         const categoryId = req.query.categoryFilter;
         if (categoryId !== undefined) {
-            similar = await Product.find({ category: categoryId }).skip((pageNum - 1) * perPage).limit(perPage);
+            similar = await Product.find({ category: categoryId })
+                .skip((pageNum - 1) * perPage)
+                .limit(perPage)
+                .populate({
+                    path: 'category',
+                    populate: {
+                        path: 'offer',
+                    },
+                });
         }
 
         res.render('user/products', { pageTitle, count, items, user: req.session.name, searchTerm, categories, similar, wishlistString, wishlistCount, page });
