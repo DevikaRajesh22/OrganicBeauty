@@ -44,7 +44,7 @@ const ProductSchema = new mongoose.Schema({
         type:Boolean,
         default:true,
     },
-    discountAppied:{
+    discountAmount:{
         type:Number,
     }
 });

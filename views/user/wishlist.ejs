@@ -98,21 +98,29 @@
                         <%}else{%>
                           <span class="out-of-stock">Out of stock</span>
                           <%}%>
-                            <h5 class="text-primary mb-3">₹ <%=item.productId.price%>
-                            </h5>
-                            <form action="/add?id=<%= item.productId._id %>" method="POST">
-                              <% if(item.productId.stock===0){ %>
-                                <button class="btn btn-danger" disabled>Out of stock</button>
-                                <% }else{ %>
-                                  <button href="/addToCart?id=<%=item.productId._id%>" class="btn btn-outline-success"
-                                    type="submit" onclick="addToCart('<%= item.productId._id %>')">
-                                    Add to cart
-                                  </button>
-                                  <% } %>
-                                    <button class="btn btn-danger"
-                                      onclick="removeFromWishlist('<%= item.productId._id %>')"><i
-                                        class="fas fa-regular fa-trash"></i></button>
-                            </form>
+                            <% if(item.productId.discountAmount){ %>
+                              <h5 class="text-danger mb-3"><strike>₹ <%=item.productId.price%> </strike><span
+                                  class="text-primary"> ₹<%= item.productId.price - item.productId.discountAmount %>
+                                    </span>
+                              </h5>
+                              <% }else{ %>
+                                <h5 class="text-primary mb-3">₹ <%=item.productId.price%>
+                                </h5>
+                                <% } %>
+                                  <form action="/add?id=<%= item.productId._id %>" method="POST">
+                                    <% if(item.productId.stock===0){ %>
+                                      <button class="btn btn-danger" disabled>Out of stock</button>
+                                      <% }else{ %>
+                                        <button href="/addToCart?id=<%=item.productId._id%>"
+                                          class="btn btn-outline-success" type="submit"
+                                          onclick="addToCart('<%= item.productId._id %>')">
+                                          Add to cart
+                                        </button>
+                                        <% } %>
+                                          <button class="btn btn-danger"
+                                            onclick="removeFromWishlist('<%= item.productId._id %>')"><i
+                                              class="fas fa-regular fa-trash"></i></button>
+                                  </form>
                     </div>
                   </div>
                   <% }); %>

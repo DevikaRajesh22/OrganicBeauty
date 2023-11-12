@@ -67,6 +67,8 @@ exports.addCategoryOfferPost = async (req, res) => {
         let currentDate = new Date();
         currentDate = currentDate.toISOString().split('T')[0];
         const categoryFound = await Offer.findOne({ category: category });
+        const categoryData = Category.findOne({ categoryName: category });
+        let categoryId = (await categoryData)._id;
         if (activationDate < currentDate || expiryDate <= currentDate) {
             res.json({ dateValidation: true });
         } else if (categoryFound) {
@@ -94,6 +96,11 @@ exports.addCategoryOfferPost = async (req, res) => {
                     offer: offerId
                 }
             });
+
+            const updatedProductData = await Product.updateMany(
+                { category: categoryId },
+                { $set: { discountAmount: discountAmount } }
+            );
 
             return res.json({ success: true });
         }
