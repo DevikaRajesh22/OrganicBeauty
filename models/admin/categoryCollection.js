@@ -1,22 +1,25 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const CategorySchema = new mongoose.Schema({
+const CategorySchema = new mongoose.Schema(
+  {
     categoryName: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     categoryDescription: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     isBlocked: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     offer: {
-        type: String,
-        ref: 'Offer'
+      type: String,
+      ref: "Offer",
     },
-}, { strictPopulate: false });
+  },
+  { strictPopulate: false }
+);
 
-module.exports = mongoose.model('Category', CategorySchema);
+module.exports = mongoose.model("Category", CategorySchema);

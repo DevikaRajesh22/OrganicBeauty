@@ -100,9 +100,9 @@
                           <%}%>
                             <% if(item.productId.category.offer){ %>
                               <h5 class="text-danger mb-3"><strike>₹ <%=item.productId.price%> </strike>
-                                <span
-                                  class="text-primary"> ₹<%= item.productId.price - Math.floor((item.productId.price * item?.productId?.category?.offer?.discountAmount) / 100)%>
-                                    </span>
+                                <span class="text-primary"> ₹<%= item.productId.price - Math.floor((item.productId.price
+                                    * item?.productId?.category?.offer?.discountAmount) / 100)%>
+                                </span>
                               </h5>
                               <% }else{ %>
                                 <h5 class="text-primary mb-3">₹ <%=item.productId.price%>

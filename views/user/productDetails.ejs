@@ -1,204 +1,238 @@
 <%- include('../layouts/user/userHeader.ejs') %>
-  <!-- Page Preloder -->
-  <div id="preloder">
-    <div class="loader"></div>
-  </div>
-  <!-- Navbar Start -->
-  <%- include('../layouts/user/userNavbar.ejs') %>
-    <!-- Navbar End -->
+<!-- Page Preloder -->
+<div id="preloder">
+  <div class="loader"></div>
+</div>
+<!-- Navbar Start -->
+<%- include('../layouts/user/userNavbar.ejs') %>
+<!-- Navbar End -->
 
-    <!-- Product Details Section Begin -->
-    <style>
-      .product {
-        position: relative;
-        overflow: hidden;
-        transition: transform 0.3s;
-        /* Add a smooth transition effect */
-      }
+<!-- Product Details Section Begin -->
+<style>
+  .product {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
+    /* Add a smooth transition effect */
+  }
 
-      .product img {
-        width: 100%;
-        height: auto;
-        display: block;
-      }
+  .product img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
 
-      .product:hover {
-        transform: scale(1.1);
-        /* Scale the image up by 10% on hover */
-      }
-    </style>
-    <section class="product-details spad">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-6 col-md-6">
-            <div class="product__details__pic">
-              <div class="product__details__pic__item product">
-                <img class="product__details__pic__item--large" src="/product/<%=products.image.image1%>" alt="" />
-              </div>
-              <div class="product__details__pic__slider owl-carousel">
-                <img data-imgbigurl="/product/<%=products.image.image1%>" src="/product/<%=products.image.image1%>"
-                  alt="" />
-                <img data-imgbigurl="/product/<%=products.image.image2%>" src="/product/<%=products.image.image2%>"
-                  alt="" />
-                <img data-imgbigurl="/product/<%=products.image.image3%>" src="/product/<%=products.image.image3%>"
-                  alt="" />
-                <img data-imgbigurl="/product/<%=products.image.image4%>" src="/product/<%= products.image.image4 %>"
-                  alt="" />
-              </div>
-            </div>
+  .product:hover {
+    transform: scale(1.1);
+    /* Scale the image up by 10% on hover */
+  }
+</style>
+<section class="product-details spad">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 col-md-6">
+        <div class="product__details__pic">
+          <div class="product__details__pic__item product">
+            <img
+              class="product__details__pic__item--large"
+              src="/product/<%=products.image.image1%>"
+              alt=""
+            />
           </div>
-          <div class="col-lg-6 col-md-6">
-            <div class="product__details__text">
-              <h3>
-                <%=products.productName%>
-              </h3>
-              <p>Category: <%= categories.categoryName %>
-              </p>
-              <% if(products.category.offer && products.category.offer.activationDate <=new Date() &&
-                products.category.offer.expiryDate>= new Date() &&
-                products.category.categoryName===products.category.offer.category  && products.category.offer.isBlocked===false){ %>
-                <h5 class="text-danger mb-3"><strike>₹ <%= products.price%></strike><span class="text-primary"> ₹ <%= products.price - Math.floor((products.price * products.category.offer.discountAmount) / 100) %></span>
-                </h5>
-                <h6 class="text-danger">
-                  <%= products.category.offer.offerName %>
-                </h6>
-                <% }else{ %>
-                  <h5 class="text-primary mb-3">₹ <%= products.price%>
-                  </h5>
-                  <% } %>
-                    <div style="display: flex; align-items: center;">
-                      <%if(wishlistString.includes(products._id.toString())){ %>
-                        <a onclick="wishlist('<%= products._id%>')" class="mx-3 text-decoration-none"
-                          style="color: red;">
-                          <i class="fas fa-heart fa-lg"></i>
-                        </a>
-                        <% }else{ %>
-                          <a onclick="wishlist('<%= products._id%>')" class="mx-3 text-decoration-none">
-                            <i class="far fa-heart fa-lg"></i>
-                          </a>
-                          <% } %>
-                            <form action="/add?id=<%= products._id %>" method="POST">
-                              <% if(products.stock===0){ %>
-                                <button class="btn btn-danger text-white" disabled>Out of stock</button>
-                                <% }else{ %>
-                                  <button href="/addToCart?id=<%=products._id%>" class="btn btn-outline-success"
-                                    type="submit" onclick="addToCart('<%= products._id%>')">
-                                    Add to cart
-                                  </button>
-                                  <% } %>
-                            </form>
-                    </div>
-                    <ul>
-                      <li><b>Availability</b>
-                        <%if(products._id.stock> 0){ %>
-                          <span class="in-stock">In stock</span>
-                          <%}else{%>
-                            <span class="out-of-stock" style="color: red;"><b>Out of stock</b></span>
-                            <%}%>
-                      </li>
-                      <li>
-                        <b>Shipping</b>
-                        <span>01 day shipping. <samp>Free pickup today</samp></span>
-                      </li>
-                    </ul>
-            </div>
+          <div class="product__details__pic__slider owl-carousel">
+            <img
+              data-imgbigurl="/product/<%=products.image.image1%>"
+              src="/product/<%=products.image.image1%>"
+              alt=""
+            />
+            <img
+              data-imgbigurl="/product/<%=products.image.image2%>"
+              src="/product/<%=products.image.image2%>"
+              alt=""
+            />
+            <img
+              data-imgbigurl="/product/<%=products.image.image3%>"
+              src="/product/<%=products.image.image3%>"
+              alt=""
+            />
+            <img
+              data-imgbigurl="/product/<%=products.image.image4%>"
+              src="/product/<%= products.image.image4 %>"
+              alt=""
+            />
           </div>
-          <div class="col-lg-12">
-            <div class="product__details__tab">
-              <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item">
-                  <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab"
-                    aria-selected="true">Description</a>
-                </li>
-              </ul>
-              <div class="tab-content">
-                <div class="tab-pane active" id="tabs-1" role="tabpanel">
-                  <div class="product__details__tab__desc">
-                    <h6>Products Infomation</h6>
-                    <p>
-                      <%=products.productDetails%>
-                    </p>
-                  </div>
-                </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6">
+        <div class="product__details__text">
+          <h3><%=products.productName%></h3>
+          <p>Category: <%= categories.categoryName %></p>
+          <% if(products.category.offer &&
+          products.category.offer.activationDate <=new Date() &&
+          products.category.offer.expiryDate>= new Date() &&
+          products.category.categoryName===products.category.offer.category &&
+          products.category.offer.isBlocked===false){ %>
+          <h5 class="text-danger mb-3">
+            <strike>₹ <%= products.price%></strike
+            ><span class="text-primary">
+              ₹ <%= products.price - Math.floor((products.price *
+              products.category.offer.discountAmount) / 100) %></span
+            >
+          </h5>
+          <h6 class="text-danger"><%= products.category.offer.offerName %></h6>
+          <% }else{ %>
+          <h5 class="text-primary mb-3">₹ <%= products.price%></h5>
+          <% } %>
+          <div style="display: flex; align-items: center">
+            <%if(wishlistString.includes(products._id.toString())){ %>
+            <a
+              onclick="wishlist('<%= products._id%>')"
+              class="mx-3 text-decoration-none"
+              style="color: red"
+            >
+              <i class="fas fa-heart fa-lg"></i>
+            </a>
+            <% }else{ %>
+            <a
+              onclick="wishlist('<%= products._id%>')"
+              class="mx-3 text-decoration-none"
+            >
+              <i class="far fa-heart fa-lg"></i>
+            </a>
+            <% } %>
+            <form action="/add?id=<%= products._id %>" method="POST">
+              <% if(products.stock===0){ %>
+              <button class="btn btn-danger text-white" disabled>
+                Out of stock
+              </button>
+              <% }else{ %>
+              <button
+                href="/addToCart?id=<%=products._id%>"
+                class="btn btn-outline-success"
+                type="submit"
+                onclick="addToCart('<%= products._id%>')"
+              >
+                Add to cart
+              </button>
+              <% } %>
+            </form>
+          </div>
+          <ul>
+            <li>
+              <b>Availability</b>
+              <%if(products._id.stock> 0){ %>
+              <span class="in-stock">In stock</span>
+              <%}else{%>
+              <span class="out-of-stock" style="color: red"
+                ><b>Out of stock</b></span
+              >
+              <%}%>
+            </li>
+            <li>
+              <b>Shipping</b>
+              <span>01 day shipping. <samp>Free pickup today</samp></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <div class="product__details__tab">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                data-toggle="tab"
+                href="#tabs-1"
+                role="tab"
+                aria-selected="true"
+                >Description</a
+              >
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+              <div class="product__details__tab__desc">
+                <h6>Products Infomation</h6>
+                <p><%=products.productDetails%></p>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </section>
-    <!-- Product Details Section End -->
+    </div>
+  </div>
+</section>
+<!-- Product Details Section End -->
 
-    <!-- sweetalert script -->
-    <script>
-      function addToCart(productId) {
-        $.ajax({
-          url: '/add',
-          type: 'POST',
-          data: {
-            product: productId,
-          },
-          success: function (response) {
-            if (response.login == true) {
-              swal
-                .fire({
-                  icon: "warning",
-                  title: "Please Login",
-                  confirmButtonColor: "#3085d6",
-                  confirmButtonText: "Login",
-                  showCancelButton: true,
-                  cancelButtonColor: "#d33",
-                  text: response.message,
-                })
-                .then((result) => {
-                  if (result.isConfirmed) {
-                    window.location.href = "/login";
-                  }
-                });
-            } else if (response.success) {
-              swal.fire({
-                position: "center",
-                icon: "success",
-                title: "Product added to cart",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            } else if (response.exist) {
-              Swal.fire({
-                icon: 'warning',
-                title: 'Item Already in Cart',
-                text: 'This item is already in your cart.',
-              });
-            } else if (response.outOfStock) {
-              swal.fire({
-                position: "center",
-                icon: "error",
-                title: "Out of stock",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            }
-          },
-        })
-      };
+<!-- sweetalert script -->
+<script>
+  function addToCart(productId) {
+    $.ajax({
+      url: "/add",
+      type: "POST",
+      data: {
+        product: productId,
+      },
+      success: function (response) {
+        if (response.login == true) {
+          swal
+            .fire({
+              icon: "warning",
+              title: "Please Login",
+              confirmButtonColor: "#3085d6",
+              confirmButtonText: "Login",
+              showCancelButton: true,
+              cancelButtonColor: "#d33",
+              text: response.message,
+            })
+            .then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = "/login";
+              }
+            });
+        } else if (response.success) {
+          swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Product added to cart",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        } else if (response.exist) {
+          Swal.fire({
+            icon: "warning",
+            title: "Item Already in Cart",
+            text: "This item is already in your cart.",
+          });
+        } else if (response.outOfStock) {
+          swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Out of stock",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      },
+    });
+  }
 
-      function wishlist(productId) {
-        $.ajax({
-          url: '/addToWishlist',
-          type: 'POST',
-          data: {
-            productId: productId,
-          },
-          success: function (response) {
-            if (response.added) {
-              location.reload();
-            } else if (response.removed) {
-              location.reload()
-            }
-          }
-        });
-      }
+  function wishlist(productId) {
+    $.ajax({
+      url: "/addToWishlist",
+      type: "POST",
+      data: {
+        productId: productId,
+      },
+      success: function (response) {
+        if (response.added) {
+          location.reload();
+        } else if (response.removed) {
+          location.reload();
+        }
+      },
+    });
+  }
+</script>
 
-
-    </script>
-
-    <%- include('../layouts/user/userFooter.ejs') %>
+<%- include('../layouts/user/userFooter.ejs') %>

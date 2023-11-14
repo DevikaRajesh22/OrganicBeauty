@@ -6,8 +6,6 @@ const port = process.env.PORT || 3000;
 const session = require("express-session");
 const nocache = require("nocache");
 const crypto = require("crypto");
-const multer = require("multer");
-const sharp = require("sharp");
 
 const app = express();
 
@@ -25,6 +23,9 @@ app.use(
   })
 );
 
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
 //static
 app.use(express.static(path.join(__dirname, "public")));
 app.use(nocache());
@@ -32,6 +33,9 @@ app.use(nocache());
 //routes
 app.use("/", userRoute);
 app.use("/admin", adminRoute);
+app.use((req, res) => {
+  res.status(404).render("user/error"); // Assuming 'user/error' is your error page
+});
 
 app.listen(port, () => {
   console.log("server is running");

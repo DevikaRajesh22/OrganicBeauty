@@ -292,7 +292,7 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                window.location.href='/admin/coupon';
+                                window.location.href = '/admin/coupon';
                             } else if (response.dateValidation) {
                                 Swal.fire({
                                     position: "center",

@@ -1,146 +1,152 @@
 <%- include('../layouts/admin/adminHeader.ejs') %>
-  <div class="container-scroller">
-    <!-- partial:partials/_navbar.html -->
-    <%- include('../layouts/admin/adminNavbar.ejs') %>
-      <!-- partial -->
-      <div class="container-fluid page-body-wrapper">
-        <!-- partial:partials/_sidebar.html -->
-        <%- include('../layouts/admin/adminSidebar.ejs') %>
-          <!-- partial -->
-          <div class="main-panel">
-            <div class="content-wrapper">
-              <!-- Page Title Header Starts-->
-              <div class="row page-title-header">
-                <div class="col-12">
-                  <div class="page-header">
-                    <h4 class="page-title">Order management</h4>
-                  </div>
-                </div>
-              </div>
-              <!-- code -->
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th scope="col">Order ID</th>
-                    <th scope="col">Customer Name</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% orders.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
-                    orders.forEach(function(order){ %>
-                    <tr>
-                      <th scope="row">
-                        <%= order.orderId %>
-                      </th>
-                      <td>
-                        <%= order.userName %>
-                      </td>
-                      <td>
-                        <%= new Date(order.date).toLocaleString('en-US', { year: 'numeric' , month: '2-digit' ,
-                          day: '2-digit' }) %>
-                      </td>
-                      <td>₹ <%= order.totalAmount %></td>
-                      <td>
-                        <% if(order.status==="Pending" ){ %>
-                          <button class="btn btn-success" onclick="return updateStatus('<%=order._id %>')"
-                            type="button">
-                            <%= order.status %>
-                          </button>
-                          <% }else if(order.status==="Placed"){%>
-                            <button class="btn btn-success" onclick="return updateStatus('<%=order._id %>')"
-                              type="button">
-                              <%= order.status %>
-                            </button>
-                            <% }else if(order.status==="Shipped" ){ %>
-                              <button class="btn btn-success" onclick="return updateStatus('<%=order._id %>')"
-                                type="button">
-                                <%= order.status %>
-                              </button>
-                              <% }else if(order.status==="Out for delivery" ){ %>
-                                <button class="btn btn-success" onclick="return updateStatus('<%=order._id %>')"
-                                  type="button">
-                                  <%= order.status %>
-                                </button>
-                                <% }else if(order.status==="Delivered" ){ %>
-                                  <button class="btn btn-success"
-                                    type="button">
-                                    <%= order.status %>
-                                  </button>
-                                  <% }else if(order.status==="Cancelled"){%>
-                                    <button class="btn btn-success"
-                                      type="button">
-                                      <%= order.status %>
-                                    </button>
-                                    <% }else if(order.status==="Returned"){ %>
-                                      <button class="btn btn-success"
-                                      type="button">
-                                      <%= order.status %>
-                                    </button>
-                                   <% } %>
-                      </td>
-
-                      <td>
-                        <a href="/admin/orderDetails?orderId=<%= order._id %>"><button type="button"
-                            class="btn btn-success">
-                            Order details
-                          </button></a>
-                      </td>
-                    </tr>
-                    <% }) %>
-                </tbody>
-              </table><br>
-              <nav aria-label="Page navigation example">
-                <ul class="pagination d-flex justify-content-center">
-                  <% for (let i=1; i <=page; i++) { %>
-                    <li class="page-item">
-                      <a class="page-link" href="/admin/ordersAdmin?pageNum=<%= i %>">
-                        <%= i %>
-                      </a>
-                    </li>
-                    <% } %>
-                </ul>
-              </nav>
-              <!-- code ends -->
+<div class="container-scroller">
+  <!-- partial:partials/_navbar.html -->
+  <%- include('../layouts/admin/adminNavbar.ejs') %>
+  <!-- partial -->
+  <div class="container-fluid page-body-wrapper">
+    <!-- partial:partials/_sidebar.html -->
+    <%- include('../layouts/admin/adminSidebar.ejs') %>
+    <!-- partial -->
+    <div class="main-panel">
+      <div class="content-wrapper">
+        <!-- Page Title Header Starts-->
+        <div class="row page-title-header">
+          <div class="col-12">
+            <div class="page-header">
+              <h4 class="page-title">Order management</h4>
             </div>
-            <!-- main-panel ends -->
           </div>
-          <!-- page-body-wrapper ends -->
+        </div>
+        <!-- code -->
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Order ID</th>
+              <th scope="col">Customer Name</th>
+              <th scope="col">Date</th>
+              <th scope="col">Price</th>
+              <th scope="col">Status</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% orders.sort(function(a, b) { return new Date(b.date) - new
+            Date(a.date); }); orders.forEach(function(order){ %>
+            <tr>
+              <th scope="row"><%= order.orderId %></th>
+              <td><%= order.userName %></td>
+              <td>
+                <%= new Date(order.date).toLocaleString('en-US', { year:
+                'numeric' , month: '2-digit' , day: '2-digit' }) %>
+              </td>
+              <td>₹ <%= order.totalAmount %></td>
+              <td>
+                <% if(order.status==="Pending" ){ %>
+                <button
+                  class="btn btn-success"
+                  onclick="return updateStatus('<%=order._id %>')"
+                  type="button"
+                >
+                  <%= order.status %>
+                </button>
+                <% }else if(order.status==="Placed"){%>
+                <button
+                  class="btn btn-success"
+                  onclick="return updateStatus('<%=order._id %>')"
+                  type="button"
+                >
+                  <%= order.status %>
+                </button>
+                <% }else if(order.status==="Shipped" ){ %>
+                <button
+                  class="btn btn-success"
+                  onclick="return updateStatus('<%=order._id %>')"
+                  type="button"
+                >
+                  <%= order.status %>
+                </button>
+                <% }else if(order.status==="Out for delivery" ){ %>
+                <button
+                  class="btn btn-success"
+                  onclick="return updateStatus('<%=order._id %>')"
+                  type="button"
+                >
+                  <%= order.status %>
+                </button>
+                <% }else if(order.status==="Delivered" ){ %>
+                <button class="btn btn-success" type="button">
+                  <%= order.status %>
+                </button>
+                <% }else if(order.status==="Cancelled"){%>
+                <button class="btn btn-success" type="button">
+                  <%= order.status %>
+                </button>
+                <% }else if(order.status==="Returned"){ %>
+                <button class="btn btn-success" type="button">
+                  <%= order.status %>
+                </button>
+                <% } %>
+              </td>
+
+              <td>
+                <a href="/admin/orderDetails?orderId=<%= order._id %>"
+                  ><button type="button" class="btn btn-success">
+                    Order details
+                  </button></a
+                >
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <br />
+        <nav aria-label="Page navigation example">
+          <ul class="pagination d-flex justify-content-center">
+            <% for (let i=1; i <=page; i++) { %>
+            <li class="page-item">
+              <a class="page-link" href="/admin/ordersAdmin?pageNum=<%= i %>">
+                <%= i %>
+              </a>
+            </li>
+            <% } %>
+          </ul>
+        </nav>
+        <!-- code ends -->
       </div>
-      <!-- container-scroller -->
-      <script>
-        function updateStatus(orderId) {
-          Swal.fire({
-            title: "Are you sure?",
-            text: "You want to change the status?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes",
-            cancelButtonText: "No",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              $.ajax({
-                type: "post",
-                url: "/admin/updateStatus",
-                data: {
-                  orderId: orderId,
-                },
-                success: function (response) {
-                  if (response.success) {
-                    location.reload();
-                  }
-                },
-              });
-            }
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <script>
+    function updateStatus(orderId) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You want to change the status?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            type: "post",
+            url: "/admin/updateStatus",
+            data: {
+              orderId: orderId,
+            },
+            success: function (response) {
+              if (response.success) {
+                location.reload();
+              }
+            },
           });
         }
-
-      </script>
-      <!-- footer -->
-      <%- include('../layouts/admin/adminFooter.ejs') %>
-  </div>
+      });
+    }
+  </script>
+  <!-- footer -->
+  <%- include('../layouts/admin/adminFooter.ejs') %>
+</div>

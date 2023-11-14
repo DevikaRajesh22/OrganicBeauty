@@ -1,21 +1,21 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const UsersSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
-    required: true
+    required: true,
   },
   number: {
     type: String,
-    required: true
+    required: true,
   },
   spassword: {
     type: String,
-    required: true
+    required: true,
   },
   isBlocked: {
     type: Boolean,
@@ -23,29 +23,29 @@ const UsersSchema = new mongoose.Schema({
   },
   isVerified: {
     type: Boolean,
-    default: false
+    default: false,
   },
-  wallet :{
-    type : Number,
-    default : 0,
+  wallet: {
+    type: Number,
+    default: 0,
   },
-  walletHistory :[{
-    date :{
-      type : Date
+  walletHistory: [
+    {
+      date: {
+        type: Date,
+      },
+      amount: {
+        type: Number,
+      },
+      status: {
+        type: String,
+      },
     },
-    amount :{
-      type : Number
-    },
-    status :{
-      type : String
-    }
-  }],
+  ],
   referralCode: {
     type: String,
-    unique: true
+    unique: true,
   },
 });
 
-
-
-module.exports = mongoose.model('User', UsersSchema);
+module.exports = mongoose.model("User", UsersSchema);

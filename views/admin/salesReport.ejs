@@ -1,86 +1,101 @@
 <%- include('../layouts/admin/adminHeader.ejs') %>
-    <div class="container-scroller">
-        <!-- partial:partials/_navbar.html -->
-        <%- include('../layouts/admin/adminNavbar.ejs') %>
-            <!-- partial -->
-            <div class="container-fluid page-body-wrapper">
-                <!-- partial:partials/_sidebar.html -->
-                <%- include('../layouts/admin/adminSidebar.ejs') %>
-                    <!-- partial -->
-                    <div class="main-panel">
-                        <div class="content-wrapper">
-                            <!-- Page Title Header Starts-->
-                            <div class="page-header">
-                                <h4 class="page-title">Sales Report </h4>
-                                <div class="dropdown">
-                                    <button class="btn btn-success dropdown-toggle" type="button"
-                                        style="margin-left: 30px; margin-right: 30px;" id="dropdownMenuOutlineButton1"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Filter
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuOutlineButton1">
-                                        <a class="dropdown-item" href="/admin/sort?id=1">Daily</a>
-                                        <a class="dropdown-item" href="/admin/sort?id=7">Weekly</a>
-                                        <a class="dropdown-item" href="/admin/sort?id=30">Monthly</a>
-                                        <a class="dropdown-item" href="/admin/sort?id=365">Yearly</a>
-                                    </div>
-                                </div>
-                                <div class="dropdown">
-                                    <button class="btn btn-success dropdown-toggle" type="button"
-                                        id="dropdownMenuOutlineButton1" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false"> Report Download </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuOutlineButton1">
-                                        <a class="dropdown-item" href="/admin/download?format=excel&duration=1">Excel
-                                            Format</a>
-                                        <a class="dropdown-item" href="/admin/download?format=pdf">Pdf Format</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- code -->
-                            <table class="table">
-                                <thead class="black white-text">
-                                    <tr>
-                                        <th scope="col">Order ID</th>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Customer</th>
-                                        <th scope="col">Products</th>
-                                        <th scope="col">Quantity</th>
-                                        <th scope="col">Payment mode</th>
-                                        <th scope="col">Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% orderData.forEach(function(order){ %>
-                                        <tr>
-                                            <td>
-                                                <%= order.orderId %>
-                                            </td>
-                                            <td>
-                                                <%= new Date(order.date).toLocaleString('en-US', { year: 'numeric' ,
-                                                    month: '2-digit' , day: '2-digit' }) %>
-                                            </td>
-                                            <td>
-                                                <%= order.userName %>
-                                            </td>
-                                            <td>
-                                                <%= order.products.productDetails.productName %>
-                                            </td>
-                                            <td>
-                                                <%= order.products.count %>
-                                            </td>
-                                            <td>
-                                                <%= order.paymentMethod %>
-                                            </td>
-                                            <td>₹ <%= order.totalAmount %>
-                                            </td>
-                                        </tr>
-                                        <% }) %>
-                                </tbody>
-                            </table>
-                            <!-- code ends -->
-                        </div>
-                        <!-- main-panel ends -->
-                    </div>
-                    <!-- page-body-wrapper ends -->
+<div class="container-scroller">
+  <!-- partial:partials/_navbar.html -->
+  <%- include('../layouts/admin/adminNavbar.ejs') %>
+  <!-- partial -->
+  <div class="container-fluid page-body-wrapper">
+    <!-- partial:partials/_sidebar.html -->
+    <%- include('../layouts/admin/adminSidebar.ejs') %>
+    <!-- partial -->
+    <div class="main-panel">
+      <div class="content-wrapper">
+        <!-- Page Title Header Starts-->
+        <div class="page-header">
+          <h4 class="page-title">Sales Report</h4>
+          <div class="dropdown">
+            <button
+              class="btn btn-success dropdown-toggle"
+              type="button"
+              style="margin-left: 30px; margin-right: 30px"
+              id="dropdownMenuOutlineButton1"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Filter
+            </button>
+            <div
+              class="dropdown-menu"
+              aria-labelledby="dropdownMenuOutlineButton1"
+            >
+              <a class="dropdown-item" href="/admin/sort?id=1">Daily</a>
+              <a class="dropdown-item" href="/admin/sort?id=7">Weekly</a>
+              <a class="dropdown-item" href="/admin/sort?id=30">Monthly</a>
+              <a class="dropdown-item" href="/admin/sort?id=365">Yearly</a>
             </div>
-            <!-- container-scroller -->
-            <%- include('../layouts/admin/adminFooter.ejs') %>
+          </div>
+          <div class="dropdown">
+            <button
+              class="btn btn-success dropdown-toggle"
+              type="button"
+              id="dropdownMenuOutlineButton1"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Report Download
+            </button>
+            <div
+              class="dropdown-menu"
+              aria-labelledby="dropdownMenuOutlineButton1"
+            >
+              <a
+                class="dropdown-item"
+                href="/admin/download?format=excel&duration=1"
+                >Excel Format</a
+              >
+              <a class="dropdown-item" href="/admin/download?format=pdf"
+                >Pdf Format</a
+              >
+            </div>
+          </div>
+        </div>
+        <!-- code -->
+        <table class="table">
+          <thead class="black white-text">
+            <tr>
+              <th scope="col">Order ID</th>
+              <th scope="col">Date</th>
+              <th scope="col">Customer</th>
+              <th scope="col">Products</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Payment mode</th>
+              <th scope="col">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% orderData.forEach(function(order){ %>
+            <tr>
+              <td><%= order.orderId %></td>
+              <td>
+                <%= new Date(order.date).toLocaleString('en-US', { year:
+                'numeric' , month: '2-digit' , day: '2-digit' }) %>
+              </td>
+              <td><%= order.userName %></td>
+              <td><%= order.products.productDetails.productName %></td>
+              <td><%= order.products.count %></td>
+              <td><%= order.paymentMethod %></td>
+              <td>₹ <%= order.totalAmount %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <!-- code ends -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <%- include('../layouts/admin/adminFooter.ejs') %>
+</div>

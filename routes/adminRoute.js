@@ -67,7 +67,7 @@ adminRoute.get('/addCategoryOffer', adminAuth.isLoggedIn, offerController.addCat
 adminRoute.post('/addCategoryOfferPost', adminAuth.isLoggedIn, offerController.addCategoryOfferPost);
 adminRoute.get('/editCategoryOffer', adminAuth.isLoggedIn, offerController.editCategoryOffer);
 adminRoute.post('/editcategoryOfferPost', adminAuth.isLoggedIn, offerController.editCategoryOfferPost);
-adminRoute.get('/hideCategoryOffer',adminAuth.isLoggedIn,offerController.hideCategoryOffer);
-adminRoute.get('/showCategoryOffer',adminAuth.isLoggedIn,offerController.showCategoryOffer);
+adminRoute.get('/hideCategoryOffer', adminAuth.isLoggedIn, offerController.hideCategoryOffer);
+adminRoute.get('/showCategoryOffer', adminAuth.isLoggedIn, offerController.showCategoryOffer);
 
 module.exports = adminRoute;
