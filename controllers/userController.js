@@ -160,7 +160,7 @@ exports.registerPost = async (req, res) => {
         const transporter = nodemailer.createTransport(smtpConfig);
         emailOne = req.body.email;
         randomNumber = Math.floor(Math.random() * 9000) + 1000;
-        console.log('registerPost' + randomNumber);
+        console.log('OTP : ' + randomNumber);
         const spassword = await securePassword(req.body.spassword);
         function generateReferralCode() {
             const timestamp = Date.now().toString(36);

@@ -70,7 +70,4 @@ adminRoute.post('/editcategoryOfferPost', adminAuth.isLoggedIn, offerController.
 adminRoute.get('/hideCategoryOffer',adminAuth.isLoggedIn,offerController.hideCategoryOffer);
 adminRoute.get('/showCategoryOffer',adminAuth.isLoggedIn,offerController.showCategoryOffer);
 
-//product offer management
-adminRoute.get('/productOffer', adminAuth.isLoggedIn, offerController.productOffer);
-
 module.exports = adminRoute;

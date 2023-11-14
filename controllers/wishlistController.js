@@ -14,9 +14,10 @@ exports.wishlist = async (req, res) => {
         } else {
             count = 0;
         }
-        const wishlist = await Wishlist.findOne({ user: userId }).populate(
-            "products.productId"
-        );
+        const wishlist = await Wishlist.findOne({ user: userId });
+        await wishlist.populate('products.productId');
+        await wishlist.populate('products.productId.category');
+        await wishlist.populate('products.productId.category.offer');
         wishlist ? wishlistCount = wishlist.products.length : 0;
         res.render('user/wishlist', { user: req.session.name, pageTitle, count, wishlist, wishlistCount });
     } catch (error) {

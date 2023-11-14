@@ -194,9 +194,14 @@ exports.landing = async (req, res) => {
         //categoryChart
         const productWiseAggregate = Product.aggregate([
             {
+                $addFields: {
+                    categoryId: { $toObjectId: '$category' }
+                }
+            },
+            {
                 $lookup: {
                     from: 'categories',
-                    localField: 'category',
+                    localField: 'categoryId',
                     foreignField: '_id',
                     as: 'categoryDetails'
                 }
@@ -208,6 +213,7 @@ exports.landing = async (req, res) => {
                 }
             }
         ]);
+        
         const productWise = await productWiseAggregate.exec();
         const categoryName = productWise.map(item => item._id[0]);
         let categoryLength = categoryName.length;
@@ -358,7 +364,7 @@ exports.sort = async (req, res) => {
                 },
             },
         ]);
-        res.render('admin/salesReport', { pageName, orderData });
+        res.render('admin/salesReport', { pageName, orderData, admin:req.session.admin });
     } catch (error) {
         console.log(error.message);
         res.render('admin/errors');
@@ -368,10 +374,7 @@ exports.sort = async (req, res) => {
 //user downloadReport() GET request
 exports.downloadReport = async (req, res) => {
     try {
-        console.log('download');
         const { format, duration } = req.query;
-        console.log(format);
-        console.log(duration);
         const currentDate = new Date();
         const startDate = new Date(currentDate - 1 * 24 * 60 * 60 * 1000);
         const orders = await Order.aggregate([
@@ -405,8 +408,6 @@ exports.downloadReport = async (req, res) => {
         ]);
         const totalSales = await Order.find({ status: "Delivered" }).count();
         const totalOrders = await Order.find().count();
-        console.log(totalSales);
-        console.log(totalOrders);
         const date = new Date();
         data = {
             orders,

@@ -14,11 +14,11 @@ const ObjectId = mongoose.Types.ObjectId;
 exports.orderGet = async (req, res) => {
     try {
         const pageName = "Order";
-        let pageNum=req.query.pageNum;
-        let perPage=10;
-        let orderCount=await Order.find().countDocuments();
-        let page=Math.ceil(orderCount/perPage);
-        const orders = await Order.find().skip((pageNum - 1)*perPage).limit(perPage).sort({date:-1});
+        let pageNum = req.query.pageNum;
+        let perPage = 10;
+        let orderCount = await Order.find().countDocuments();
+        let page = Math.ceil(orderCount / perPage);
+        const orders = await Order.find().skip((pageNum - 1) * perPage).limit(perPage).sort({ date: -1 });
         res.render("admin/orders", { pageName, orders, page, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
@@ -71,12 +71,12 @@ exports.orderDetails = async (req, res) => {
         const userId = orders.user;
         const cart = await Cart.findOne({ userId: userId });
         let finalPrice = orders.totalAmount;
-        let subTotal = orders.totalAmount-10;
-        const couponApplied=await Coupon.findOne({couponCode:cart?.coupon});
+        let subTotal = orders.totalAmount - 10;
+        const couponApplied = await Coupon.findOne({ couponCode: cart?.coupon });
         if (couponApplied) {
             subTotal += couponApplied.maximumDiscount;
         }
-        const address=orders.deliveryDetails;
+        const address = orders.deliveryDetails;
         res.render("admin/orderDetails", { pageName, orders, subTotal, finalPrice, address, couponApplied, admin: req.session.admin });
     } catch (error) {
         console.log(error.message);
@@ -105,11 +105,11 @@ exports.orders = async (req, res) => {
         if (!users) {
             return res.redirect('/login');
         }
-        let pageNum=req.query.id;
-        let perPage=10;
-        let productCount=await Order.find({user:userId}).countDocuments();
-        let page=Math.ceil(productCount/perPage);
-        const orders = await Order.find({ user: userId }).skip((pageNum - 1)*perPage).limit(perPage).sort({date:-1});
+        let pageNum = req.query.id;
+        let perPage = 10;
+        let productCount = await Order.find({ user: userId }).countDocuments();
+        let page = Math.ceil(productCount / perPage);
+        const orders = await Order.find({ user: userId }).skip((pageNum - 1) * perPage).limit(perPage).sort({ date: -1 });
         const products = orders.products;
         const carts = await Cart?.findOne({ userId: userId });
         let count = 0;
@@ -235,6 +235,19 @@ exports.placeOrder = async (req, res) => {
                 currency: 'INR',
                 receipt: orderId,
             };
+            //to reduce stock
+            const stockReduce = cartData.products
+            for (let i = 0; i < stockReduce.length; i++) {
+                const productId = stockReduce[i].productId;
+                const updatedProduct = await Product.findByIdAndUpdate(
+                    productId,
+                    {
+                        $inc: { stock: -stockReduce[i].count }
+                    },
+                    { new: true }
+                );
+            }
+            await Cart.findOneAndUpdate({ userId }, { $set: { products: [], couponApplied: '' } });
             razorpay.orders.create(orderData, (err, order) => {
                 if (err) {
                     console.log(err);
@@ -242,6 +255,7 @@ exports.placeOrder = async (req, res) => {
                     res.json({ order });
                 }
             });
+
         } else {
             console.log('error');
         }
@@ -272,8 +286,8 @@ exports.orderDet = async (req, res) => {
             count = 0;
         }
         let finalPrice = orders.totalAmount;
-        let subTotal=orders.totalAmount-10;
-        let couponApplied = await Coupon.findOne({ couponCode: cart?.coupon });
+        let subTotal = orders.totalAmount - 10;
+        let couponApplied = await Coupon.findOne({ couponCode: cart?.coupon});
         if (couponApplied) {
             subTotal += couponApplied.maximumDiscount;
         }

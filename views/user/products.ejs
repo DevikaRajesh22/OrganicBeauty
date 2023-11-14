@@ -131,9 +131,9 @@
                         </a>
                         <% if(item.category.offer && item.category.offer.activationDate <=new Date() &&
                           item.category.offer.expiryDate>= new Date() &&
-                          item.category.categoryName===items[index].category.offer.category ){ %>
+                          item.category.categoryName===items[index].category.offer.category && item.category.offer.isBlocked===false ){ %>
                           <h5 class="text-danger mb-3"><strike>₹ <%= item.price%></strike><span class="text-primary"> ₹
-                              <%= item.price - item.category.offer.discountAmount %>
+                            <%= item.price - Math.floor((item.price * item.category.offer.discountAmount) / 100) %>
                             </span>
                           </h5>
                           <h6 class="text-danger">

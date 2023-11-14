@@ -56,9 +56,8 @@
               </p>
               <% if(products.category.offer && products.category.offer.activationDate <=new Date() &&
                 products.category.offer.expiryDate>= new Date() &&
-                products.category.categoryName===products.category.offer.category ){ %>
-                <h5 class="text-danger mb-3"><strike>₹ <%= products.price%></strike><span class="text-primary"> ₹ <%=
-                      products.price - products.category.offer.discountAmount %></span>
+                products.category.categoryName===products.category.offer.category  && products.category.offer.isBlocked===false){ %>
+                <h5 class="text-danger mb-3"><strike>₹ <%= products.price%></strike><span class="text-primary"> ₹ <%= products.price - Math.floor((products.price * products.category.offer.discountAmount) / 100) %></span>
                 </h5>
                 <h6 class="text-danger">
                   <%= products.category.offer.offerName %>

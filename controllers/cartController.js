@@ -32,6 +32,9 @@ exports.cartGet = async (req, res) => {
         const pageTitle = 'Cart';
         const carts = await Cart.findOne({ userId: userId }).populate('products.productId');
         if (carts) {
+            await carts.populate('products.productId');
+            await carts.populate('products.productId.category');
+            await carts.populate('products.productId.category.offer');
             subTotal = carts.products.reduce((acc, val) => acc + val.totalPrice, 0);
             finalPrice = carts.products.reduce((acc, val) => acc + val.totalPrice, 0) + 10;
             couponApplied = await Coupon.findOne({ couponCode: carts?.couponApplied });
@@ -70,8 +73,14 @@ exports.addToCartPost = async (req, res) => {
         const productId = req.body.product;
         const user = await User.findOne({ _id: userId });
         const product = await Product.findOne({ _id: productId }).populate('category');
+        let offer = await product.populate('category.offer');
+        let price = product.price;
+        if (offer && offer?.category?.offer?.expiryDate >= new Date() && !offer?.category?.offer?.isBlocked) {
+            let percentage = product.price * offer.category.offer.discountAmount / 100;
+            price = product.price - Math.floor(percentage)
+        }
         const cart = await Cart.findOne({ userId: userId });
-        const price = product.price;
+
         if (userId === undefined) {
             return res.json({ login: true });
         } else {
@@ -122,12 +131,20 @@ exports.addToCartPost = async (req, res) => {
 //user updateCartQuantity() POST request
 exports.updateCartQuantity = async (req, res) => {
     try {
+        let productPrice;
         const userId = req.session.userId;
         const productId = req.body.productId;
         let count = req.body.count;
         count = parseInt(count);
         const cartData = await Cart.findOne({ userId: userId });
-        const productData = await Product.findOne({ _id: productId });
+        const productData = await Product.findOne({ _id: productId }).populate('category');
+        const offer = await productData.populate('category.offer');
+        if (offer && offer?.category?.offer?.expiryDate > new Date() && offer.category.offer.isBlocked == false) {
+            let percentage = productData.price * offer.category.offer.discountAmount / 100;
+            productPrice = productData.price - Math.floor(percentage)
+        } else {
+            productPrice = productData.price
+        }
         if (!cartData || !productData) {
             res.json({ success: false, message: "Cart or product not found." });
             return;
@@ -146,10 +163,12 @@ exports.updateCartQuantity = async (req, res) => {
             res.json({ success: false, message: "Invalid quantity." });
             return;
         }
+        if (updatedQuantity <= 0 || updatedQuantity > productQuantity) {
+            return;
+          }
         // Update the product count and total price in the cart
         cartData.products[existingProductIndex].count = updatedQuantity;
         // Calculate the updated total price for the product
-        const productPrice = productData.price;
         const productTotal = productPrice * updatedQuantity;
         cartData.products[existingProductIndex].totalPrice = productTotal;
         await cartData.save();
@@ -306,7 +325,7 @@ exports.verifyPayment = async (req, res) => {
         const details = req.body;
         const userId = req.session.userId
         const cart = await Cart.findOne({ userId });
-        const hmac = crypto.createHmac("sha256", process.env.RAZ_SECRET);
+        const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_SECRET);
         hmac.update(
             details.payment.razorpay_order_id +
             "|" +
