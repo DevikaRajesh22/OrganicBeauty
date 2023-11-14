@@ -11,6 +11,8 @@ const app = express();
 
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://127.0.0.1/OrganicBeauty");
+//  mongoose.connect("mongodb://127.0.0.1/dummy");
+
 
 //configure express session
 const secretKey = crypto.randomBytes(32).toString("hex");

@@ -1,117 +1,102 @@
 <%- include('../layouts/user/userHeader.ejs') %>
-<!-- Spinner Start -->
-<div
-  id="spinner"
-  class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"
->
-  <div
-    class="spinner-grow text-primary"
-    style="width: 3rem; height: 3rem"
-    role="status"
-  >
-    <span class="sr-only">Loading...</span>
-  </div>
-</div>
-<!-- Spinner End -->
-
-<!-- Navbar Start -->
-<%- include('../layouts/user/userNavbar.ejs') %>
-<!-- Navbar End -->
-
-<!-- Hero Start -->
-<div class="container-fluid bg-primary hero-header mb-5">
-  <div class="container text-center">
-    <h1 class="display-4 text-white mb-3 animated slideInDown">My wallet</h1>
-    <p>Access and manage funds</p>
-  </div>
-</div>
-<!-- Hero End -->
-
-<!-- wallet start -->
-<main class="container-md px-md-5">
-  <div class="col-md-9 p-3 text-center">
-    <div class="py-5 mb-2" style="background-color: #f7f7f7">
-      <h5>Total Wallet Balance</h5>
-      <h1>₹ <%= userData.wallet %></h1>
-      <!-- Dummy balance -->
+  <!-- Spinner Start -->
+  <div id="spinner"
+    class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+    <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem" role="status">
+      <span class="sr-only">Loading...</span>
     </div>
-    <br /><br />
-    <div class="table-responsive">
-      <table class="table table-striped">
-        <h5 class="fw-bold mb-1">Wallet History</h5>
+  </div>
+  <!-- Spinner End -->
+
+  <!-- Navbar Start -->
+  <%- include('../layouts/user/userNavbar.ejs') %>
+    <!-- Navbar End -->
+
+    <!-- Hero Start -->
+    <div class="container-fluid bg-primary hero-header mb-5">
+      <div class="container text-center">
+        <h1 class="display-4 text-white mb-3 animated slideInDown">My wallet</h1>
+        <p>Access and manage funds</p>
+      </div>
+    </div>
+    <!-- Hero End -->
+
+    <!-- wallet start -->
+    <main class="container-md px-md-5">
+      <div class="col-md-9 p-3 text-center">
+        <div class="py-5 mb-2" style="background-color: #f7f7f7">
+          <h5>Total Wallet Balance</h5>
+          <h1>₹ <%= userData.wallet %>
+          </h1>
+          <!-- Dummy balance -->
+        </div>
         <br /><br />
-        <thead class="table-header">
-          <tr>
-            <th><a id="name" class="filter__link">Date</a></th>
-            <th>
-              <a id="draws" class="filter__link filter__link--number">Type</a>
-            </th>
-            <th>
-              <a id="losses" class="filter__link filter__link--number"
-                >Amount</a
-              >
-            </th>
-          </tr>
-        </thead>
-        <tbody class="table-content">
-          <% historyDetails.forEach(function(history){ %>
-          <tr class="table-row">
-            <td class="table-data">
-              <%= new Date(history.date).toLocaleString('en-US', { year:
-              'numeric' , month: '2-digit' , day: '2-digit' })%>
-            </td>
-            <td class="table-data"><%= history.status%></td>
-            <% if(history.status==='Credit' || history.status==='Referral
-            link'){ %>
-            <td class="table-data text-success">+ ₹ <%= history.amount %></td>
-            <% }else if(history.status==='Debit'){ %>
-            <td class="table-data text-danger">- ₹ <%= history.amount %></td>
-            <% } %>
-          </tr>
-          <% })%>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</main>
-<!-- wallet end -->
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <h5 class="fw-bold mb-1">Wallet History</h5>
+            <br /><br />
+            <thead class="table-header">
+              <tr>
+                <th><a id="name" class="filter__link">Date</a></th>
+                <th>
+                  <a id="draws" class="filter__link filter__link--number">Type</a>
+                </th>
+                <th>
+                  <a id="losses" class="filter__link filter__link--number">Amount</a>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="table-content">
+              <% historyDetails.forEach(function(history){ %>
+                <tr class="table-row">
+                  <td class="table-data">
+                    <%= new Date(history.date).toLocaleString('en-US', { year: 'numeric' , month: '2-digit' ,
+                      day: '2-digit' })%>
+                  </td>
+                  <td class="table-data">
+                    <%= history.status%>
+                  </td>
+                  <% if(history.status==='Credit' || history.status==='Referral link' ){ %>
+                    <td class="table-data text-success">+ ₹ <%= history.amount %>
+                    </td>
+                    <% }else if(history.status==='Debit' ){ %>
+                      <td class="table-data text-danger">- ₹ <%= history.amount %>
+                      </td>
+                      <% } %>
+                </tr>
+                <% })%>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+    <!-- wallet end -->
 
-<!-- Newsletter Start -->
-<div class="container-fluid newsletter bg-primary py-5 my-5">
-  <div class="container py-5">
-    <div
-      class="mx-auto text-center wow fadeIn"
-      data-wow-delay="0.1s"
-      style="max-width: 600px"
-    >
-      <h1 class="text-white mb-3">
-        <span class="fw-light text-dark">Let's Subscribe</span> The Newsletter
-      </h1>
-      <p class="text-white mb-4">
-        Subscribe now to get 15% discount on any of our products
-      </p>
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-md-7 wow fadeIn" data-wow-delay="0.5s">
-        <div class="position-relative w-100 mt-3 mb-2">
-          <input
-            class="form-control w-100 py-4 ps-4 pe-5"
-            type="text"
-            placeholder="Enter Your Email"
-            style="height: 48px"
-          />
-          <button
-            type="button"
-            class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2"
-          >
-            <i class="fa fa-paper-plane text-white fs-4"></i>
-          </button>
+    <!-- Newsletter Start -->
+    <div class="container-fluid newsletter bg-primary py-5 my-5">
+      <div class="container py-5">
+        <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px">
+          <h1 class="text-white mb-3">
+            <span class="fw-light text-dark">Let's Subscribe</span> The Newsletter
+          </h1>
+          <p class="text-white mb-4">
+            Subscribe now to get 15% discount on any of our products
+          </p>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-7 wow fadeIn" data-wow-delay="0.5s">
+            <div class="position-relative w-100 mt-3 mb-2">
+              <input class="form-control w-100 py-4 ps-4 pe-5" type="text" placeholder="Enter Your Email"
+                style="height: 48px" />
+              <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2">
+                <i class="fa fa-paper-plane text-white fs-4"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-<!-- Newsletter End -->
+    <!-- Newsletter End -->
 
-<!-- Footer Start -->
-<%- include('../layouts/user/userFooter.ejs') %>
+    <!-- Footer Start -->
+    <%- include('../layouts/user/userFooter.ejs') %>
