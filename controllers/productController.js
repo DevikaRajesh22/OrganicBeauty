@@ -98,7 +98,7 @@ exports.editProductPost = async (req, res) => {
     let image2 = data.image.image2;
     let image3 = data.image.image3;
     let image4 = data.image.image4;
-    if (imageFiles && Object.keys(imageFiles).length > 0) {
+    if (req.files && Object.keys(req.files).length > 0) {
       image1 = imageFiles.image1
         ? imageFiles.image1[0].filename
         : data.image.image1;
@@ -116,7 +116,7 @@ exports.editProductPost = async (req, res) => {
       { _id: id },
       {
         $set: {
-          productName: productName,
+          productName: req.body.pname,
           category: category,
           price: price,
           productDetails: productDetails,
@@ -128,9 +128,10 @@ exports.editProductPost = async (req, res) => {
         },
       }
     );
-    res.render("admin/errors");
+    res.redirect('/admin/products');
   } catch (error) {
     console.log(error.message);
+    res.status(500).render('admin/errors')
   }
 };
 
