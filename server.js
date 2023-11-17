@@ -6,11 +6,12 @@ const port = process.env.PORT || 3000;
 const session = require("express-session");
 const nocache = require("nocache");
 const crypto = require("crypto");
+const database=require('./config/dbAuth');
 
 const app = express();
+database.database();
 
-const mongoose = require("mongoose");
-mongoose.connect("mongodb+srv://Devika:1234@cluster0.dr4suum.mongodb.net/OrganicBeauty?retryWrites=true&w=majority");
+
 
 //configure express session
 const secretKey = crypto.randomBytes(32).toString("hex");
