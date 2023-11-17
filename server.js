@@ -10,9 +10,7 @@ const crypto = require("crypto");
 const app = express();
 
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://127.0.0.1/OrganicBeauty");
-
-
+mongoose.connect("mongodb+srv://Devika:1234@cluster0.dr4suum.mongodb.net/OrganicBeauty?retryWrites=true&w=majority");
 
 //configure express session
 const secretKey = crypto.randomBytes(32).toString("hex");
